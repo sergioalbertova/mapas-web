@@ -27,6 +27,4 @@ RUN printf "<VirtualHost *:80>\n\
 
 EXPOSE 80
 
-CMD [\"apache2-foreground\"]
-
-
+CMD ["apache2-foreground"]
