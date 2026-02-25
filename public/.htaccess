@@ -1,4 +1,13 @@
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ api/index.php [QSA,L]
+
+# Permitir servir archivos reales
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Permitir servir directorios reales
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Para cualquier otra ruta, cargar index.html
+RewriteRule ^ index.html [L]
+
