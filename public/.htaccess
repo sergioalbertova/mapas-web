@@ -1,13 +1,16 @@
 RewriteEngine On
 
-# Permitir servir archivos reales
+# No tocar archivos reales
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
-# Permitir servir directorios reales
+# No tocar directorios reales
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Para cualquier otra ruta, cargar index.html
+# No redirigir nada que empiece con /api
+RewriteRule ^api/ - [L]
+
+# Todo lo demás va a index.html
 RewriteRule ^ index.html [L]
 
