@@ -1,10 +1,8 @@
 <?php
-require_once "db.php";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-try {
-    $conn = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Conexión exitosa";
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
+require "db.php";
+
+echo "Conexión exitosa";
+
