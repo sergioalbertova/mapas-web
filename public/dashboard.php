@@ -1,9 +1,13 @@
 <?php
+// Configuración necesaria para Render (HTTPS)
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.cookie_secure', '1');
+
 session_start();
 require "db.php";
 
-// Si quieres proteger el dashboard con login:
-if (!isset($_SESSION["usuario"])) {
+// Validación correcta de sesión
+if (!isset($_SESSION["user_id"])) {
     header("Location: login.html");
     exit;
 }
@@ -98,4 +102,3 @@ document.getElementById("selectPiso").addEventListener("change", async function 
 
 </body>
 </html>
-
