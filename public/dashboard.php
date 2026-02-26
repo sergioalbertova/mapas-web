@@ -75,6 +75,11 @@ if (!isset($_SESSION["user_id"])) {
         transform: translate(-50%, -50%);
         display: none;
     }
+
+    .busqueda {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 </style>
 </head>
 <body>
@@ -92,6 +97,15 @@ if (!isset($_SESSION["user_id"])) {
     }
     ?>
 </select>
+
+<!-- BUSQUEDAS -->
+<div class="busqueda">
+    <input type="number" id="inputNodo" placeholder="Buscar nodo">
+    <button onclick="buscarNodo()">Buscar nodo</button>
+
+    <input type="text" id="inputUsuario" placeholder="Buscar usuario">
+    <button onclick="buscarUsuario()">Buscar usuario</button>
+</div>
 
 <!-- CONTENEDOR PRINCIPAL -->
 <div id="contenedor">
@@ -190,7 +204,7 @@ function llenarTablaPiso(filas) {
     filas.forEach(f => {
         const tr = document.createElement("tr");
 
-        tr.innerHTML = `
+        tr.innerinnerHTML = `
             <td>${f.ubicacion}</td>
             <td>${f.piso}</td>
             <td>${f.nodo ?? ""}</td>
@@ -231,10 +245,6 @@ function manejarClickFila(tr) {
 }
 
 function dibujarMarcador(cxRel, cyRel) {
-    if (!mapa.complete || mapa.naturalWidth === 0) {
-        return;
-    }
-
     const rect = mapa.getBoundingClientRect();
     const x = cxRel * rect.width;
     const y = cyRel * rect.height;
@@ -259,6 +269,76 @@ function limpiarPanel() {
 
 function ocultarMarcador() {
     marcador.style.display = "none";
+}
+
+/* ===========================
+   BUSCAR NODO
+=========================== */
+async function buscarNodo() {
+    const nodo = document.getElementById("inputNodo").value.trim();
+    if (nodo === "") return alert("Ingrese un nodo");
+
+    const res = await fetch("buscarNodo.php?nodo=" + nodo);
+    const data = await res.json();
+
+    if (data.status !== "success") {
+        alert(data.message);
+        return;
+    }
+
+    const d = data.data;
+
+    // Cambiar piso automáticamente
+    selectPiso.value = d.piso;
+    selectPiso.dispatchEvent(new Event("change"));
+
+    // Llenar panel
+    datoNodo.textContent = "Nodo: " + d.nodo;
+    datoUbicacion.textContent = "Ubicación: " + d.ubicacion;
+    datoPiso.textContent = "Piso: " + d.piso;
+    datoSwitch.textContent = "Switch: " + d.switch;
+    datoPuerto.textContent = "Puerto: " + d.puerto;
+    datoUsuario.textContent = "Usuario: " + (d.usuario ?? "(sin usuario)");
+
+    // Dibujar marcador
+    setTimeout(() => {
+        dibujarMarcador(d.cx_rel, d.cy_rel);
+    }, 500);
+}
+
+/* ===========================
+   BUSCAR USUARIO
+=========================== */
+async function buscarUsuario() {
+    const usuario = document.getElementById("inputUsuario").value.trim();
+    if (usuario === "") return alert("Ingrese un usuario");
+
+    const res = await fetch("buscarUsuario.php?usuario=" + usuario);
+    const data = await res.json();
+
+    if (data.status !== "success") {
+        alert(data.message);
+        return;
+    }
+
+    const d = data.data;
+
+    // Cambiar piso automáticamente
+    selectPiso.value = d.piso;
+    selectPiso.dispatchEvent(new Event("change"));
+
+    // Llenar panel
+    datoNodo.textContent = "Nodo: " + (d.nodo ?? "(sin nodo)");
+    datoUbicacion.textContent = "Ubicación: " + d.ubicacion;
+    datoPiso.textContent = "Piso: " + d.piso;
+    datoSwitch.textContent = "Switch: " + (d.switch ?? "");
+    datoPuerto.textContent = "Puerto: " + (d.puerto ?? "");
+    datoUsuario.textContent = "Usuario: " + d.usuario;
+
+    // Dibujar marcador
+    setTimeout(() => {
+        dibujarMarcador(d.cx_rel, d.cy_rel);
+    }, 500);
 }
 </script>
 
