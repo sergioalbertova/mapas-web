@@ -14,9 +14,10 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     if (data.status === "success") {
         msg.textContent = "Acceso correcto, redirigiendo...";
         msg.style.color = "green";
+
         setTimeout(() => {
             window.location.href = "dashboard.php";
-        }, 1000);
+        }, 800);
     } else {
         msg.textContent = data.message;
         msg.style.color = "red";
