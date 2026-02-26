@@ -36,10 +36,44 @@ if (!isset($_SESSION["user_id"])) {
         background: #f8f8f8;
     }
 
-    #mapa {
+    #tablaPiso {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    #tablaPiso th, #tablaPiso td {
+        border: 1px solid #ccc;
+        padding: 4px;
+        text-align: left;
+    }
+
+    #tablaPiso tr:hover {
+        background: #e0e0e0;
+        cursor: pointer;
+    }
+
+    #mapaContenedor {
+        position: relative;
         width: 100%;
         max-width: 900px;
         border: 1px solid #ccc;
+    }
+
+    #mapa {
+        width: 100%;
+        display: block;
+    }
+
+    #marcador {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: red;
+        border: 2px solid white;
+        transform: translate(-50%, -50%);
+        display: none;
     }
 </style>
 </head>
@@ -70,34 +104,162 @@ if (!isset($_SESSION["user_id"])) {
         <p id="datoPiso"></p>
         <p id="datoSwitch"></p>
         <p id="datoPuerto"></p>
+        <p id="datoUsuario"></p>
     </div>
 
-    <!-- MAPA DEL PISO -->
-    <div>
-        <img id="mapa" src="">
+    <!-- TABLA Y MAPA -->
+    <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+
+        <!-- TABLA DEL PISO -->
+        <table id="tablaPiso">
+            <thead>
+                <tr>
+                    <th>Ubicación</th>
+                    <th>Piso</th>
+                    <th>Nodo</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- MAPA DEL PISO -->
+        <div id="mapaContenedor">
+            <img id="mapa" src="">
+            <div id="marcador"></div>
+        </div>
+
     </div>
 
 </div>
 
-<!-- SCRIPT PARA CARGAR PISO -->
+<!-- SCRIPT -->
 <script>
-document.getElementById("selectPiso").addEventListener("change", async function () {
+const selectPiso = document.getElementById("selectPiso");
+const tablaPisoBody = document.querySelector("#tablaPiso tbody");
+const mapa = document.getElementById("mapa");
+const marcador = document.getElementById("marcador");
+
+// Datos panel izquierdo
+const datoNodo = document.getElementById("datoNodo");
+const datoUbicacion = document.getElementById("datoUbicacion");
+const datoPiso = document.getElementById("datoPiso");
+const datoSwitch = document.getElementById("datoSwitch");
+const datoPuerto = document.getElementById("datoPuerto");
+const datoUsuario = document.getElementById("datoUsuario");
+
+// Cambio de piso: cargar imagen + listar ubicaciones
+selectPiso.addEventListener("change", async function () {
     const idpiso = this.value;
 
+    limpiarPanel();
+    limpiarTabla();
+    ocultarMarcador();
+
     if (idpiso === "") {
-        document.getElementById("mapa").src = "";
+        mapa.src = "";
         return;
     }
 
-    const res = await fetch("cargarPiso.php?idpiso=" + idpiso);
-    const data = await res.json();
+    // 1) Cargar imagen del piso
+    const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
+    const dataMapa = await resMapa.json();
 
-    if (data.status === "success") {
-        document.getElementById("mapa").src = data.imagen;
+    if (dataMapa.status === "success") {
+        mapa.src = dataMapa.imagen;
     } else {
-        alert(data.message);
+        alert(dataMapa.message);
+        return;
+    }
+
+    // 2) Listar ubicaciones del piso
+    const resLista = await fetch("listarPiso.php?piso=" + idpiso);
+    const dataLista = await resLista.json();
+
+    if (dataLista.status === "success") {
+        llenarTablaPiso(dataLista.data);
+    } else {
+        alert(dataLista.message);
     }
 });
+
+// Llena la tabla con las ubicaciones del piso
+function llenarTablaPiso(filas) {
+    limpiarTabla();
+
+    filas.forEach(f => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${f.ubicacion}</td>
+            <td>${f.piso}</td>
+            <td>${f.nodo ?? ""}</td>
+            <td>${f.usuario ?? ""}</td>
+        `;
+
+        tr.dataset.ubicacion = f.ubicacion;
+        tr.dataset.piso = f.piso;
+        tr.dataset.cxRel = f.cx_rel;
+        tr.dataset.cyRel = f.cy_rel;
+        tr.dataset.nodo = f.nodo ?? "";
+        tr.dataset.usuario = f.usuario ?? "";
+
+        tr.addEventListener("click", () => {
+            manejarClickFila(tr);
+        });
+
+        tablaPisoBody.appendChild(tr);
+    });
+}
+
+function manejarClickFila(tr) {
+    const piso = tr.dataset.piso;
+    const ubicacion = tr.dataset.ubicacion;
+    const nodo = tr.dataset.nodo;
+    const usuario = tr.dataset.usuario;
+    const cxRel = parseFloat(tr.dataset.cxRel);
+    const cyRel = parseFloat(tr.dataset.cyRel);
+
+    datoNodo.textContent = "Nodo: " + (nodo || "(sin nodo)");
+    datoUbicacion.textContent = "Ubicación: " + ubicacion;
+    datoPiso.textContent = "Piso: " + piso;
+    datoUsuario.textContent = "Usuario: " + (usuario || "(sin usuario)");
+    datoSwitch.textContent = "Switch: ";
+    datoPuerto.textContent = "Puerto: ";
+
+    dibujarMarcador(cxRel, cyRel);
+}
+
+function dibujarMarcador(cxRel, cyRel) {
+    if (!mapa.complete || mapa.naturalWidth === 0) {
+        return;
+    }
+
+    const rect = mapa.getBoundingClientRect();
+    const x = cxRel * rect.width;
+    const y = cyRel * rect.height;
+
+    marcador.style.left = x + "px";
+    marcador.style.top = y + "px";
+    marcador.style.display = "block";
+}
+
+function limpiarTabla() {
+    tablaPisoBody.innerHTML = "";
+}
+
+function limpiarPanel() {
+    datoNodo.textContent = "";
+    datoUbicacion.textContent = "";
+    datoPiso.textContent = "";
+    datoSwitch.textContent = "";
+    datoPuerto.textContent = "";
+    datoUsuario.textContent = "";
+}
+
+function ocultarMarcador() {
+    marcador.style.display = "none";
+}
 </script>
 
 </body>
