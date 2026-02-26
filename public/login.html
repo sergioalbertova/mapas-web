@@ -1,37 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+<div class="login-container">
     <h2>Iniciar sesión</h2>
 
-    <input id="usuario" type="text" placeholder="Usuario"><br><br>
-    <input id="clave" type="password" placeholder="Clave"><br><br>
+    <form id="loginForm">
+        <input type="email" name="email" placeholder="Correo" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <button type="submit">Entrar</button>
+    </form>
 
-    <button onclick="login()">Entrar</button>
+    <p id="msg"></p>
+</div>
 
-    <p id="resultado"></p>
-
-    <script>
-        async function login() {
-            const usuario = document.getElementById("usuario").value;
-            const clave = document.getElementById("clave").value;
-
-            const response = await fetch("/api/login.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ usuario, clave })
-            });
-
-            const data = await response.json();
-            document.getElementById("resultado").innerText = data.message;
-
-            if (data.success) {
-                window.location.href = "index.html";
-            }
-        }
-    </script>
+<script src="js/login.js"></script>
 </body>
 </html>
+
