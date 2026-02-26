@@ -1,6 +1,6 @@
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    
     const formData = new FormData(e.target);
 
     const res = await fetch("login.php", {
@@ -8,7 +8,10 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         body: formData
     });
 
-    const data = await res.json();
+    const text = await res.text();
+    console.log("RESPUESTA CRUDA:", text);
+    return;
+
     const msg = document.getElementById("msg");
 
     if (data.status === "success") {
