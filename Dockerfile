@@ -1,15 +1,14 @@
 FROM php:8.2-apache
 
-# Habilitar mod_rewrite
 RUN a2enmod rewrite
 
-# Copiar todo el proyecto
+# Instalar drivers de PostgreSQL
+RUN docker-php-ext-install pdo pdo_pgsql
+
 COPY . /var/www/html/
 
-# Configurar Apache para permitir .htaccess globalmente
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-# Configurar el VirtualHost correctamente
 RUN printf "<VirtualHost *:80>\n\
     DocumentRoot /var/www/html/public\n\
 \n\
