@@ -16,9 +16,10 @@ if ($piso <= 0) {
 }
 
 /*
-    Tabla ubicacion: piso, ubicacion, cx_rel, cy_rel
-    Tabla nodos: piso, ubicacion, NumeroNodo
-    Tabla activeusers: piso, ubimapa2, nomuser
+    Tabla ubicacion: piso (int), ubicacion (int), cx_rel, cy_rel
+    Tabla nodos: piso (int), ubicacion (TEXT o VARCHAR), NumeroNodo
+    Tabla activeuser: piso (int), ubimapa2 (TEXT o VARCHAR), nomuser
+    → Necesitamos castear ubicacion/ubimapa2 a entero para compararlos con u.ubicacion
 */
 
 $sql = "
@@ -27,15 +28,15 @@ $sql = "
         u.piso,
         u.cx_rel,
         u.cy_rel,
-        n.NumeroNodo AS nodo,
+        n.\"NumeroNodo\" AS nodo,
         a.nomuser AS usuario
     FROM ubicacion u
     LEFT JOIN nodos n
         ON n.piso = u.piso
-       AND n.ubicacion = u.ubicacion
-    LEFT JOIN activeusers a
+       AND n.ubicacion::int = u.ubicacion
+    LEFT JOIN activeuser a
         ON a.piso = u.piso
-       AND a.ubimapa2 = u.ubicacion
+       AND a.ubimapa2::int = u.ubicacion
     WHERE u.piso = :piso
     ORDER BY u.ubicacion
 ";
@@ -49,4 +50,3 @@ echo json_encode([
     "data" => $rows
 ]);
 exit;
-

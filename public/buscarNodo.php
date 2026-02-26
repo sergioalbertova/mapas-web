@@ -77,7 +77,7 @@ if (!$coord) {
 /* 3. Usuario asignado */
 $sqlUser = "
     SELECT nomuser
-    FROM activeusers
+    FROM activeuser
     WHERE piso = :piso AND ubimapa2 = :ubicacion
     LIMIT 1
 ";
