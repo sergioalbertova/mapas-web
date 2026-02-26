@@ -1,6 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 require "db.php";
+
+header("Content-Type: application/json");
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     echo json_encode(["status" => "error", "message" => "Método no permitido"]);
@@ -24,7 +29,6 @@ if (!$user) {
     exit;
 }
 
-// Como tu clave está en texto plano:
 if ($clave !== $user["clave"]) {
     echo json_encode(["status" => "error", "message" => "Contraseña incorrecta"]);
     exit;
@@ -34,3 +38,4 @@ $_SESSION["user_id"] = $user["id"];
 $_SESSION["user_name"] = $user["nombre"];
 
 echo json_encode(["status" => "success"]);
+exit;
