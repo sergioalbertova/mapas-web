@@ -8,20 +8,79 @@ require "db.php";
     <title>Mapa de Nodos</title>
 
     <style>
-        body { font-family: Arial; margin: 20px; }
-
-        /* Panel izquierdo */
-        .panel-datos input {
-            width: 100%;
-            margin-bottom: 8px;
-            padding: 5px;
+        body {
+            font-family: Arial;
+            margin: 0;
+            padding: 0;
+            background: #f4f6f9;
         }
 
-        /* Tabla con scroll */
+        h2 {
+            margin: 0;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+        }
+
+        /* Barra superior */
+        .top-bar {
+            background: #ecf0f1;
+            padding: 15px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border-bottom: 2px solid #bdc3c7;
+        }
+
+        .top-bar input, .top-bar select {
+            padding: 6px;
+        }
+
+        .top-bar button {
+            padding: 6px 10px;
+            cursor: pointer;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Contenedor principal */
+        .main-container {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Panel de datos */
+        .panel-datos {
+            width: 260px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .panel-datos input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 6px;
+        }
+
+        /* Tabla */
+        .tabla-box {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
         .tabla-scroll {
-            max-height: 300px;
+            max-height: 350px;
             overflow-y: auto;
             border: 1px solid #ccc;
+            margin-top: 10px;
         }
 
         table {
@@ -32,33 +91,22 @@ require "db.php";
         th, td {
             border: 1px solid #ccc;
             padding: 6px;
-            text-align: left;
         }
 
         th {
             background: #eee;
         }
 
-        /* Layout principal */
-        .contenedor {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
-
-        .panel-datos {
-            width: 250px;
-            border: 1px solid #ccc;
-            padding: 10px;
-        }
-
-        .panel-busqueda {
-            width: 250px;
+        /* Mapa */
+        .mapa-box {
+            margin: 20px;
+            text-align: center;
         }
 
         #imgMapa {
-            max-width: 100%;
-            border: 1px solid #ccc;
+            max-width: 90%;
+            border: 2px solid #7f8c8d;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -67,11 +115,34 @@ require "db.php";
 
 <h2>Mapa de Nodos</h2>
 
-<div class="contenedor">
+<!-- BARRA SUPERIOR -->
+<div class="top-bar">
+    <label>Piso:</label>
+    <select id="selectPiso">
+        <option value="">Seleccione un piso</option>
+        <?php
+        $pisos = $pdo->query("SELECT idpiso, nombrepiso FROM pisos ORDER BY idpiso")->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($pisos as $p) {
+            echo "<option value='{$p['idpiso']}'>Piso {$p['nombrepiso']}</option>";
+        }
+        ?>
+    </select>
 
-    <!-- Panel izquierdo -->
+    <label>Nodo:</label>
+    <input type="text" id="inputNodo">
+    <button id="btnBuscarNodo">Buscar nodo</button>
+
+    <label>Usuario:</label>
+    <input type="text" id="inputUsuario">
+    <button id="btnBuscarUsuario">Buscar usuario</button>
+</div>
+
+<!-- PANEL IZQUIERDO + TABLA -->
+<div class="main-container">
+
+    <!-- Panel de datos -->
     <div class="panel-datos">
-        <h3>Datos:</h3>
+        <h3>Datos</h3>
         <div style="width: 15px; height: 15px; background: green; border-radius: 50%; margin-bottom: 10px;"></div>
 
         <label>Nodo:</label>
@@ -90,55 +161,29 @@ require "db.php";
         <input type="text" id="datoPuerto" readonly>
     </div>
 
-    <!-- Mapa al centro -->
-    <div style="flex: 1; text-align: center;">
-        <img id="imgMapa" src="">
-    </div>
+    <!-- Tabla -->
+    <div class="tabla-box">
+        <h3>Listado</h3>
 
-    <!-- Buscadores a la derecha -->
-    <div class="panel-busqueda">
-        <label>Piso:</label>
-        <select id="selectPiso">
-            <option value="">Seleccione un piso</option>
-            <?php
-            $pisos = $pdo->query("SELECT idpiso, nombrepiso FROM pisos ORDER BY idpiso")->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($pisos as $p) {
-                echo "<option value='{$p['idpiso']}'>Piso {$p['nombrepiso']}</option>";
-            }
-            ?>
-        </select>
-
-        <br><br>
-
-        <label>Nodo:</label>
-        <input type="text" id="inputNodo">
-        <button id="btnBuscarNodo">Buscar nodo</button>
-
-        <br><br>
-
-        <label>Usuario:</label>
-        <input type="text" id="inputUsuario">
-        <button id="btnBuscarUsuario">Buscar usuario</button>
+        <div class="tabla-scroll">
+            <table id="tablaUbicaciones">
+                <thead>
+                    <tr>
+                        <th>Ubicación</th>
+                        <th>Nodo</th>
+                        <th>Usuario</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
 </div>
 
-<!-- Tabla abajo -->
-<div style="margin-top: 20px;">
-    <h3>Listado</h3>
-
-    <div class="tabla-scroll">
-        <table id="tablaUbicaciones">
-            <thead>
-                <tr>
-                    <th>Ubicación</th>
-                    <th>Nodo</th>
-                    <th>Usuario</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+<!-- MAPA ABAJO -->
+<div class="mapa-box">
+    <img id="imgMapa" src="">
 </div>
 
 <script>
@@ -159,60 +204,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Cargar mapa
-        try {
-            const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
-            const dataMapa = await resMapa.json();
-            if (dataMapa.status === "success") {
-                imgMapa.src = dataMapa.imagen;
-            }
-        } catch (e) {
-            console.error("Error cargando mapa:", e);
-            return;
+        const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
+        const dataMapa = await resMapa.json();
+        if (dataMapa.status === "success") {
+            imgMapa.src = dataMapa.imagen;
         }
 
         // Cargar listado
-        try {
-            const resLista = await fetch("listarPiso.php?piso=" + idpiso);
-            const dataLista = await resLista.json();
+        const resLista = await fetch("listarPiso.php?piso=" + idpiso);
+        const dataLista = await resLista.json();
 
-            if (dataLista.status === "success") {
-                tablaBody.innerHTML = "";
-                dataLista.data.forEach(item => {
-                    tablaBody.insertAdjacentHTML("beforeend", `
-                        <tr>
-                            <td>${item.ubicacion}</td>
-                            <td>${item.nodo ?? ""}</td>
-                            <td>${item.usuario ?? ""}</td>
-                        </tr>
-                    `);
-                });
-            }
-        } catch (e) {
-            console.error("Error cargando lista:", e);
-        }
-    });
-
-    // Buscar nodo
-    document.getElementById("btnBuscarNodo").addEventListener("click", async () => {
-        const nodo = document.getElementById("inputNodo").value.trim();
-        if (!nodo) return;
-        try {
-            const res = await fetch("buscarNodo.php?nodo=" + nodo);
-            console.log(await res.json());
-        } catch (e) {
-            console.error("Error en buscar nodo:", e);
-        }
-    });
-
-    // Buscar usuario
-    document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
-        const usuario = document.getElementById("inputUsuario").value.trim();
-        if (!usuario) return;
-        try {
-            const res = await fetch("buscarUsuario.php?usuario=" + usuario);
-            console.log(await res.json());
-        } catch (e) {
-            console.error("Error en buscar usuario:", e);
+        if (dataLista.status === "success") {
+            tablaBody.innerHTML = "";
+            dataLista.data.forEach(item => {
+                tablaBody.insertAdjacentHTML("beforeend", `
+                    <tr>
+                        <td>${item.ubicacion}</td>
+                        <td>${item.nodo ?? ""}</td>
+                        <td>${item.usuario ?? ""}</td>
+                    </tr>
+                `);
+            });
         }
     });
 
