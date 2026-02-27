@@ -24,7 +24,7 @@ if ($nodo <= 0) {
 
 $sqlNodo = "
     SELECT 
-        \"IdNodo\",
+        \"idnodo\",
         piso,
         ubicacion,
         \"SwitchNombre\",

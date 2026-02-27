@@ -278,7 +278,47 @@ document.getElementById("btnBuscarUsuario").addEventListener("click", () => {
 });
 
 
-    
+    // Buscar nodo
+    document.getElementById("btnBuscarNodo").addEventListener("click", async () => {
+        const nodo = document.getElementById("inputNodo").value.trim();
+        if (!nodo) return;
+
+        const res = await fetch("buscarNodo.php?nodo=" + encodeURIComponent(nodo));
+        const data = await res.json();
+
+        if (data.status === "success" && data.data) {
+            const reg = data.data;
+
+            selectPiso.value = reg.piso;
+            await cargarPisoCompleto(reg.piso);
+
+            llenarPanelDatos(reg);
+            resaltarFilaPorNodo(reg.nodo);
+        } else {
+            alert("Nodo no encontrado");
+        }
+    });
+
+    // Buscar usuario
+    document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
+        const usuario = document.getElementById("inputUsuario").value.trim();
+        if (!usuario) return;
+
+        const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
+        const data = await res.json();
+
+        if (data.status === "success" && data.data) {
+            const reg = data.data;
+
+            selectPiso.value = reg.piso;
+            await cargarPisoCompleto(reg.piso);
+
+            llenarPanelDatos(reg);
+            resaltarFilaPorNodo(reg.nodo);
+        } else {
+            alert("Usuario no encontrado");
+        }
+    });
 
 });
 </script>
