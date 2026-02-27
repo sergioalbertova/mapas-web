@@ -5,7 +5,7 @@ require "db.php";
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mapa de Nodos v:12:18</title>
+    <title>Mapa de Nodos</title>
 
     <style>
         body {
@@ -113,7 +113,7 @@ require "db.php";
 
 <body>
 
-<h2>Mapa de Nodos</h2>
+<h2 id="tituloMapa">MAPA DE NODOS - 0</h2>
 
 <!-- BARRA SUPERIOR -->
 <div class="top-bar">
@@ -187,6 +187,8 @@ require "db.php";
 </div>
 
 <script>
+let contador = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const selectPiso   = document.getElementById("selectPiso");
@@ -199,7 +201,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const datoSwitch    = document.getElementById("datoSwitch");
     const datoPuerto    = document.getElementById("datoPuerto");
 
+    const tituloMapa = document.getElementById("tituloMapa");
+
+    function actualizarTitulo() {
+        contador++;
+        tituloMapa.textContent = "MAPA DE NODOS - " + contador;
+    }
+
     async function cargarPisoCompleto(idpiso) {
+        actualizarTitulo();
+
         if (!idpiso) {
             tablaBody.innerHTML = "";
             imgMapa.src = "";
@@ -260,27 +271,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const nodo = document.getElementById("inputNodo").value.trim();
         if (!nodo) return;
 
-        try {
-            const res = await fetch("buscarNodo.php?nodo=" + encodeURIComponent(nodo));
-            const data = await res.json();
+        const res = await fetch("buscarNodo.php?nodo=" + encodeURIComponent(nodo));
+        const data = await res.json();
 
-            if (data.status === "success" && data.data) {
-                const reg = data.data;
+        if (data.status === "success" && data.data) {
+            const reg = data.data;
 
-                // Seleccionar piso correcto
-                selectPiso.value = reg.piso;
-                await cargarPisoCompleto(reg.piso);
+            selectPiso.value = reg.piso;
+            await cargarPisoCompleto(reg.piso);
 
-                // Llenar panel
-                llenarPanelDatos(reg);
-
-                // Resaltar fila
-                resaltarFilaPorNodo(reg.nodo);
-            } else {
-                alert("Nodo no encontrado");
-            }
-        } catch (e) {
-            console.error("Error en buscar nodo:", e);
+            llenarPanelDatos(reg);
+            resaltarFilaPorNodo(reg.nodo);
+        } else {
+            alert("Nodo no encontrado");
         }
     });
 
@@ -289,33 +292,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const usuario = document.getElementById("inputUsuario").value.trim();
         if (!usuario) return;
 
-        try {
-            const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
-            const data = await res.json();
+        const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
+        const data = await res.json();
 
-            if (data.status === "success" && data.data) {
-                const reg = data.data;
+        if (data.status === "success" && data.data) {
+            const reg = data.data;
 
-                // Seleccionar piso correcto
-                selectPiso.value = reg.piso;
-                await cargarPisoCompleto(reg.piso);
+            selectPiso.value = reg.piso;
+            await cargarPisoCompleto(reg.piso);
 
-                // Llenar panel
-                llenarPanelDatos(reg);
-
-                // Resaltar fila
-                resaltarFilaPorNodo(reg.nodo);
-            } else {
-                alert("Usuario no encontrado");
-            }
-        } catch (e) {
-            console.error("Error en buscar usuario:", e);
+            llenarPanelDatos(reg);
+            resaltarFilaPorNodo(reg.nodo);
+        } else {
+            alert("Usuario no encontrado");
         }
     });
 
 });
 </script>
-
 
 </body>
 </html>
