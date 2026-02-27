@@ -18,6 +18,7 @@ if ($usuario === "") {
 /*
     Devolver TODOS los usuarios que coincidan
     + su nodo (si existe)
+    + ignorar ND en piso
 */
 
 $sql = "
@@ -29,7 +30,8 @@ $sql = "
         n.idnodo AS nodo
     FROM activeuser a
     LEFT JOIN nodos n
-        ON n.piso = a.piso::int
+        ON a.piso ~ '^[0-9]+$'       -- piso es numérico
+       AND n.piso = a.piso::int
        AND n.ubicacion::int = a.ubimapa2
     WHERE a.nomuser ILIKE :usuario
     ORDER BY a.nomuser
