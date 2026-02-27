@@ -27,8 +27,8 @@ $sqlNodo = "
         \"idnodo\",
         piso,
         ubicacion,
-        \"SwitchNombre\",
-        \"SwitchPuerto\",
+        \"switchnombre\",
+        \"switchpuerto\",
         \"NumeroNodo\"
     FROM nodos
     WHERE \"NumeroNodo\" = :nodo
