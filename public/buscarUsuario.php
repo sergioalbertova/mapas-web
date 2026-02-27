@@ -28,9 +28,7 @@ $sqlUser = "
         idu,
         nomuser,
         piso,
-        ubimapa2 AS ubicacion,
-        switch,
-        puerto
+        ubimapa2 AS ubicacion
     FROM activeuser
     WHERE nomuser ILIKE :usuario
     LIMIT 1
@@ -106,9 +104,7 @@ echo json_encode([
         "ubicacion" => $ubicacion,
         "cx_rel" => $coord["cx_rel"],
         "cy_rel" => $coord["cy_rel"],
-        "nodo" => $nodo["idnodo"] ?? null,
-        "switch" => $infoUser["switch"] ?? null,
-        "puerto" => $infoUser["puerto"] ?? null
+        "nodo" => $nodo["idnodo"] ?? null
     ]
 ]);
 exit;
