@@ -5,7 +5,7 @@ require "db.php";
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mapa de Nodos</title>
+    <title>Mapa de Nodos v:12:18</title>
 
     <style>
         body {
