@@ -23,6 +23,7 @@ if ($piso <= 0) {
     - a.ubimapa2 es TEXT → se debe castear a entero
 */
 
+
 $sql = "
     SELECT 
         u.ubicacion,
@@ -36,11 +37,13 @@ $sql = "
         ON n.piso = u.piso
        AND n.ubicacion::int = u.ubicacion
     LEFT JOIN activeuser a
-        ON a.piso = u.piso
+        ON a.piso::int = u.piso
        AND a.ubimapa2::int = u.ubicacion
     WHERE u.piso = :piso
     ORDER BY u.ubicacion
 ";
+
+
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute(["piso" => $piso]);
