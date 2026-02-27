@@ -189,14 +189,17 @@ require "db.php";
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    const selectPiso = document.getElementById("selectPiso");
-    const imgMapa = document.getElementById("imgMapa");
-    const tablaBody = document.querySelector("#tablaUbicaciones tbody");
+    const selectPiso   = document.getElementById("selectPiso");
+    const imgMapa      = document.getElementById("imgMapa");
+    const tablaBody    = document.querySelector("#tablaUbicaciones tbody");
 
-    selectPiso.addEventListener("change", async function () {
+    const datoNodo      = document.getElementById("datoNodo");
+    const datoUbicacion = document.getElementById("datoUbicacion");
+    const datoPiso      = document.getElementById("datoPiso");
+    const datoSwitch    = document.getElementById("datoSwitch");
+    const datoPuerto    = document.getElementById("datoPuerto");
 
-        const idpiso = this.value;
-
+    async function cargarPisoCompleto(idpiso) {
         if (!idpiso) {
             tablaBody.innerHTML = "";
             imgMapa.src = "";
@@ -218,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tablaBody.innerHTML = "";
             dataLista.data.forEach(item => {
                 tablaBody.insertAdjacentHTML("beforeend", `
-                    <tr>
+                    <tr data-ubicacion="${item.ubicacion}" data-nodo="${item.nodo ?? ""}">
                         <td>${item.ubicacion}</td>
                         <td>${item.nodo ?? ""}</td>
                         <td>${item.usuario ?? ""}</td>
@@ -226,10 +229,93 @@ document.addEventListener("DOMContentLoaded", () => {
                 `);
             });
         }
+    }
+
+    function llenarPanelDatos(reg) {
+        datoNodo.value      = reg.nodo ?? "";
+        datoUbicacion.value = reg.ubicacion ?? "";
+        datoPiso.value      = reg.piso ?? "";
+        datoSwitch.value    = reg.switch ?? "";
+        datoPuerto.value    = reg.puerto ?? "";
+    }
+
+    function resaltarFilaPorNodo(nodo) {
+        const filas = tablaBody.querySelectorAll("tr");
+        filas.forEach(tr => tr.style.background = "");
+        const target = Array.from(filas).find(tr => tr.dataset.nodo == nodo);
+        if (target) {
+            target.style.background = "#ffeaa7";
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    // Cambio de piso
+    selectPiso.addEventListener("change", async function () {
+        const idpiso = this.value;
+        await cargarPisoCompleto(idpiso);
+    });
+
+    // Buscar nodo
+    document.getElementById("btnBuscarNodo").addEventListener("click", async () => {
+        const nodo = document.getElementById("inputNodo").value.trim();
+        if (!nodo) return;
+
+        try {
+            const res = await fetch("buscarNodo.php?nodo=" + encodeURIComponent(nodo));
+            const data = await res.json();
+
+            if (data.status === "success" && data.data) {
+                const reg = data.data;
+
+                // Seleccionar piso correcto
+                selectPiso.value = reg.piso;
+                await cargarPisoCompleto(reg.piso);
+
+                // Llenar panel
+                llenarPanelDatos(reg);
+
+                // Resaltar fila
+                resaltarFilaPorNodo(reg.nodo);
+            } else {
+                alert("Nodo no encontrado");
+            }
+        } catch (e) {
+            console.error("Error en buscar nodo:", e);
+        }
+    });
+
+    // Buscar usuario
+    document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
+        const usuario = document.getElementById("inputUsuario").value.trim();
+        if (!usuario) return;
+
+        try {
+            const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
+            const data = await res.json();
+
+            if (data.status === "success" && data.data) {
+                const reg = data.data;
+
+                // Seleccionar piso correcto
+                selectPiso.value = reg.piso;
+                await cargarPisoCompleto(reg.piso);
+
+                // Llenar panel
+                llenarPanelDatos(reg);
+
+                // Resaltar fila
+                resaltarFilaPorNodo(reg.nodo);
+            } else {
+                alert("Usuario no encontrado");
+            }
+        } catch (e) {
+            console.error("Error en buscar usuario:", e);
+        }
     });
 
 });
 </script>
+
 
 </body>
 </html>
