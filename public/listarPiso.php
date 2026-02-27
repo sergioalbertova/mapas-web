@@ -37,12 +37,13 @@ $sql = "
         ON n.piso = u.piso
        AND n.ubicacion::int = u.ubicacion
     LEFT JOIN activeuser a
-        ON a.piso::int = u.piso
-       AND a.ubimapa2::int = u.ubicacion
+        ON a.piso ~ '^[0-9]+$'       -- Solo pisos numéricos
+       AND a.piso::int = u.piso      -- Casteo seguro
+       AND a.ubimapa2 IS NOT NULL    -- Evita NULL
+       AND a.ubimapa2 = u.ubicacion  -- Comparación directa
     WHERE u.piso = :piso
     ORDER BY u.ubicacion
 ";
-
 
 
 $stmt = $pdo->prepare($sql);
