@@ -266,18 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
         await cargarPisoCompleto(idpiso);
     });
 
-
-    // Buscar nodo
-document.getElementById("btnBuscarNodo").addEventListener("click", () => {
-    alert("CLICK BUSCAR NODO");
-});
-
-// Buscar usuario
-document.getElementById("btnBuscarUsuario").addEventListener("click", () => {
-    alert("CLICK BUSCAR USUARIO");
-});
-
-
     // Buscar nodo
     document.getElementById("btnBuscarNodo").addEventListener("click", async () => {
         const nodo = document.getElementById("inputNodo").value.trim();
