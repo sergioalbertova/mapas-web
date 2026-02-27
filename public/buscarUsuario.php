@@ -16,7 +16,7 @@ if ($usuario === "") {
 }
 
 /*
-    Ahora devolvemos TODOS los usuarios que coincidan
+    Devolver TODOS los usuarios que coincidan
     + su nodo (si existe)
 */
 

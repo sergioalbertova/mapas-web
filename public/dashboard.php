@@ -108,6 +108,12 @@ require "db.php";
             border: 2px solid #7f8c8d;
             border-radius: 8px;
         }
+
+        /* Iconos */
+        .icono {
+            font-size: 18px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -169,9 +175,11 @@ require "db.php";
             <table id="tablaUbicaciones">
                 <thead>
                     <tr>
+                        <th>Estado</th>
                         <th>Ubicación</th>
                         <th>Nodo</th>
                         <th>Usuario</th>
+                        <th>Piso</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -195,17 +203,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const imgMapa      = document.getElementById("imgMapa");
     const tablaBody    = document.querySelector("#tablaUbicaciones tbody");
 
-    const datoNodo      = document.getElementById("datoNodo");
-    const datoUbicacion = document.getElementById("datoUbicacion");
-    const datoPiso      = document.getElementById("datoPiso");
-    const datoSwitch    = document.getElementById("datoSwitch");
-    const datoPuerto    = document.getElementById("datoPuerto");
-
     const tituloMapa = document.getElementById("tituloMapa");
 
     function actualizarTitulo() {
         contador++;
         tituloMapa.textContent = "MAPA DE NODOS - " + contador;
+    }
+
+    function iconoEstado(nodo, usuario) {
+        if (nodo && usuario) return "🟢";
+        if (nodo && !usuario) return "🟡";
+        return "🔴";
     }
 
     async function cargarPisoCompleto(idpiso) {
@@ -231,32 +239,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (dataLista.status === "success") {
             tablaBody.innerHTML = "";
             dataLista.data.forEach(item => {
+
+                const icono = iconoEstado(item.nodo, item.usuario);
+
                 tablaBody.insertAdjacentHTML("beforeend", `
-                    <tr data-ubicacion="${item.ubicacion}" data-nodo="${item.nodo ?? ""}">
+                    <tr>
+                        <td class="icono">${icono}</td>
                         <td>${item.ubicacion}</td>
                         <td>${item.nodo ?? ""}</td>
                         <td>${item.usuario ?? ""}</td>
+                        <td>${item.piso}</td>
                     </tr>
                 `);
             });
-        }
-    }
-
-    function llenarPanelDatos(reg) {
-        datoNodo.value      = reg.nodo ?? "";
-        datoUbicacion.value = reg.ubicacion ?? "";
-        datoPiso.value      = reg.piso ?? "";
-        datoSwitch.value    = reg.switch ?? "";
-        datoPuerto.value    = reg.puerto ?? "";
-    }
-
-    function resaltarFilaPorNodo(nodo) {
-        const filas = tablaBody.querySelectorAll("tr");
-        filas.forEach(tr => tr.style.background = "");
-        const target = Array.from(filas).find(tr => tr.dataset.nodo == nodo);
-        if (target) {
-            target.style.background = "#ffeaa7";
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }
 
@@ -279,32 +274,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
             selectPiso.value = reg.piso;
             await cargarPisoCompleto(reg.piso);
-
-            llenarPanelDatos(reg);
-            resaltarFilaPorNodo(reg.nodo);
         } else {
             alert("Nodo no encontrado");
         }
     });
 
- // Buscar usuario (modo lista)
-document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
-    const usuario = document.getElementById("inputUsuario").value.trim();
-    if (!usuario) return;
+    // Buscar usuario (modo lista)
+    document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
+        const usuario = document.getElementById("inputUsuario").value.trim();
+        if (!usuario) return;
 
-    try {
         const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
         const data = await res.json();
 
         if (data.status === "success") {
 
-            // Limpiar tabla
             tablaBody.innerHTML = "";
 
-            // Llenar tabla con coincidencias
             data.data.forEach(item => {
+                const icono = iconoEstado(item.nodo, item.nomuser);
+
                 tablaBody.insertAdjacentHTML("beforeend", `
                     <tr>
+                        <td class="icono">${icono}</td>
                         <td>${item.ubicacion ?? ""}</td>
                         <td>${item.nodo ?? ""}</td>
                         <td>${item.nomuser}</td>
@@ -316,13 +308,7 @@ document.getElementById("btnBuscarUsuario").addEventListener("click", async () =
         } else {
             alert("No se encontraron usuarios");
         }
-
-    } catch (e) {
-        console.error("Error en buscar usuario:", e);
-    }
-});
-
-
+    });
 
 });
 </script>
