@@ -287,26 +287,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Buscar usuario
-    document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
-        const usuario = document.getElementById("inputUsuario").value.trim();
-        if (!usuario) return;
+    // Buscar usuario (modo lista)
+document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
+    const usuario = document.getElementById("inputUsuario").value.trim();
+    if (!usuario) return;
 
+    try {
         const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
         const data = await res.json();
 
-        if (data.status === "success" && data.data) {
-            const reg = data.data;
+        if (data.status === "success") {
 
-            selectPiso.value = reg.piso;
-            await cargarPisoCompleto(reg.piso);
+            // Limpiar tabla
+            tablaBody.innerHTML = "";
 
-            llenarPanelDatos(reg);
-            resaltarFilaPorNodo(reg.nodo);
+            // Llenar tabla con coincidencias
+            data.data.forEach(item => {
+                tablaBody.insertAdjacentHTML("beforeend", `
+                    <tr>
+                        <td>${item.ubicacion ?? ""}</td>
+                        <td></td>
+                        <td>${item.nomuser}</td>
+                    </tr>
+                `);
+            });
+
+            // No tocar mapa
+            // No cambiar piso
+            // No llenar panel de datos
+
         } else {
-            alert("Usuario no encontrado");
+            alert("No se encontraron usuarios");
         }
-    });
+
+    } catch (e) {
+        console.error("Error en buscar usuario:", e);
+    }
+});
+
 
 });
 </script>

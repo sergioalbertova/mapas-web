@@ -16,11 +16,7 @@ if ($usuario === "") {
 }
 
 /*
-    Flujo correcto:
-    1. Buscar usuario en activeuser
-    2. Validar que piso sea numérico
-    3. Obtener coordenadas desde ubicacion
-    4. Obtener nodo desde nodos (ubicacion::int)
+    Ahora devolvemos TODOS los usuarios que coincidan
 */
 
 $sqlUser = "
@@ -31,80 +27,23 @@ $sqlUser = "
         ubimapa2 AS ubicacion
     FROM activeuser
     WHERE nomuser ILIKE :usuario
-    LIMIT 1
+    ORDER BY nomuser
 ";
 
 $stmt = $pdo->prepare($sqlUser);
 $stmt->execute(["usuario" => "%$usuario%"]);
-$infoUser = $stmt->fetch(PDO::FETCH_ASSOC);
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (!$infoUser) {
+if (!$usuarios) {
     echo json_encode([
         "status" => "error",
-        "message" => "Usuario no encontrado"
+        "message" => "No se encontraron usuarios"
     ]);
     exit;
 }
-
-/* Validar piso numérico */
-if (!preg_match('/^[0-9]+$/', $infoUser["piso"])) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "El usuario tiene un piso no válido (ND)"
-    ]);
-    exit;
-}
-
-$piso = intval($infoUser["piso"]);
-$ubicacion = intval($infoUser["ubicacion"]);
-
-/* 2. Coordenadas relativas */
-$sqlCoord = "
-    SELECT cx_rel, cy_rel
-    FROM ubicacion
-    WHERE piso = :piso AND ubicacion = :ubicacion
-    LIMIT 1
-";
-
-$stmt = $pdo->prepare($sqlCoord);
-$stmt->execute([
-    "piso" => $piso,
-    "ubicacion" => $ubicacion
-]);
-$coord = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$coord) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "No hay coordenadas para esta ubicación"
-    ]);
-    exit;
-}
-
-/* 3. Buscar nodo asignado */
-$sqlNodo = "
-    SELECT idnodo
-    FROM nodos
-    WHERE piso = :piso AND ubicacion::int = :ubicacion
-    LIMIT 1
-";
-
-$stmt = $pdo->prepare($sqlNodo);
-$stmt->execute([
-    "piso" => $piso,
-    "ubicacion" => $ubicacion
-]);
-$nodo = $stmt->fetch(PDO::FETCH_ASSOC);
 
 echo json_encode([
     "status" => "success",
-    "data" => [
-        "usuario" => $infoUser["nomuser"],
-        "piso" => $piso,
-        "ubicacion" => $ubicacion,
-        "cx_rel" => $coord["cx_rel"],
-        "cy_rel" => $coord["cy_rel"],
-        "nodo" => $nodo["idnodo"] ?? null
-    ]
+    "data" => $usuarios
 ]);
 exit;
