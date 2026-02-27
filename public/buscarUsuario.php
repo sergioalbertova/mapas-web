@@ -16,11 +16,11 @@ if ($usuario === "") {
 }
 
 /*
-    Flujo:
-    1. Buscar usuario en activeusers
-    2. Obtener piso y ubimapa2 (ubicación)
-    3. Obtener coordenadas relativas desde ubicacion
-    4. Buscar nodo asignado en nodos (piso + ubicacion)
+    Flujo correcto:
+    1. Buscar usuario en activeuser
+    2. Validar que piso sea numérico
+    3. Obtener coordenadas desde ubicacion
+    4. Obtener nodo desde nodos (ubicacion::int)
 */
 
 $sqlUser = "
@@ -28,7 +28,9 @@ $sqlUser = "
         idu,
         nomuser,
         piso,
-        ubimapa2 AS ubicacion
+        ubimapa2 AS ubicacion,
+        switch,
+        puerto
     FROM activeuser
     WHERE nomuser ILIKE :usuario
     LIMIT 1
@@ -46,8 +48,17 @@ if (!$infoUser) {
     exit;
 }
 
-$piso = $infoUser["piso"];
-$ubicacion = $infoUser["ubicacion"];
+/* Validar piso numérico */
+if (!preg_match('/^[0-9]+$/', $infoUser["piso"])) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "El usuario tiene un piso no válido (ND)"
+    ]);
+    exit;
+}
+
+$piso = intval($infoUser["piso"]);
+$ubicacion = intval($infoUser["ubicacion"]);
 
 /* 2. Coordenadas relativas */
 $sqlCoord = "
@@ -74,9 +85,9 @@ if (!$coord) {
 
 /* 3. Buscar nodo asignado */
 $sqlNodo = "
-    SELECT NumeroNodo, switchnombre, switchpuerto
+    SELECT idnodo
     FROM nodos
-    WHERE piso = :piso AND ubicacion = :ubicacion
+    WHERE piso = :piso AND ubicacion::int = :ubicacion
     LIMIT 1
 ";
 
@@ -95,9 +106,9 @@ echo json_encode([
         "ubicacion" => $ubicacion,
         "cx_rel" => $coord["cx_rel"],
         "cy_rel" => $coord["cy_rel"],
-        "nodo" => $nodo["NumeroNodo"] ?? null,
-        "switch" => $nodo["switchnombre"] ?? null,
-        "puerto" => $nodo["switchpuerto"] ?? null
+        "nodo" => $nodo["idnodo"] ?? null,
+        "switch" => $infoUser["switch"] ?? null,
+        "puerto" => $infoUser["puerto"] ?? null
     ]
 ]);
 exit;
