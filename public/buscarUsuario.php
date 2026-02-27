@@ -29,7 +29,7 @@ $sqlUser = "
         nomuser,
         piso,
         ubimapa2 AS ubicacion
-    FROM activeusers
+    FROM activeuser
     WHERE nomuser ILIKE :usuario
     LIMIT 1
 ";
