@@ -16,9 +16,11 @@ if ($usuario === "") {
 }
 
 /*
-    Devolver TODOS los usuarios que coincidan
-    + su nodo (si existe)
-    + ignorar ND en piso y ND en ubicación
+    Solución definitiva:
+    - NO castear piso
+    - NO castear ubimapa2
+    - Comparar todo como TEXTO
+    - Solo unir cuando ambos son numéricos
 */
 
 $sql = "
@@ -30,10 +32,10 @@ $sql = "
         n.idnodo AS nodo
     FROM activeuser a
     LEFT JOIN nodos n
-        ON (a.piso)::text ~ '^[0-9]+$'          -- piso es numérico
-       AND (a.ubimapa2)::text ~ '^[0-9]+$'      -- ubicación es numérica
-       AND n.piso = (a.piso)::int
-       AND n.ubicacion::int = (a.ubimapa2)::int
+        ON a.piso ~ '^[0-9]+$'              -- piso es numérico
+       AND a.ubimapa2 ~ '^[0-9]+$'          -- ubicación es numérica
+       AND n.piso::text = a.piso::text
+       AND n.ubicacion = a.ubimapa2::text
     WHERE a.nomuser ILIKE :usuario
     ORDER BY a.nomuser
 ";
