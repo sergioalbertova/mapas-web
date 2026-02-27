@@ -94,8 +94,8 @@ echo json_encode([
         "nodo" => $infoNodo["NumeroNodo"],
         "piso" => $piso,
         "ubicacion" => $ubicacion,
-        "switch" => $infoNodo["SwitchNombre"],
-        "puerto" => $infoNodo["SwitchPuerto"],
+        "switch" => $infoNodo["switchnombre"],
+        "puerto" => $infoNodo["switchpuerto"],
         "cx_rel" => $coord["cx_rel"],
         "cy_rel" => $coord["cy_rel"],
         "usuario" => $user["nomuser"] ?? null
