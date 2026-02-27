@@ -74,7 +74,7 @@ if (!$coord) {
 
 /* 3. Buscar nodo asignado */
 $sqlNodo = "
-    SELECT NumeroNodo, SwitchNombre, SwitchPuerto
+    SELECT NumeroNodo, switchnombre, switchpuerto
     FROM nodos
     WHERE piso = :piso AND ubicacion = :ubicacion
     LIMIT 1
@@ -96,8 +96,8 @@ echo json_encode([
         "cx_rel" => $coord["cx_rel"],
         "cy_rel" => $coord["cy_rel"],
         "nodo" => $nodo["NumeroNodo"] ?? null,
-        "switch" => $nodo["SwitchNombre"] ?? null,
-        "puerto" => $nodo["SwitchPuerto"] ?? null
+        "switch" => $nodo["switchnombre"] ?? null,
+        "puerto" => $nodo["switchpuerto"] ?? null
     ]
 ]);
 exit;
