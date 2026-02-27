@@ -16,10 +16,10 @@ if ($piso <= 0) {
 }
 
 /*
-    Tabla ubicacion: piso (int), ubicacion (int), cx_rel, cy_rel
-    Tabla nodos: piso (int), ubicacion (TEXT o VARCHAR), NumeroNodo
-    Tabla activeuser: piso (int), ubimapa2 (TEXT o VARCHAR), nomuser
-    → Necesitamos castear ubicacion/ubimapa2 a entero para compararlos con u.ubicacion
+    IMPORTANTE:
+    - u.ubicacion es INTEGER
+    - n.ubicacion es TEXT → se debe castear a entero
+    - a.ubimapa2 es TEXT → se debe castear a entero
 */
 
 $sql = "
