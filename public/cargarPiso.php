@@ -1,4 +1,5 @@
 <?php
+die("ESTE ES EL CARGAR PISO");
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
