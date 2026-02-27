@@ -1,6 +1,4 @@
 <?php
-
-die("ESTE ES BUSCAR NODO");
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -18,23 +16,22 @@ if ($nodo <= 0) {
 }
 
 /*
-    Flujo:
-    1. Buscar nodo en tabla nodos
-    2. Obtener piso, ubicacion, switch, puerto
-    3. Buscar coordenadas relativas en tabla ubicacion
-    4. Buscar usuario asignado en activeusers (piso + ubimapa2)
+    IMPORTANTE:
+    - nodos.ubicacion es TEXT → se debe castear a entero
+    - ubicacion.ubicacion es INTEGER
+    - activeuser.ubimapa2 es TEXT → se debe castear a entero
 */
 
 $sqlNodo = "
     SELECT 
-        IdNodo,
+        \"IdNodo\",
         piso,
         ubicacion,
-        SwitchNombre,
-        SwitchPuerto,
-        NumeroNodo
+        \"SwitchNombre\",
+        \"SwitchPuerto\",
+        \"NumeroNodo\"
     FROM nodos
-    WHERE NumeroNodo = :nodo
+    WHERE \"NumeroNodo\" = :nodo
     LIMIT 1
 ";
 
@@ -51,7 +48,7 @@ if (!$infoNodo) {
 }
 
 $piso = $infoNodo["piso"];
-$ubicacion = $infoNodo["ubicacion"];
+$ubicacion = intval($infoNodo["ubicacion"]); // ← CAST A ENTERO
 
 /* 2. Coordenadas relativas */
 $sqlCoord = "
@@ -80,7 +77,7 @@ if (!$coord) {
 $sqlUser = "
     SELECT nomuser
     FROM activeuser
-    WHERE piso = :piso AND ubimapa2 = :ubicacion
+    WHERE piso = :piso AND ubimapa2::int = :ubicacion
     LIMIT 1
 ";
 
