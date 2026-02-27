@@ -17,20 +17,25 @@ if ($usuario === "") {
 
 /*
     Ahora devolvemos TODOS los usuarios que coincidan
+    + su nodo (si existe)
 */
 
-$sqlUser = "
+$sql = "
     SELECT 
-        idu,
-        nomuser,
-        piso,
-        ubimapa2 AS ubicacion
-    FROM activeuser
-    WHERE nomuser ILIKE :usuario
-    ORDER BY nomuser
+        a.idu,
+        a.nomuser,
+        a.piso,
+        a.ubimapa2 AS ubicacion,
+        n.idnodo AS nodo
+    FROM activeuser a
+    LEFT JOIN nodos n
+        ON n.piso = a.piso::int
+       AND n.ubicacion::int = a.ubimapa2
+    WHERE a.nomuser ILIKE :usuario
+    ORDER BY a.nomuser
 ";
 
-$stmt = $pdo->prepare($sqlUser);
+$stmt = $pdo->prepare($sql);
 $stmt->execute(["usuario" => "%$usuario%"]);
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

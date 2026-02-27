@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Buscar usuario (modo lista)
+ // Buscar usuario (modo lista)
 document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
     const usuario = document.getElementById("inputUsuario").value.trim();
     if (!usuario) return;
@@ -306,15 +306,12 @@ document.getElementById("btnBuscarUsuario").addEventListener("click", async () =
                 tablaBody.insertAdjacentHTML("beforeend", `
                     <tr>
                         <td>${item.ubicacion ?? ""}</td>
-                        <td></td>
+                        <td>${item.nodo ?? ""}</td>
                         <td>${item.nomuser}</td>
+                        <td>${item.piso}</td>
                     </tr>
                 `);
             });
-
-            // No tocar mapa
-            // No cambiar piso
-            // No llenar panel de datos
 
         } else {
             alert("No se encontraron usuarios");
@@ -324,6 +321,7 @@ document.getElementById("btnBuscarUsuario").addEventListener("click", async () =
         console.error("Error en buscar usuario:", e);
     }
 });
+
 
 
 });
