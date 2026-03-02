@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL); 
+ini_set('display_errors', 1);
 require "db.php";
 ?>
 <!DOCTYPE html>
@@ -98,6 +100,11 @@ require "db.php";
             text-align: center;
         }
 
+        .mapa-box {
+            margin: 20px;
+            text-align: center;
+        }
+
         /* Contenedor del mapa */
         #mapaContainer {
             position: relative;
@@ -138,14 +145,14 @@ require "db.php";
 
 <body>
 
-<h2 id="tituloMapa">MAPA DE NODOS - 0</h2>
+<h2 id="tituloMapa">MAPA DE NODOS - 02marzo</h2>
 
 <div class="top-bar">
     <label>Piso:</label>
     <select id="selectPiso">
         <option value="">Seleccione un piso</option>
         <?php
-        $pisos = $pdo->query("SELECT idpiso, nombrepiso FROM pisos ORDER ORDER BY idpiso")->fetchAll(PDO::FETCH_ASSOC);
+        $pisos = $pdo->query("SELECT idpiso, nombrepiso FROM pisos ORDER BY idpiso")->fetchAll(PDO::FETCH_ASSOC);
         foreach ($pisos as $p) {
             echo "<option value='{$p['idpiso']}'>Piso {$p['nombrepiso']}</option>";
         }
@@ -214,7 +221,7 @@ require "db.php";
 let contador = 0;
 let pisoActual = null;
 
-// Zoom variables
+// Zoom
 let zoom = 1;
 let posX = 0;
 let posY = 0;
@@ -224,17 +231,17 @@ let lastY = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const selectPiso   = document.getElementById("selectPiso");
-    const imgMapa      = document.getElementById("imgMapa");
-    const mapaContainer= document.getElementById("mapaContainer");
-    const marcador     = document.getElementById("marcador");
-    const tablaBody    = document.querySelector("#tablaUbicaciones tbody");
+    const selectPiso    = document.getElementById("selectPiso");
+    const imgMapa       = document.getElementById("imgMapa");
+    const mapaContainer = document.getElementById("mapaContainer");
+    const marcador      = document.getElementById("marcador");
+    const tablaBody     = document.querySelector("#tablaUbicaciones tbody");
 
-    const datoNodo     = document.getElementById("datoNodo");
-    const datoUbicacion= document.getElementById("datoUbicacion");
-    const datoPiso     = document.getElementById("datoPiso");
-    const datoSwitch   = document.getElementById("datoSwitch");
-    const datoPuerto   = document.getElementById("datoPuerto");
+    const datoNodo      = document.getElementById("datoNodo");
+    const datoUbicacion = document.getElementById("datoUbicacion");
+    const datoPiso      = document.getElementById("datoPiso");
+    const datoSwitch    = document.getElementById("datoSwitch");
+    const datoPuerto    = document.getElementById("datoPuerto");
 
     function actualizarTitulo() {
         contador++;
@@ -369,6 +376,8 @@ document.addEventListener("DOMContentLoaded", () => {
             datoPiso.value       = reg.piso;
             datoSwitch.value     = reg.switch ?? "";
             datoPuerto.value     = reg.puerto ?? "";
+        } else {
+            alert("Nodo no encontrado");
         }
     });
 
@@ -402,6 +411,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 `);
             });
 
+        } else {
+            alert("No se encontraron usuarios");
         }
     });
 
