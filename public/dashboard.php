@@ -22,7 +22,6 @@ require "db.php";
             color: white;
         }
 
-        /* Barra superior */
         .top-bar {
             background: #ecf0f1;
             padding: 15px;
@@ -45,14 +44,12 @@ require "db.php";
             border-radius: 4px;
         }
 
-        /* Contenedor principal */
         .main-container {
             display: flex;
             padding: 20px;
             gap: 20px;
         }
 
-        /* Panel de datos */
         .panel-datos {
             width: 260px;
             background: white;
@@ -67,7 +64,6 @@ require "db.php";
             padding: 6px;
         }
 
-        /* Tabla */
         .tabla-box {
             flex: 1;
             background: white;
@@ -97,7 +93,6 @@ require "db.php";
             background: #eee;
         }
 
-        /* Mapa */
         .mapa-box {
             margin: 20px;
             text-align: center;
@@ -109,7 +104,6 @@ require "db.php";
             border-radius: 8px;
         }
 
-        /* Iconos */
         .icono {
             font-size: 18px;
             text-align: center;
@@ -121,7 +115,6 @@ require "db.php";
 
 <h2 id="tituloMapa">MAPA DE NODOS - 0</h2>
 
-<!-- BARRA SUPERIOR -->
 <div class="top-bar">
     <label>Piso:</label>
     <select id="selectPiso">
@@ -143,13 +136,10 @@ require "db.php";
     <button id="btnBuscarUsuario">Buscar usuario</button>
 </div>
 
-<!-- PANEL IZQUIERDO + TABLA -->
 <div class="main-container">
 
-    <!-- Panel de datos -->
     <div class="panel-datos">
         <h3>Datos</h3>
-        <div style="width: 15px; height: 15px; background: green; border-radius: 50%; margin-bottom: 10px;"></div>
 
         <label>Nodo:</label>
         <input type="text" id="datoNodo" readonly>
@@ -167,7 +157,6 @@ require "db.php";
         <input type="text" id="datoPuerto" readonly>
     </div>
 
-    <!-- Tabla -->
     <div class="tabla-box">
         <h3>Listado</h3>
 
@@ -189,7 +178,6 @@ require "db.php";
 
 </div>
 
-<!-- MAPA ABAJO -->
 <div class="mapa-box">
     <img id="imgMapa" src="">
 </div>
@@ -225,14 +213,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Cargar mapa
         const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
         const dataMapa = await resMapa.json();
         if (dataMapa.status === "success") {
             imgMapa.src = dataMapa.imagen;
         }
 
-        // Cargar listado
         const resLista = await fetch("listarPiso.php?piso=" + idpiso);
         const dataLista = await resLista.json();
 
@@ -243,7 +229,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const icono = iconoEstado(item.nodo, item.usuario);
 
                 tablaBody.insertAdjacentHTML("beforeend", `
-                    <tr>
+                    <tr 
+                        data-nodo="${item.nodo ?? ''}" 
+                        data-ubicacion="${item.ubicacion}" 
+                        data-usuario="${item.usuario ?? ''}"
+                    >
                         <td class="icono">${icono}</td>
                         <td>${item.ubicacion}</td>
                         <td>${item.nodo ?? ""}</td>
@@ -255,13 +245,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Cambio de piso
+    function resaltarFilaPorNodo(nodo) {
+        const filas = tablaBody.querySelectorAll("tr");
+        filas.forEach(tr => tr.style.outline = "");
+
+        const target = Array.from(filas).find(tr => tr.dataset.nodo == nodo);
+
+        if (target) {
+            target.style.outline = "3px solid #f1c40f";
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    function resaltarFilaPorUbicacion(ubicacion) {
+        const filas = tablaBody.querySelectorAll("tr");
+        filas.forEach(tr => tr.style.outline = "");
+
+        const target = Array.from(filas).find(tr => tr.dataset.ubicacion == ubicacion);
+
+        if (target) {
+            target.style.outline = "3px solid #3498db";
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
     selectPiso.addEventListener("change", async function () {
         const idpiso = this.value;
         await cargarPisoCompleto(idpiso);
     });
 
-    // Buscar nodo
     document.getElementById("btnBuscarNodo").addEventListener("click", async () => {
         const nodo = document.getElementById("inputNodo").value.trim();
         if (!nodo) return;
@@ -274,12 +286,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             selectPiso.value = reg.piso;
             await cargarPisoCompleto(reg.piso);
+
+            resaltarFilaPorNodo(reg.nodo);
         } else {
             alert("Nodo no encontrado");
         }
     });
 
-    // Buscar usuario (modo lista)
     document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
         const usuario = document.getElementById("inputUsuario").value.trim();
         if (!usuario) return;
@@ -295,7 +308,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const icono = iconoEstado(item.nodo, item.nomuser);
 
                 tablaBody.insertAdjacentHTML("beforeend", `
-                    <tr>
+                    <tr 
+                        data-nodo="${item.nodo ?? ''}" 
+                        data-ubicacion="${item.ubicacion ?? ''}" 
+                        data-usuario="${item.nomuser}"
+                    >
                         <td class="icono">${icono}</td>
                         <td>${item.ubicacion ?? ""}</td>
                         <td>${item.nodo ?? ""}</td>
@@ -307,6 +324,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } else {
             alert("No se encontraron usuarios");
+        }
+    });
+
+    tablaBody.addEventListener("click", async (e) => {
+        const tr = e.target.closest("tr");
+        if (!tr) return;
+
+        const nodo = tr.dataset.nodo;
+        const ubicacion = tr.dataset.ubicacion;
+        const usuario = tr.dataset.usuario;
+
+        if (nodo) {
+            const res = await fetch("buscarNodo.php?nodo=" + nodo);
+            const data = await res.json();
+
+            if (data.status === "success") {
+                const reg = data.data;
+
+                selectPiso.value = reg.piso;
+                await cargarPisoCompleto(reg.piso);
+
+                resaltarFilaPorNodo(reg.nodo);
+
+                document.getElementById("datoNodo").value = reg.nodo;
+                document.getElementById("datoUbicacion").value = reg.ubicacion;
+                document.getElementById("datoPiso").value = reg.piso;
+                document.getElementById("datoSwitch").value = reg.switch ?? "";
+                document.getElementById("datoPuerto").value = reg.puerto ?? "";
+            }
+
+            return;
+        }
+
+        if (usuario) {
+            const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
+            const data = await res.json();
+
+            if (data.status === "success" && data.data.length > 0) {
+                const reg = data.data[0];
+
+                selectPiso.value = reg.piso;
+                await cargarPisoCompleto(reg.piso);
+
+                resaltarFilaPorUbicacion(reg.ubicacion);
+
+                document.getElementById("datoNodo").value = reg.nodo ?? "";
+                document.getElementById("datoUbicacion").value = reg.ubicacion;
+                document.getElementById("datoPiso").value = reg.piso;
+                document.getElementById("datoSwitch").value = "";
+                document.getElementById("datoPuerto").value = "";
+            }
         }
     });
 
