@@ -93,17 +93,32 @@ require "db.php";
             background: #eee;
         }
 
-        .mapa-box {
-            margin: 20px;
-            text-align: center;
-        }
-
         .icono {
             font-size: 18px;
             text-align: center;
         }
 
-        /* Marcador en el mapa */
+        /* Contenedor del mapa */
+        #mapaContainer {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            overflow: hidden;
+            border: 2px solid #7f8c8d;
+            border-radius: 8px;
+        }
+
+        /* Imagen del mapa */
+        #imgMapa {
+            width: 100%;
+            height: auto;
+            display: block;
+            transform-origin: center center;
+            cursor: grab;
+        }
+
+        /* Marcador */
         #marcador {
             position: absolute;
             width: 18px;
@@ -186,7 +201,7 @@ require "db.php";
 </div>
 
 <div class="mapa-box">
-    <div style="position: relative; display: inline-block;">
+    <div id="mapaContainer">
         <img id="imgMapa" src="">
         <div id="marcador"></div>
     </div>
@@ -194,14 +209,23 @@ require "db.php";
 
 <script>
 let contador = 0;
+let pisoActual = null;
+
+// Zoom variables
+let zoom = 1;
+let posX = 0;
+let posY = 0;
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
 
     const selectPiso   = document.getElementById("selectPiso");
     const imgMapa      = document.getElementById("imgMapa");
+    const mapaContainer= document.getElementById("mapaContainer");
+    const marcador     = document.getElementById("marcador");
     const tablaBody    = document.querySelector("#tablaUbicaciones tbody");
-
-    const tituloMapa   = document.getElementById("tituloMapa");
 
     const datoNodo     = document.getElementById("datoNodo");
     const datoUbicacion= document.getElementById("datoUbicacion");
@@ -211,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function actualizarTitulo() {
         contador++;
-        tituloMapa.textContent = "MAPA DE NODOS - " + contador;
+        document.getElementById("tituloMapa").textContent = "MAPA DE NODOS - " + contador;
     }
 
     function iconoEstado(nodo, usuario) {
@@ -220,9 +244,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return "🔴";
     }
 
-    function colocarMarcador(cx, cy) {
-        const marcador = document.getElementById("marcador");
+    function aplicarTransform() {
+        imgMapa.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
+    }
 
+    function colocarMarcador(cx, cy) {
         if (!cx || !cy) {
             marcador.style.display = "none";
             return;
@@ -236,12 +262,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function cargarPisoCompleto(idpiso) {
+
+        if (pisoActual == idpiso) return;
+
+        pisoActual = idpiso;
         actualizarTitulo();
+
+        zoom = 1;
+        posX = 0;
+        posY = 0;
+        aplicarTransform();
+        marcador.style.display = "none";
 
         if (!idpiso) {
             tablaBody.innerHTML = "";
             imgMapa.src = "";
-            document.getElementById("marcador").style.display = "none";
             return;
         }
 
@@ -302,8 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     selectPiso.addEventListener("change", async function () {
-        const idpiso = this.value;
-        await cargarPisoCompleto(idpiso);
+        await cargarPisoCompleto(this.value);
     });
 
     document.getElementById("btnBuscarNodo").addEventListener("click", async () => {
@@ -313,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = await fetch("buscarNodo.php?nodo=" + encodeURIComponent(nodo));
         const data = await res.json();
 
-        if (data.status === "success" && data.data) {
+        if (data.status === "success") {
             const reg = data.data;
 
             selectPiso.value = reg.piso;
@@ -327,8 +361,6 @@ document.addEventListener("DOMContentLoaded", () => {
             datoPiso.value       = reg.piso;
             datoSwitch.value     = reg.switch ?? "";
             datoPuerto.value     = reg.puerto ?? "";
-        } else {
-            alert("Nodo no encontrado");
         }
     });
 
@@ -361,8 +393,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 `);
             });
 
-        } else {
-            alert("No se encontraron usuarios");
         }
     });
 
@@ -416,6 +446,41 @@ document.addEventListener("DOMContentLoaded", () => {
                 datoPuerto.value     = "";
             }
         }
+    });
+
+    // ZOOM con scroll
+    mapaContainer.addEventListener("wheel", (e) => {
+        e.preventDefault();
+
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        zoom = Math.min(Math.max(0.5, zoom + delta), 3);
+
+        aplicarTransform();
+    });
+
+    // DRAG del mapa
+    imgMapa.addEventListener("mousedown", (e) => {
+        dragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        imgMapa.style.cursor = "grabbing";
+    });
+
+    document.addEventListener("mouseup", () => {
+        dragging = false;
+        imgMapa.style.cursor = "grab";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+
+        posX += (e.clientX - lastX);
+        posY += (e.clientY - lastY);
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        aplicarTransform();
     });
 
 });
