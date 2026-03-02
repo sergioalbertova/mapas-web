@@ -98,15 +98,22 @@ require "db.php";
             text-align: center;
         }
 
-        #imgMapa {
-            max-width: 90%;
-            border: 2px solid #7f8c8d;
-            border-radius: 8px;
-        }
-
         .icono {
             font-size: 18px;
             text-align: center;
+        }
+
+        /* Marcador en el mapa */
+        #marcador {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: red;
+            border-radius: 50%;
+            border: 2px solid white;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
         }
     </style>
 </head>
@@ -179,7 +186,10 @@ require "db.php";
 </div>
 
 <div class="mapa-box">
-    <img id="imgMapa" src="">
+    <div style="position: relative; display: inline-block;">
+        <img id="imgMapa" src="">
+        <div id="marcador"></div>
+    </div>
 </div>
 
 <script>
@@ -191,7 +201,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const imgMapa      = document.getElementById("imgMapa");
     const tablaBody    = document.querySelector("#tablaUbicaciones tbody");
 
-    const tituloMapa = document.getElementById("tituloMapa");
+    const tituloMapa   = document.getElementById("tituloMapa");
+
+    const datoNodo     = document.getElementById("datoNodo");
+    const datoUbicacion= document.getElementById("datoUbicacion");
+    const datoPiso     = document.getElementById("datoPiso");
+    const datoSwitch   = document.getElementById("datoSwitch");
+    const datoPuerto   = document.getElementById("datoPuerto");
 
     function actualizarTitulo() {
         contador++;
@@ -204,12 +220,28 @@ document.addEventListener("DOMContentLoaded", () => {
         return "🔴";
     }
 
+    function colocarMarcador(cx, cy) {
+        const marcador = document.getElementById("marcador");
+
+        if (!cx || !cy) {
+            marcador.style.display = "none";
+            return;
+        }
+
+        const rect = imgMapa.getBoundingClientRect();
+
+        marcador.style.left = (rect.left + rect.width * cx) + "px";
+        marcador.style.top  = (rect.top  + rect.height * cy) + "px";
+        marcador.style.display = "block";
+    }
+
     async function cargarPisoCompleto(idpiso) {
         actualizarTitulo();
 
         if (!idpiso) {
             tablaBody.innerHTML = "";
             imgMapa.src = "";
+            document.getElementById("marcador").style.display = "none";
             return;
         }
 
@@ -288,6 +320,13 @@ document.addEventListener("DOMContentLoaded", () => {
             await cargarPisoCompleto(reg.piso);
 
             resaltarFilaPorNodo(reg.nodo);
+            colocarMarcador(reg.cx_rel, reg.cy_rel);
+
+            datoNodo.value       = reg.nodo;
+            datoUbicacion.value  = reg.ubicacion;
+            datoPiso.value       = reg.piso;
+            datoSwitch.value     = reg.switch ?? "";
+            datoPuerto.value     = reg.puerto ?? "";
         } else {
             alert("Nodo no encontrado");
         }
@@ -331,9 +370,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const tr = e.target.closest("tr");
         if (!tr) return;
 
-        const nodo = tr.dataset.nodo;
+        const nodo      = tr.dataset.nodo;
         const ubicacion = tr.dataset.ubicacion;
-        const usuario = tr.dataset.usuario;
+        const usuario   = tr.dataset.usuario;
 
         if (nodo) {
             const res = await fetch("buscarNodo.php?nodo=" + nodo);
@@ -346,12 +385,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 await cargarPisoCompleto(reg.piso);
 
                 resaltarFilaPorNodo(reg.nodo);
+                colocarMarcador(reg.cx_rel, reg.cy_rel);
 
-                document.getElementById("datoNodo").value = reg.nodo;
-                document.getElementById("datoUbicacion").value = reg.ubicacion;
-                document.getElementById("datoPiso").value = reg.piso;
-                document.getElementById("datoSwitch").value = reg.switch ?? "";
-                document.getElementById("datoPuerto").value = reg.puerto ?? "";
+                datoNodo.value       = reg.nodo;
+                datoUbicacion.value  = reg.ubicacion;
+                datoPiso.value       = reg.piso;
+                datoSwitch.value     = reg.switch ?? "";
+                datoPuerto.value     = reg.puerto ?? "";
             }
 
             return;
@@ -369,11 +409,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 resaltarFilaPorUbicacion(reg.ubicacion);
 
-                document.getElementById("datoNodo").value = reg.nodo ?? "";
-                document.getElementById("datoUbicacion").value = reg.ubicacion;
-                document.getElementById("datoPiso").value = reg.piso;
-                document.getElementById("datoSwitch").value = "";
-                document.getElementById("datoPuerto").value = "";
+                datoNodo.value       = reg.nodo ?? "";
+                datoUbicacion.value  = reg.ubicacion;
+                datoPiso.value       = reg.piso;
+                datoSwitch.value     = "";
+                datoPuerto.value     = "";
             }
         }
     });
