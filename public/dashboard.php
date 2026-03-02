@@ -448,24 +448,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (usuario) {
-            const res = await fetch("buscarUsuario.php?usuario=" + encodeURIComponent(usuario));
-            const data = await res.json();
 
-            if (data.status === "success" && data.data.length > 0) {
-                const reg = data.data[0];
+    // NO recargar piso, NO llamar buscarUsuario otra vez
+    resaltarFilaPorUbicacion(ubicacion);
 
-                selectPiso.value = reg.piso;
-                await cargarPisoCompleto(reg.piso);
+    datoNodo.value       = nodo ?? "";
+    datoUbicacion.value  = ubicacion;
+    datoPiso.value       = selectPiso.value;
+    datoSwitch.value     = "";
+    datoPuerto.value     = "";
 
-                resaltarFilaPorUbicacion(reg.ubicacion);
+    marcador.style.display = "none"; // No hay coordenadas en búsqueda por usuario
+    return;
+}
 
-                datoNodo.value       = reg.nodo ?? "";
-                datoUbicacion.value  = reg.ubicacion;
-                datoPiso.value       = reg.piso;
-                datoSwitch.value     = "";
-                datoPuerto.value     = "";
-            }
-        }
     });
 
     // ZOOM con scroll
