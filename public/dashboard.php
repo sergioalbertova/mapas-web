@@ -116,6 +116,8 @@ require "db.php";
             display: block;
             transform-origin: center center;
             cursor: grab;
+            position: relative;
+            z-index: 1;
         }
 
         /* Marcador */
@@ -128,6 +130,7 @@ require "db.php";
             border: 2px solid white;
             transform: translate(-50%, -50%);
             pointer-events: none;
+            z-index: 10;
             display: none;
         }
     </style>
@@ -142,7 +145,7 @@ require "db.php";
     <select id="selectPiso">
         <option value="">Seleccione un piso</option>
         <?php
-        $pisos = $pdo->query("SELECT idpiso, nombrepiso FROM pisos ORDER BY idpiso")->fetchAll(PDO::FETCH_ASSOC);
+        $pisos = $pdo->query("SELECT idpiso, nombrepiso FROM pisos ORDER ORDER BY idpiso")->fetchAll(PDO::FETCH_ASSOC);
         foreach ($pisos as $p) {
             echo "<option value='{$p['idpiso']}'>Piso {$p['nombrepiso']}</option>";
         }
@@ -254,10 +257,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const rect = imgMapa.getBoundingClientRect();
+        const cont = mapaContainer.getBoundingClientRect();
+        const img  = imgMapa.getBoundingClientRect();
 
-        marcador.style.left = (rect.left + rect.width * cx) + "px";
-        marcador.style.top  = (rect.top  + rect.height * cy) + "px";
+        const x = img.left - cont.left + img.width * cx;
+        const y = img.top  - cont.top  + img.height * cy;
+
+        marcador.style.left = x + "px";
+        marcador.style.top  = y + "px";
         marcador.style.display = "block";
     }
 
@@ -300,6 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         data-nodo="${item.nodo ?? ''}" 
                         data-ubicacion="${item.ubicacion}" 
                         data-usuario="${item.usuario ?? ''}"
+                        style="cursor:pointer"
                     >
                         <td class="icono">${icono}</td>
                         <td>${item.ubicacion}</td>
@@ -383,6 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         data-nodo="${item.nodo ?? ''}" 
                         data-ubicacion="${item.ubicacion ?? ''}" 
                         data-usuario="${item.nomuser}"
+                        style="cursor:pointer"
                     >
                         <td class="icono">${icono}</td>
                         <td>${item.ubicacion ?? ""}</td>
