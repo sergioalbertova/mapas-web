@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL); 
+ini_set('display_errors', 1);
 require "db.php";
 ?>
 <!DOCTYPE html>
@@ -143,7 +145,7 @@ require "db.php";
 
 <body>
 
-<h2 id="tituloMapa">MAPA DE NODOS - 0</h2>
+<h2 id="tituloMapa">MAPA DE NODOS - 02marzo</h2>
 
 <div class="top-bar">
     <label>Piso:</label>
