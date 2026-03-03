@@ -100,11 +100,6 @@ require "db.php";
             text-align: center;
         }
 
-        .mapa-box {
-            margin: 20px;
-            text-align: center;
-        }
-
         /* Contenedor del mapa */
         #mapaContainer {
             position: relative;
@@ -145,7 +140,7 @@ require "db.php";
 
 <body>
 
-<h2 id="tituloMapa">MAPA DE NODOS - 02marzo</h2>
+<h2 id="tituloMapa">MAPA DE NODOS</h2>
 
 <div class="top-bar">
     <label>Piso:</label>
@@ -218,41 +213,22 @@ require "db.php";
 </div>
 
 <script>
-let contador = 0;
 let pisoActual = null;
-
-// Zoom
-let zoom = 1;
-let posX = 0;
-let posY = 0;
-let dragging = false;
-let lastX = 0;
-let lastY = 0;
+let zoom = 1, posX = 0, posY = 0, dragging = false, lastX = 0, lastY = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const selectPiso    = document.getElementById("selectPiso");
-    const imgMapa       = document.getElementById("imgMapa");
+    const selectPiso = document.getElementById("selectPiso");
+    const imgMapa = document.getElementById("imgMapa");
     const mapaContainer = document.getElementById("mapaContainer");
-    const marcador      = document.getElementById("marcador");
-    const tablaBody     = document.querySelector("#tablaUbicaciones tbody");
+    const marcador = document.getElementById("marcador");
+    const tablaBody = document.querySelector("#tablaUbicaciones tbody");
 
-    const datoNodo      = document.getElementById("datoNodo");
+    const datoNodo = document.getElementById("datoNodo");
     const datoUbicacion = document.getElementById("datoUbicacion");
-    const datoPiso      = document.getElementById("datoPiso");
-    const datoSwitch    = document.getElementById("datoSwitch");
-    const datoPuerto    = document.getElementById("datoPuerto");
-
-    function actualizarTitulo() {
-        contador++;
-        document.getElementById("tituloMapa").textContent = "MAPA DE NODOS - " + contador;
-    }
-
-    function iconoEstado(nodo, usuario) {
-        if (nodo && usuario) return "🟢";
-        if (nodo && !usuario) return "🟡";
-        return "🔴";
-    }
+    const datoPiso = document.getElementById("datoPiso");
+    const datoSwitch = document.getElementById("datoSwitch");
+    const datoPuerto = document.getElementById("datoPuerto");
 
     function aplicarTransform() {
         imgMapa.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
@@ -265,13 +241,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const cont = mapaContainer.getBoundingClientRect();
-        const img  = imgMapa.getBoundingClientRect();
+        const img = imgMapa.getBoundingClientRect();
 
         const x = img.left - cont.left + img.width * cx;
-        const y = img.top  - cont.top  + img.height * cy;
+        const y = img.top - cont.top + img.height * cy;
 
         marcador.style.left = x + "px";
-        marcador.style.top  = y + "px";
+        marcador.style.top = y + "px";
         marcador.style.display = "block";
     }
 
@@ -280,7 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (pisoActual == idpiso) return;
 
         pisoActual = idpiso;
-        actualizarTitulo();
 
         zoom = 1;
         posX = 0;
@@ -306,8 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (dataLista.status === "success") {
             tablaBody.innerHTML = "";
             dataLista.data.forEach(item => {
-
-                const icono = iconoEstado(item.nodo, item.usuario);
+                const icono = item.nodo && item.usuario ? "🟢" : item.nodo ? "🟡" : "🔴";
 
                 tablaBody.insertAdjacentHTML("beforeend", `
                     <tr 
@@ -324,30 +298,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     </tr>
                 `);
             });
-        }
-    }
-
-    function resaltarFilaPorNodo(nodo) {
-        const filas = tablaBody.querySelectorAll("tr");
-        filas.forEach(tr => tr.style.outline = "");
-
-        const target = Array.from(filas).find(tr => tr.dataset.nodo == nodo);
-
-        if (target) {
-            target.style.outline = "3px solid #f1c40f";
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    }
-
-    function resaltarFilaPorUbicacion(ubicacion) {
-        const filas = tablaBody.querySelectorAll("tr");
-        filas.forEach(tr => tr.style.outline = "");
-
-        const target = Array.from(filas).find(tr => tr.dataset.ubicacion == ubicacion);
-
-        if (target) {
-            target.style.outline = "3px solid #3498db";
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }
 
@@ -368,16 +318,13 @@ document.addEventListener("DOMContentLoaded", () => {
             selectPiso.value = reg.piso;
             await cargarPisoCompleto(reg.piso);
 
-            resaltarFilaPorNodo(reg.nodo);
             colocarMarcador(reg.cx_rel, reg.cy_rel);
 
-            datoNodo.value       = reg.nodo;
-            datoUbicacion.value  = reg.ubicacion;
-            datoPiso.value       = reg.piso;
-            datoSwitch.value     = reg.switch ?? "";
-            datoPuerto.value     = reg.puerto ?? "";
-        } else {
-            alert("Nodo no encontrado");
+            datoNodo.value = reg.nodo;
+            datoUbicacion.value = reg.ubicacion;
+            datoPiso.value = reg.piso;
+            datoSwitch.value = reg.switch ?? "";
+            datoPuerto.value = reg.puerto ?? "";
         }
     });
 
@@ -393,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tablaBody.innerHTML = "";
 
             data.data.forEach(item => {
-                const icono = iconoEstado(item.nodo, item.nomuser);
+                const icono = item.nodo && item.nomuser ? "🟢" : item.nodo ? "🟡" : "🔴";
 
                 tablaBody.insertAdjacentHTML("beforeend", `
                     <tr 
@@ -411,8 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `);
             });
 
-        } else {
-            alert("No se encontraron usuarios");
+            marcador.style.display = "none";
         }
     });
 
@@ -420,11 +366,33 @@ document.addEventListener("DOMContentLoaded", () => {
         const tr = e.target.closest("tr");
         if (!tr) return;
 
-        const nodo      = tr.dataset.nodo;
+        const nodo = tr.dataset.nodo;
         const ubicacion = tr.dataset.ubicacion;
-        const usuario   = tr.dataset.usuario;
+        const usuario = tr.dataset.usuario;
 
+        // --- CLIC EN NODO ---
         if (nodo) {
+
+            // Si NO tiene usuario → buscar por piso + ubicación (modo seguro)
+            if (!usuario) {
+                const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&ubicacion=${ubicacion}`);
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    const reg = data.data;
+
+                    colocarMarcador(reg.cx_rel, reg.cy_rel);
+
+                    datoNodo.value = reg.nodo;
+                    datoUbicacion.value = reg.ubicacion;
+                    datoPiso.value = reg.piso;
+                    datoSwitch.value = reg.switch ?? "";
+                    datoPuerto.value = reg.puerto ?? "";
+                }
+                return;
+            }
+
+            // Si tiene usuario → búsqueda normal
             const res = await fetch("buscarNodo.php?nodo=" + nodo);
             const data = await res.json();
 
@@ -434,47 +402,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectPiso.value = reg.piso;
                 await cargarPisoCompleto(reg.piso);
 
-                resaltarFilaPorNodo(reg.nodo);
                 colocarMarcador(reg.cx_rel, reg.cy_rel);
 
-                datoNodo.value       = reg.nodo;
-                datoUbicacion.value  = reg.ubicacion;
-                datoPiso.value       = reg.piso;
-                datoSwitch.value     = reg.switch ?? "";
-                datoPuerto.value     = reg.puerto ?? "";
+                datoNodo.value = reg.nodo;
+                datoUbicacion.value = reg.ubicacion;
+                datoPiso.value = reg.piso;
+                datoSwitch.value = reg.switch ?? "";
+                datoPuerto.value = reg.puerto ?? "";
             }
-
             return;
         }
 
+        // --- CLIC EN USUARIO (NO RECARGAR PISO) ---
         if (usuario) {
 
-    // NO recargar piso, NO llamar buscarUsuario otra vez
-    resaltarFilaPorUbicacion(ubicacion);
+            datoNodo.value = nodo ?? "";
+            datoUbicacion.value = ubicacion;
+            datoPiso.value = selectPiso.value;
+            datoSwitch.value = "";
+            datoPuerto.value = "";
 
-    datoNodo.value       = nodo ?? "";
-    datoUbicacion.value  = ubicacion;
-    datoPiso.value       = selectPiso.value;
-    datoSwitch.value     = "";
-    datoPuerto.value     = "";
-
-    marcador.style.display = "none"; // No hay coordenadas en búsqueda por usuario
-    return;
-}
-
+            marcador.style.display = "none";
+            return;
+        }
     });
 
-    // ZOOM con scroll
+    // ZOOM
     mapaContainer.addEventListener("wheel", (e) => {
         e.preventDefault();
-
         const delta = e.deltaY > 0 ? -0.1 : 0.1;
         zoom = Math.min(Math.max(0.5, zoom + delta), 3);
-
         aplicarTransform();
     });
 
-    // DRAG del mapa
+    // DRAG
     imgMapa.addEventListener("mousedown", (e) => {
         dragging = true;
         lastX = e.clientX;

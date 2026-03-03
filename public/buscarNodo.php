@@ -6,38 +6,63 @@ header("Content-Type: application/json");
 require "db.php";
 
 $nodo = isset($_GET["nodo"]) ? intval($_GET["nodo"]) : 0;
-
-if ($nodo <= 0) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Nodo inválido"
-    ]);
-    exit;
-}
+$piso = isset($_GET["piso"]) ? intval($_GET["piso"]) : 0;
+$ubic = isset($_GET["ubicacion"]) ? intval($_GET["ubicacion"]) : 0;
 
 /*
-    IMPORTANTE:
-    - nodos.ubicacion es TEXT → se debe castear a entero
-    - ubicacion.ubicacion es INTEGER
-    - activeuser.ubimapa2 es TEXT → se debe castear a entero
+    MODO 1: BÚSQUEDA SEGURA (piso + ubicación)
+    Este modo se usa cuando haces clic en una fila del dashboard.
 */
+if ($piso > 0 && $ubic > 0) {
 
-$sqlNodo = "
-    SELECT 
-        \"idnodo\",
-        piso,
-        ubicacion,
-        \"switchnombre\",
-        \"switchpuerto\",
-        \"NumeroNodo\"
-    FROM nodos
-    WHERE \"NumeroNodo\" = :nodo
-    LIMIT 1
-";
+    $sqlNodo = "
+        SELECT 
+            \"idnodo\",
+            piso,
+            ubicacion,
+            \"switchnombre\",
+            \"switchpuerto\",
+            \"NumeroNodo\"
+        FROM nodos
+        WHERE piso = :piso AND ubicacion::int = :ubic
+        LIMIT 1
+    ";
 
-$stmt = $pdo->prepare($sqlNodo);
-$stmt->execute(["nodo" => $nodo]);
-$infoNodo = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare($sqlNodo);
+    $stmt->execute(["piso" => $piso, "ubic" => $ubic]);
+    $infoNodo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+} else {
+
+    /*
+        MODO 2: BÚSQUEDA POR NÚMERO DE NODO
+        (solo si no se envió piso + ubicación)
+    */
+    if ($nodo <= 0) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Nodo inválido"
+        ]);
+        exit;
+    }
+
+    $sqlNodo = "
+        SELECT 
+            \"idnodo\",
+            piso,
+            ubicacion,
+            \"switchnombre\",
+            \"switchpuerto\",
+            \"NumeroNodo\"
+        FROM nodos
+        WHERE \"NumeroNodo\" = :nodo
+        LIMIT 1
+    ";
+
+    $stmt = $pdo->prepare($sqlNodo);
+    $stmt->execute(["nodo" => $nodo]);
+    $infoNodo = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
 if (!$infoNodo) {
     echo json_encode([
@@ -48,9 +73,9 @@ if (!$infoNodo) {
 }
 
 $piso = $infoNodo["piso"];
-$ubicacion = intval($infoNodo["ubicacion"]); // ← CAST A ENTERO
+$ubicacion = intval($infoNodo["ubicacion"]);
 
-/* 2. Coordenadas relativas */
+/* Coordenadas */
 $sqlCoord = "
     SELECT cx_rel, cy_rel
     FROM ubicacion
@@ -65,15 +90,7 @@ $stmt->execute([
 ]);
 $coord = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$coord) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "No hay coordenadas para esta ubicación"
-    ]);
-    exit;
-}
-
-/* 3. Usuario asignado */
+/* Usuario asignado */
 $sqlUser = "
     SELECT nomuser
     FROM activeuser
@@ -96,8 +113,8 @@ echo json_encode([
         "ubicacion" => $ubicacion,
         "switch"    => $infoNodo["switchnombre"],
         "puerto"    => $infoNodo["switchpuerto"],
-        "cx_rel"    => $coord["cx_rel"],
-        "cy_rel"    => $coord["cy_rel"],
+        "cx_rel"    => $coord["cx_rel"] ?? null,
+        "cy_rel"    => $coord["cy_rel"] ?? null,
         "usuario"   => $user["nomuser"] ?? null
     ]
 ]);
