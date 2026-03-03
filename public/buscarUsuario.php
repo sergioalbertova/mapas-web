@@ -17,24 +17,25 @@ if ($usuario === "") {
 
 /*
     NOTAS IMPORTANTES:
-    - ubimapa2 es TEXTO (puede ser "ND", "45", "A1", etc.)
-    - nodos.ubicacion también es TEXTO
-    - NO se convierte nada a entero
-    - El JOIN se hace por TEXTO EXACTO
+    - activeuser.piso puede ser "ND", NULL, texto, etc.
+    - nodos.piso sí es entero
+    - Por lo tanto:
+        * NO convertimos a.piso a entero
+        * Convertimos n.piso a texto para comparar
 */
 
 $sql = "
     SELECT 
         a.nomuser,
-        a.piso::int AS piso,
-        a.ubimapa2 AS ubicacion,
+        a.piso AS piso,              -- SIN CAST
+        a.ubimapa2 AS ubicacion,     -- SIN CAST
         n.\"NumeroNodo\" AS nodo
     FROM activeuser a
     LEFT JOIN nodos n 
-        ON n.piso::int = a.piso::int
-        AND n.ubicacion = a.ubimapa2
+        ON n.piso::text = a.piso     -- COMPARACIÓN TEXTO-TEXTO
+        AND n.ubicacion = a.ubimapa2 -- TEXTO-TEXTO
     WHERE LOWER(a.nomuser) LIKE LOWER(:usuario)
-    ORDER BY a.piso::int, a.ubimapa2
+    ORDER BY a.piso, a.ubimapa2
 ";
 
 $stmt = $pdo->prepare($sql);
