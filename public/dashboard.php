@@ -100,13 +100,11 @@ require "db.php";
             text-align: center;
         }
 
-        /* FILA SELECCIONADA - AZUL SUAVE */
         .fila-seleccionada {
             background-color: #cce5ff !important;
             font-weight: bold;
         }
 
-        /* Contenedor del mapa */
         #mapaContainer {
             position: relative;
             width: 100%;
@@ -117,7 +115,6 @@ require "db.php";
             border-radius: 8px;
         }
 
-        /* Imagen del mapa */
         #imgMapa {
             width: 100%;
             height: auto;
@@ -128,7 +125,6 @@ require "db.php";
             z-index: 1;
         }
 
-        /* Marcador */
         #marcador {
             position: absolute;
             width: 18px;
@@ -236,14 +232,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const datoSwitch = document.getElementById("datoSwitch");
     const datoPuerto = document.getElementById("datoPuerto");
 
-    /* ------------------ RESALTADO ------------------ */
-
     function limpiarResaltado() {
         const filas = tablaBody.querySelectorAll("tr");
         filas.forEach(tr => tr.classList.remove("fila-seleccionada"));
     }
-
-    /* ------------------ MAPA ------------------ */
 
     function aplicarTransform() {
         imgMapa.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
@@ -265,8 +257,6 @@ document.addEventListener("DOMContentLoaded", () => {
         marcador.style.top = y + "px";
         marcador.style.display = "block";
     }
-
-    /* ------------------ CARGAR PISO ------------------ */
 
     async function cargarPisoCompleto(idpiso) {
 
@@ -322,8 +312,6 @@ document.addEventListener("DOMContentLoaded", () => {
         await cargarPisoCompleto(this.value);
     });
 
-    /* ------------------ BUSCAR NODO ------------------ */
-
     document.getElementById("btnBuscarNodo").addEventListener("click", async () => {
         const nodo = document.getElementById("inputNodo").value.trim();
         if (!nodo) return;
@@ -350,8 +338,6 @@ document.addEventListener("DOMContentLoaded", () => {
             datoPuerto.value = reg.puerto ?? "";
         }
     });
-
-    /* ------------------ BUSCAR USUARIO ------------------ */
 
     document.getElementById("btnBuscarUsuario").addEventListener("click", async () => {
         const usuario = document.getElementById("inputUsuario").value.trim();
@@ -387,8 +373,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    /* ------------------ CLIC EN FILAS ------------------ */
-
     tablaBody.addEventListener("click", async (e) => {
         const tr = e.target.closest("tr");
         if (!tr) return;
@@ -396,11 +380,45 @@ document.addEventListener("DOMContentLoaded", () => {
         const nodo = tr.dataset.nodo;
         const ubicacion = tr.dataset.ubicacion;
         const usuario = tr.dataset.usuario;
+        const pisoFila = tr.querySelector("td:last-child").innerText.trim();
 
         limpiarResaltado();
         tr.classList.add("fila-seleccionada");
 
-        /* --- CLIC EN NODO (con o sin usuario) → piso+nodo --- */
+        if (usuario) {
+
+            if (pisoFila) {
+                selectPiso.value = pisoFila;
+                await cargarPisoCompleto(pisoFila);
+            }
+
+            if (nodo) {
+                const res = await fetch(`buscarNodo.php?piso=${pisoFila}&nodo=${nodo}`);
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    const reg = data.data;
+
+                    colocarMarcador(reg.cx_rel, reg.cy_rel);
+
+                    datoNodo.value = reg.nodo;
+                    datoUbicacion.value = reg.ubicacion;
+                    datoPiso.value = reg.piso;
+                    datoSwitch.value = reg.switch ?? "";
+                    datoPuerto.value = reg.puerto ?? "";
+                }
+            } else {
+                datoNodo.value = "";
+                datoUbicacion.value = ubicacion;
+                datoPiso.value = pisoFila;
+                datoSwitch.value = "";
+                datoPuerto.value = "";
+                marcador.style.display = "none";
+            }
+
+            return;
+        }
+
         if (nodo) {
 
             const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&nodo=${nodo}`);
@@ -419,22 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             return;
         }
-
-        /* --- CLIC EN USUARIO (sin nodo) --- */
-        if (usuario) {
-
-            datoNodo.value = nodo ?? "";
-            datoUbicacion.value = ubicacion > 0 ? ubicacion : "";
-            datoPiso.value = selectPiso.value;
-            datoSwitch.value = "";
-            datoPuerto.value = "";
-
-            marcador.style.display = "none";
-            return;
-        }
     });
-
-    /* ------------------ ZOOM ------------------ */
 
     mapaContainer.addEventListener("wheel", (e) => {
         e.preventDefault();
@@ -442,8 +445,6 @@ document.addEventListener("DOMContentLoaded", () => {
         zoom = Math.min(Math.max(0.5, zoom + delta), 3);
         aplicarTransform();
     });
-
-    /* ------------------ DRAG ------------------ */
 
     imgMapa.addEventListener("mousedown", (e) => {
         dragging = true;
