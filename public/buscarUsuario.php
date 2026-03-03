@@ -16,9 +16,10 @@ if ($usuario === "") {
 }
 
 /*
-    NOTA IMPORTANTE:
+    NOTAS IMPORTANTES:
     - ubimapa2 puede contener texto no numérico.
-    - Usamos NULLIF + regexp para evitar errores.
+    - Usamos regexp para validar si es número.
+    - No usamos unaccent() para evitar errores.
 */
 
 $sql = "
@@ -38,7 +39,7 @@ $sql = "
                 WHEN a.ubimapa2 ~ '^[0-9]+$' THEN a.ubimapa2::int
                 ELSE -1
             END
-    WHERE unaccent(LOWER(a.nomuser)) LIKE unaccent(LOWER(:usuario))
+    WHERE LOWER(a.nomuser) LIKE LOWER(:usuario)
     ORDER BY a.piso, ubicacion
 ";
 
@@ -46,7 +47,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute(["usuario" => "%$usuario%"]);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (!$data) {
+if (!$data || count($data) === 0) {
     echo json_encode([
         "status" => "error",
         "message" => "No se encontraron usuarios"
