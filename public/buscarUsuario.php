@@ -10,41 +10,43 @@ $usuario = isset($_GET["usuario"]) ? trim($_GET["usuario"]) : "";
 if ($usuario === "") {
     echo json_encode([
         "status" => "error",
-        "message" => "Debe ingresar un usuario"
+        "message" => "Usuario vacío"
     ]);
     exit;
 }
 
 /*
-    Solución definitiva:
-    - Convertir piso y ubimapa2 SIEMPRE a texto
-    - Validar con regex sobre TEXTO
-    - Comparar nodos como TEXTO
-    - Nunca castear a entero
+    NOTAS:
+    - Convertimos piso a entero en ambas tablas.
+    - Convertimos ubimapa2 a entero solo si es numérico.
 */
 
 $sql = "
     SELECT 
-        a.idu,
         a.nomuser,
-        a.piso,
-        a.ubimapa2 AS ubicacion,
-        n.idnodo AS nodo
+        a.piso::int AS piso,
+        CASE 
+            WHEN a.ubimapa2 ~ '^[0-9]+$' THEN a.ubimapa2::int
+            ELSE NULL
+        END AS ubicacion,
+        n.\"NumeroNodo\" AS nodo
     FROM activeuser a
-    LEFT JOIN nodos n
-        ON (a.piso)::text ~ '^[0-9]+$'
-       AND (a.ubimapa2)::text ~ '^[0-9]+$'
-       AND (n.piso)::text = (a.piso)::text
-       AND (n.ubicacion)::text = (a.ubimapa2)::text
-    WHERE a.nomuser ILIKE :usuario
-    ORDER BY a.nomuser
+    LEFT JOIN nodos n 
+        ON n.piso::int = a.piso::int
+        AND n.ubicacion::int = 
+            CASE 
+                WHEN a.ubimapa2 ~ '^[0-9]+$' THEN a.ubimapa2::int
+                ELSE -1
+            END
+    WHERE LOWER(a.nomuser) LIKE LOWER(:usuario)
+    ORDER BY a.piso::int, ubicacion
 ";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute(["usuario" => "%$usuario%"]);
-$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (!$usuarios) {
+if (!$data || count($data) === 0) {
     echo json_encode([
         "status" => "error",
         "message" => "No se encontraron usuarios"
@@ -54,6 +56,6 @@ if (!$usuarios) {
 
 echo json_encode([
     "status" => "success",
-    "data" => $usuarios
+    "data" => $data
 ]);
 exit;

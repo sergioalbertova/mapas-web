@@ -243,26 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
         filas.forEach(tr => tr.classList.remove("fila-seleccionada"));
     }
 
-    function resaltarFilaPorNodo(nodo) {
-        limpiarResaltado();
-        const filas = tablaBody.querySelectorAll("tr");
-        const target = Array.from(filas).find(tr => tr.dataset.nodo == nodo);
-        if (target) {
-            target.classList.add("fila-seleccionada");
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    }
-
-    function resaltarFilaPorUbicacion(ubicacion) {
-        limpiarResaltado();
-        const filas = tablaBody.querySelectorAll("tr");
-        const target = Array.from(filas).find(tr => tr.dataset.ubicacion == ubicacion);
-        if (target) {
-            target.classList.add("fila-seleccionada");
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    }
-
     /* ------------------ MAPA ------------------ */
 
     function aplicarTransform() {
@@ -357,7 +337,10 @@ document.addEventListener("DOMContentLoaded", () => {
             selectPiso.value = reg.piso;
             await cargarPisoCompleto(reg.piso);
 
-            resaltarFilaPorNodo(reg.nodo);
+            limpiarResaltado();
+            const fila = [...tablaBody.querySelectorAll("tr")].find(tr => tr.dataset.nodo == reg.nodo);
+            if (fila) fila.classList.add("fila-seleccionada");
+
             colocarMarcador(reg.cx_rel, reg.cy_rel);
 
             datoNodo.value = reg.nodo;
@@ -414,8 +397,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const ubicacion = tr.dataset.ubicacion;
         const usuario = tr.dataset.usuario;
 
-        /* --- CLIC EN NODO SIN USUARIO → piso+nodo --- */
-        if (nodo && !usuario) {
+        limpiarResaltado();
+        tr.classList.add("fila-seleccionada");
+
+        /* --- CLIC EN NODO (con o sin usuario) → piso+nodo --- */
+        if (nodo) {
 
             const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&nodo=${nodo}`);
             const data = await res.json();
@@ -423,7 +409,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.status === "success") {
                 const reg = data.data;
 
-                resaltarFilaPorUbicacion(ubicacion);
                 colocarMarcador(reg.cx_rel, reg.cy_rel);
 
                 datoNodo.value = reg.nodo;
@@ -435,37 +420,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        /* --- CLIC EN NODO CON USUARIO → piso+nodo --- */
-        if (nodo && usuario) {
-
-            const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&nodo=${nodo}`);
-            const data = await res.json();
-
-            if (data.status === "success") {
-                const reg = data.data;
-
-                selectPiso.value = reg.piso;
-                await cargarPisoCompleto(reg.piso);
-
-                resaltarFilaPorNodo(reg.nodo);
-                colocarMarcador(reg.cx_rel, reg.cy_rel);
-
-                datoNodo.value = reg.nodo;
-                datoUbicacion.value = reg.ubicacion;
-                datoPiso.value = reg.piso;
-                datoSwitch.value = reg.switch ?? "";
-                datoPuerto.value = reg.puerto ?? "";
-            }
-            return;
-        }
-
-        /* --- CLIC EN USUARIO (NO recargar piso) --- */
+        /* --- CLIC EN USUARIO (sin nodo) --- */
         if (usuario) {
 
-            resaltarFilaPorUbicacion(ubicacion);
-
             datoNodo.value = nodo ?? "";
-            datoUbicacion.value = ubicacion;
+            datoUbicacion.value = ubicacion > 0 ? ubicacion : "";
             datoPiso.value = selectPiso.value;
             datoSwitch.value = "";
             datoPuerto.value = "";
