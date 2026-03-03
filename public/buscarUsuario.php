@@ -19,6 +19,7 @@ if ($usuario === "") {
     NOTAS:
     - Convertimos piso a entero en ambas tablas.
     - Convertimos ubimapa2 a entero solo si es numérico.
+    - Convertimos ubimapa2 a texto para usar regex (~).
 */
 
 $sql = "
@@ -26,8 +27,8 @@ $sql = "
         a.nomuser,
         a.piso::int AS piso,
         CASE 
-            WHEN a.ubimapa2 ~ '^[0-9]+$' THEN a.ubimapa2::int
-            ELSE NULL
+            WHEN (a.ubimapa2)::text ~ '^[0-9]+$' THEN a.ubimapa2::int
+            ELSE -1
         END AS ubicacion,
         n.\"NumeroNodo\" AS nodo
     FROM activeuser a
@@ -35,7 +36,7 @@ $sql = "
         ON n.piso::int = a.piso::int
         AND n.ubicacion::int = 
             CASE 
-                WHEN a.ubimapa2 ~ '^[0-9]+$' THEN a.ubimapa2::int
+                WHEN (a.ubimapa2)::text ~ '^[0-9]+$' THEN a.ubimapa2::int
                 ELSE -1
             END
     WHERE LOWER(a.nomuser) LIKE LOWER(:usuario)
