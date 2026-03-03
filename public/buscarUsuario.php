@@ -16,26 +16,30 @@ if ($usuario === "") {
 }
 
 /*
-    IMPORTANTE:
-    - activeuser.nomuser = nombre del usuario
-    - activeuser.ubimapa2 = ubicación (texto → convertir a entero)
-    - activeuser.piso = piso
-    - nodos.ubicacion = ubicación (texto)
-    - nodos.NumeroNodo = nodo
+    NOTA IMPORTANTE:
+    - ubimapa2 puede contener texto no numérico.
+    - Usamos NULLIF + regexp para evitar errores.
 */
 
 $sql = "
     SELECT 
         a.nomuser,
         a.piso,
-        a.ubimapa2::int AS ubicacion,
+        CASE 
+            WHEN a.ubimapa2 ~ '^[0-9]+$' THEN a.ubimapa2::int
+            ELSE NULL
+        END AS ubicacion,
         n.\"NumeroNodo\" AS nodo
     FROM activeuser a
     LEFT JOIN nodos n 
         ON n.piso = a.piso 
-        AND n.ubicacion::int = a.ubimapa2::int
-    WHERE LOWER(a.nomuser) LIKE LOWER(:usuario)
-    ORDER BY a.piso, a.ubimapa2::int
+        AND n.ubicacion::int = 
+            CASE 
+                WHEN a.ubimapa2 ~ '^[0-9]+$' THEN a.ubimapa2::int
+                ELSE -1
+            END
+    WHERE unaccent(LOWER(a.nomuser)) LIKE unaccent(LOWER(:usuario))
+    ORDER BY a.piso, ubicacion
 ";
 
 $stmt = $pdo->prepare($sql);
