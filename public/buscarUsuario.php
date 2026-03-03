@@ -16,31 +16,40 @@ if ($usuario === "") {
 }
 
 /*
-    NOTAS:
-    - Convertimos piso a entero en ambas tablas.
-    - Convertimos ubimapa2 a entero solo si es numérico.
-    - Convertimos ubimapa2 a texto para usar regex (~).
+    NOTAS IMPORTANTES:
+    - NO convertimos ubimapa2 a entero dentro del CASE.
+    - Primero lo convertimos a texto SIEMPRE.
+    - Luego verificamos si es numérico usando regexp.
+    - Si es numérico → lo convertimos a entero.
+    - Si NO es numérico → devolvemos NULL.
 */
 
 $sql = "
+    WITH datos AS (
+        SELECT 
+            a.nomuser,
+            a.piso::int AS piso,
+            (a.ubimapa2)::text AS ubi_texto
+        FROM activeuser a
+        WHERE LOWER(a.nomuser) LIKE LOWER(:usuario)
+    )
     SELECT 
-        a.nomuser,
-        a.piso::int AS piso,
+        d.nomuser,
+        d.piso,
         CASE 
-            WHEN (a.ubimapa2)::text ~ '^[0-9]+$' THEN a.ubimapa2::int
-            ELSE -1
+            WHEN d.ubi_texto ~ '^[0-9]+$' THEN d.ubi_texto::int
+            ELSE NULL
         END AS ubicacion,
         n.\"NumeroNodo\" AS nodo
-    FROM activeuser a
+    FROM datos d
     LEFT JOIN nodos n 
-        ON n.piso::int = a.piso::int
+        ON n.piso::int = d.piso
         AND n.ubicacion::int = 
             CASE 
-                WHEN (a.ubimapa2)::text ~ '^[0-9]+$' THEN a.ubimapa2::int
-                ELSE -1
+                WHEN d.ubi_texto ~ '^[0-9]+$' THEN d.ubi_texto::int
+                ELSE -9999
             END
-    WHERE LOWER(a.nomuser) LIKE LOWER(:usuario)
-    ORDER BY a.piso::int, ubicacion
+    ORDER BY d.piso, ubicacion NULLS LAST
 ";
 
 $stmt = $pdo->prepare($sql);
