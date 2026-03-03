@@ -237,6 +237,16 @@ document.addEventListener("DOMContentLoaded", () => {
         filas.forEach(tr => tr.classList.remove("fila-seleccionada"));
     }
 
+    function resaltarFilaPorNodo(nodo) {
+        limpiarResaltado();
+        const filas = tablaBody.querySelectorAll("tr");
+        const target = Array.from(filas).find(tr => tr.dataset.nodo == nodo);
+        if (target) {
+            target.classList.add("fila-seleccionada");
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
     function aplicarTransform() {
         imgMapa.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
     }
@@ -256,6 +266,14 @@ document.addEventListener("DOMContentLoaded", () => {
         marcador.style.left = x + "px";
         marcador.style.top = y + "px";
         marcador.style.display = "block";
+    }
+
+    async function cargarSoloMapa(idpiso) {
+        const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
+        const dataMapa = await resMapa.json();
+        if (dataMapa.status === "success") {
+            imgMapa.src = dataMapa.imagen;
+        }
     }
 
     async function cargarPisoCompleto(idpiso) {
@@ -325,10 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
             selectPiso.value = reg.piso;
             await cargarPisoCompleto(reg.piso);
 
-            limpiarResaltado();
-            const fila = [...tablaBody.querySelectorAll("tr")].find(tr => tr.dataset.nodo == reg.nodo);
-            if (fila) fila.classList.add("fila-seleccionada");
-
+            resaltarFilaPorNodo(reg.nodo);
             colocarMarcador(reg.cx_rel, reg.cy_rel);
 
             datoNodo.value = reg.nodo;
@@ -389,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (pisoFila) {
                 selectPiso.value = pisoFila;
-                await cargarPisoCompleto(pisoFila);
+                await cargarSoloMapa(pisoFila);
             }
 
             if (nodo) {
