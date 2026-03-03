@@ -100,7 +100,7 @@ require "db.php";
             text-align: center;
         }
 
-        /* FILA SELECCIONADA - OPCIÓN 2 (AZUL SUAVE) */
+        /* FILA SELECCIONADA - AZUL SUAVE */
         .fila-seleccionada {
             background-color: #cce5ff !important;
             font-weight: bold;
@@ -281,11 +281,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const x = img.left - cont.left + img.width * cx;
         const y = img.top - cont.top + img.height * cy;
 
-        /*marcador.style.left = x + "px";
-        marcador.style.top = y + "px"; */
-
-        marcador.style.left = x;
-        marcador.style.top = y;
+        marcador.style.left = x + "px";
+        marcador.style.top = y + "px";
         marcador.style.display = "block";
     }
 
@@ -351,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const nodo = document.getElementById("inputNodo").value.trim();
         if (!nodo) return;
 
-        const res = await fetch("buscarNodo.php?nodo=" + encodeURIComponent(nodo));
+        const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&nodo=${nodo}`);
         const data = await res.json();
 
         if (data.status === "success") {
@@ -417,10 +414,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const ubicacion = tr.dataset.ubicacion;
         const usuario = tr.dataset.usuario;
 
-        /* --- CLIC EN NODO SIN USUARIO → búsqueda segura por piso+ubicación --- */
+        /* --- CLIC EN NODO SIN USUARIO → piso+nodo --- */
         if (nodo && !usuario) {
 
-            const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&ubicacion=${ubicacion}`);
+            const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&nodo=${nodo}`);
             const data = await res.json();
 
             if (data.status === "success") {
@@ -438,10 +435,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        /* --- CLIC EN NODO CON USUARIO → búsqueda normal --- */
+        /* --- CLIC EN NODO CON USUARIO → piso+nodo --- */
         if (nodo && usuario) {
 
-            const res = await fetch("buscarNodo.php?nodo=" + nodo);
+            const res = await fetch(`buscarNodo.php?piso=${selectPiso.value}&nodo=${nodo}`);
             const data = await res.json();
 
             if (data.status === "success") {

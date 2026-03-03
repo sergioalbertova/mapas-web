@@ -5,15 +5,39 @@ ini_set('display_errors', 1);
 header("Content-Type: application/json");
 require "db.php";
 
-$nodo = isset($_GET["nodo"]) ? intval($_GET["nodo"]) : 0;
 $piso = isset($_GET["piso"]) ? intval($_GET["piso"]) : 0;
+$nodo = isset($_GET["nodo"]) ? intval($_GET["nodo"]) : 0;
 $ubic = isset($_GET["ubicacion"]) ? intval($_GET["ubicacion"]) : 0;
 
-/*
-    MODO 1: BÚSQUEDA SEGURA (piso + ubicación)
-    Este modo se usa cuando haces clic en una fila del dashboard.
-*/
-if ($piso > 0 && $ubic > 0) {
+$infoNodo = null;
+
+/* ============================================================
+   1) MODO SEGURO: BUSCAR POR PISO + NODO (clave única real)
+   ============================================================ */
+if ($piso > 0 && $nodo > 0) {
+
+    $sqlNodo = "
+        SELECT 
+            \"idnodo\",
+            piso,
+            ubicacion,
+            \"switchnombre\",
+            \"switchpuerto\",
+            \"NumeroNodo\"
+        FROM nodos
+        WHERE piso = :piso AND \"NumeroNodo\" = :nodo
+        LIMIT 1
+    ";
+
+    $stmt = $pdo->prepare($sqlNodo);
+    $stmt->execute(["piso" => $piso, "nodo" => $nodo]);
+    $infoNodo = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+/* ============================================================
+   2) MODO ALTERNATIVO: BUSCAR POR PISO + UBICACIÓN
+   ============================================================ */
+if (!$infoNodo && $piso > 0 && $ubic > 0) {
 
     $sqlNodo = "
         SELECT 
@@ -31,20 +55,12 @@ if ($piso > 0 && $ubic > 0) {
     $stmt = $pdo->prepare($sqlNodo);
     $stmt->execute(["piso" => $piso, "ubic" => $ubic]);
     $infoNodo = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
-} else {
-
-    /*
-        MODO 2: BÚSQUEDA POR NÚMERO DE NODO
-        (solo si no se envió piso + ubicación)
-    */
-    if ($nodo <= 0) {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Nodo inválido"
-        ]);
-        exit;
-    }
+/* ============================================================
+   3) MODO LEGACY: BUSCAR SOLO POR NODO (NO RECOMENDADO)
+   ============================================================ */
+if (!$infoNodo && $nodo > 0) {
 
     $sqlNodo = "
         SELECT 
@@ -64,6 +80,9 @@ if ($piso > 0 && $ubic > 0) {
     $infoNodo = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+/* ============================================================
+   VALIDACIÓN
+   ============================================================ */
 if (!$infoNodo) {
     echo json_encode([
         "status" => "error",
@@ -75,7 +94,9 @@ if (!$infoNodo) {
 $piso = $infoNodo["piso"];
 $ubicacion = intval($infoNodo["ubicacion"]);
 
-/* Coordenadas */
+/* ============================================================
+   COORDENADAS
+   ============================================================ */
 $sqlCoord = "
     SELECT cx_rel, cy_rel
     FROM ubicacion
@@ -90,7 +111,9 @@ $stmt->execute([
 ]);
 $coord = $stmt->fetch(PDO::FETCH_ASSOC);
 
-/* Usuario asignado */
+/* ============================================================
+   USUARIO
+   ============================================================ */
 $sqlUser = "
     SELECT nomuser
     FROM activeuser
@@ -105,6 +128,9 @@ $stmt->execute([
 ]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+/* ============================================================
+   RESPUESTA
+   ============================================================ */
 echo json_encode([
     "status" => "success",
     "data" => [
