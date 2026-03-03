@@ -17,9 +17,10 @@ if ($usuario === "") {
 
 /*
     NOTAS IMPORTANTES:
-    - ubimapa2 puede ser texto ("ND", "N/A", "45", "12", etc.)
-    - nodos.ubicacion también es texto
-    - NO se debe convertir nada a entero
+    - ubimapa2 es TEXTO (puede ser "ND", "45", "A1", etc.)
+    - nodos.ubicacion también es TEXTO
+    - NO se convierte nada a entero
+    - El JOIN se hace por TEXTO EXACTO
 */
 
 $sql = "
