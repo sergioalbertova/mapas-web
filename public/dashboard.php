@@ -220,7 +220,7 @@ let zoom = 1, posX = 0, posY = 0, dragging = false, lastX = 0, lastY = 0;
 
 /* 🔧 CALIBRACIÓN DEL MARCADOR */
 let offsetX = 15;   // Ajusta horizontal (+ derecha, - izquierda)
-let offsetY = -200;   // Ajusta vertical (+ abajo, - arriba)
+let offsetY = -225;   // Ajusta vertical (+ abajo, - arriba)
 let scaleX = 1;    // Ajusta proporción horizontal
 let scaleY = 1;    // Ajusta proporción vertical
 
