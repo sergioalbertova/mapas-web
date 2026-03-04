@@ -217,6 +217,10 @@ require "db.php";
 <script>
 let pisoActual = null;
 let zoom = 1, posX = 0, posY = 0, dragging = false, lastX = 0, lastY = 0;
+let offsetX += 10;
+let offsetY += 10;
+let scaleX = 1;
+let scaleY = 1;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -252,21 +256,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function colocarMarcador(cx, cy) {
-        if (!cx || !cy) {
-            marcador.style.display = "none";
-            return;
-        }
-
-        const cont = mapaContainer.getBoundingClientRect();
-        const img = imgMapa.getBoundingClientRect();
-
-        const x = img.left - cont.left + img.width * cx;
-        const y = img.top - cont.top + img.height * cy;
-
-        marcador.style.left = x + "px";
-        marcador.style.top = y + "px";
-        marcador.style.display = "block";
+    if (cx == null || cy == null) {
+        marcador.style.display = "none";
+        return;
     }
+
+    const cont = mapaContainer.getBoundingClientRect();
+    const img = imgMapa.getBoundingClientRect();
+
+    // Aplicar calibración
+    const x = img.left - cont.left + (img.width * cx * scaleX) + offsetX;
+    const y = img.top - cont.top + (img.height * cy * scaleY) + offsetY;
+
+    marcador.style.left = x + "px";
+    marcador.style.top = y + "px";
+    marcador.style.display = "block";
+}
+
 
     async function cargarSoloMapa(idpiso) {
         const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
