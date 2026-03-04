@@ -217,10 +217,12 @@ require "db.php";
 <script>
 let pisoActual = null;
 let zoom = 1, posX = 0, posY = 0, dragging = false, lastX = 0, lastY = 0;
-let offsetX += 10;
-let offsetY += 10;
-let scaleX = 1;
-let scaleY = 1;
+
+/* 🔧 CALIBRACIÓN DEL MARCADOR */
+let offsetX = 0;   // Ajusta horizontal (+ derecha, - izquierda)
+let offsetY = 0;   // Ajusta vertical (+ abajo, - arriba)
+let scaleX = 1;    // Ajusta proporción horizontal
+let scaleY = 1;    // Ajusta proporción vertical
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -255,24 +257,23 @@ document.addEventListener("DOMContentLoaded", () => {
         imgMapa.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
     }
 
+    /* 🎯 FUNCIÓN DE MARCADOR CON CALIBRACIÓN */
     function colocarMarcador(cx, cy) {
-    if (cx == null || cy == null) {
-        marcador.style.display = "none";
-        return;
+        if (cx == null || cy == null) {
+            marcador.style.display = "none";
+            return;
+        }
+
+        const cont = mapaContainer.getBoundingClientRect();
+        const img = imgMapa.getBoundingClientRect();
+
+        const x = img.left - cont.left + (img.width * cx * scaleX) + offsetX;
+        const y = img.top - cont.top + (img.height * cy * scaleY) + offsetY;
+
+        marcador.style.left = x + "px";
+        marcador.style.top = y + "px";
+        marcador.style.display = "block";
     }
-
-    const cont = mapaContainer.getBoundingClientRect();
-    const img = imgMapa.getBoundingClientRect();
-
-    // Aplicar calibración
-    const x = img.left - cont.left + (img.width * cx * scaleX) + offsetX;
-    const y = img.top - cont.top + (img.height * cy * scaleY) + offsetY;
-
-    marcador.style.left = x + "px";
-    marcador.style.top = y + "px";
-    marcador.style.display = "block";
-}
-
 
     async function cargarSoloMapa(idpiso) {
         const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
