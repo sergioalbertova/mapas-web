@@ -119,9 +119,10 @@ require "db.php";
             width: 100%;
             height: auto;
             display: block;
+            transform-origin: center center;
+            cursor: grab;
             position: relative;
             z-index: 1;
-            cursor: default;
         }
 
         #marcador {
@@ -215,51 +216,13 @@ require "db.php";
 
 <script>
 let pisoActual = null;
+let zoom = 1, posX = 0, posY = 0, dragging = false, lastX = 0, lastY = 0;
 
-/* ============================================================
-   AJUSTES POR PISO (EDITA AQUÍ)
-   ============================================================ */
-const ajustesPorPiso = {
-    1: { offsetX: 0, offsetY: 0 },
-    2: { offsetX: 0, offsetY: 0 },
-    3: { offsetX: 0, offsetY: 0 },
-    4: { offsetX: 0, offsetY: 0 },
-    5: { offsetX: 0, offsetY: 0 }
-};
-
-/* ============================================================
-   MARCADOR SIN ZOOM
-   ============================================================ */
-function colocarMarcador(cx, cy) {
-    if (cx == null || cy == null) {
-        marcador.style.display = "none";
-        return;
-    }
-
-    const cont = mapaContainer.getBoundingClientRect();
-    const img  = imgMapa.getBoundingClientRect();
-
-    const ajustes = ajustesPorPiso[pisoActual] || { offsetX: 0, offsetY: 0 };
-
-    const x = img.left - cont.left + (img.width  * cx) + ajustes.offsetX;
-    const y = img.top  - cont.top  + (img.height * cy) + ajustes.offsetY;
-
-    marcador.style.left = x + "px";
-    marcador.style.top  = y + "px";
-    marcador.style.display = "block";
-}
-
-/* ============================================================
-   DESACTIVAR ZOOM Y PAN
-   ============================================================ */
-mapaContainer.onwheel = (e) => e.preventDefault();
-imgMapa.onmousedown = null;
-document.onmousemove = null;
-document.onmouseup = null;
-
-/* ============================================================
-   RESTO DEL CÓDIGO (igual que antes)
-   ============================================================ */
+/* 🔧 CALIBRACIÓN DEL MARCADOR */
+let offsetX = 15;   // Ajusta horizontal (+ derecha, - izquierda)
+let offsetY = -210;   // Ajusta vertical (+ abajo, - arriba)
+let scaleX = 1;    // Ajusta proporción horizontal
+let scaleY = 1;    // Ajusta proporción vertical
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -290,12 +253,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function aplicarTransform() {
+        imgMapa.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
+    }
+
+    /* 🎯 FUNCIÓN DE MARCADOR CON CALIBRACIÓN */
+    function colocarMarcador(cx, cy) {
+        if (cx == null || cy == null) {
+            marcador.style.display = "none";
+            return;
+        }
+
+        const cont = mapaContainer.getBoundingClientRect();
+        const img = imgMapa.getBoundingClientRect();
+
+        const x = img.left - cont.left + (img.width * cx * scaleX) + offsetX;
+        const y = img.top - cont.top + (img.height * cy * scaleY) + offsetY;
+
+        marcador.style.left = x + "px";
+        marcador.style.top = y + "px";
+        marcador.style.display = "block";
+    }
+
+    async function cargarSoloMapa(idpiso) {
+        const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
+        const dataMapa = await resMapa.json();
+        if (dataMapa.status === "success") {
+            imgMapa.src = dataMapa.imagen;
+        }
+    }
+
     async function cargarPisoCompleto(idpiso) {
 
         if (pisoActual == idpiso) return;
 
         pisoActual = idpiso;
 
+        zoom = 1;
+        posX = 0;
+        posY = 0;
+        aplicarTransform();
         marcador.style.display = "none";
 
         if (!idpiso) {
@@ -414,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (pisoFila) {
                 selectPiso.value = pisoFila;
-                await cargarPisoCompleto(pisoFila);
+                await cargarSoloMapa(pisoFila);
             }
 
             if (nodo) {
@@ -462,6 +459,37 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             return;
         }
+    });
+
+    mapaContainer.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        zoom = Math.min(Math.max(0.5, zoom + delta), 3);
+        aplicarTransform();
+    });
+
+    imgMapa.addEventListener("mousedown", (e) => {
+        dragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        imgMapa.style.cursor = "grabbing";
+    });
+
+    document.addEventListener("mouseup", () => {
+        dragging = false;
+        imgMapa.style.cursor = "grab";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+
+        posX += (e.clientX - lastX);
+        posY += (e.clientY - lastY);
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        aplicarTransform();
     });
 
 });
