@@ -186,7 +186,15 @@ require "db.php";
     </div>
 
     <div class="tabla-box">
-        <h3>Listado</h3>
+    <h3 style="display:flex; align-items:center; gap:15px;">
+        Listado
+        <span style="font-size:14px; color:#2c3e50;">
+            🟢 Nodo con usuario &nbsp;&nbsp;
+            🟡 Nodo sin usuario &nbsp;&nbsp;
+            🔴 Ubicación libre
+        </span>
+    </h3>
+
 
         <div class="tabla-scroll">
             <table id="tablaUbicaciones">
