@@ -228,7 +228,7 @@ let pisoActual = null;
    AJUSTES POR PISO (EDITA AQUÍ)
    ============================================================ */
 const ajustesPorPiso = {
-    1: { offsetX: 15, offsetY: -210 },
+    1: { offsetX: 15, offsetY: -200 },
     2: { offsetX: -10, offsetY: -215 },
     3: { offsetX: 0, offsetY: 0 },
     4: { offsetX: 0, offsetY: 0 },
