@@ -298,6 +298,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    async function cargarSoloMapa(idpiso) {
+        const resMapa = await fetch("cargarPiso.php?idpiso=" + idpiso);
+        const dataMapa = await resMapa.json();
+        if (dataMapa.status === "success") {
+            imgMapa.src = dataMapa.imagen;
+        }
+    }
+
+
     async function cargarPisoCompleto(idpiso) {
 
         if (pisoActual == idpiso) return;
@@ -422,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (pisoFila) {
                 selectPiso.value = pisoFila;
-                
+                await cargarSoloMapa(pisoFila);
             }
 
             if (nodo) {
