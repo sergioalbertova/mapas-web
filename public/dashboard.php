@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (pisoFila) {
                 selectPiso.value = pisoFila;
-                await cargarPisoCompleto(pisoFila);
+                
             }
 
             if (nodo) {
