@@ -48,16 +48,23 @@ $colores = [
 $hoy = date('Y-m-d');
 $tecnicoHoy = $mapa[$hoy] ?? "Sin guardia";
 
-// Formato moderno del mes
-$fmt = new IntlDateFormatter(
-    'es_MX',
-    IntlDateFormatter::NONE,
-    IntlDateFormatter::NONE,
-    null,
-    null,
-    'LLLL yyyy'
-);
-$nombreMes = ucfirst($fmt->format($primerDia));
+// Meses en español (sin IntlDateFormatter)
+$meses = [
+    1 => "ENERO",
+    2 => "FEBRERO",
+    3 => "MARZO",
+    4 => "ABRIL",
+    5 => "MAYO",
+    6 => "JUNIO",
+    7 => "JULIO",
+    8 => "AGOSTO",
+    9 => "SEPTIEMBRE",
+    10 => "OCTUBRE",
+    11 => "NOVIEMBRE",
+    12 => "DICIEMBRE"
+];
+
+$nombreMes = $meses[$mes] . " " . $anio;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -155,7 +162,7 @@ h1 {
 
 <div class="contenedor">
 
-<h1><?= strtoupper($nombreMes) ?></h1>
+<h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>">◀</a>
