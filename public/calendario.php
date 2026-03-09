@@ -227,6 +227,29 @@ body.dark .boton {
 body.dark .boton:hover {
     background: #666;
 }
+
+/* Colores especiales en modo oscuro */
+body.dark .festivo {
+    background: #8d6e63 !important;
+}
+
+body.dark .sabado {
+    background: #6d2c41 !important;
+}
+
+body.dark .domingo {
+    background: #8e3b46 !important;
+}
+
+body.dark .hoy {
+    border: 3px solid #64b5f6 !important;
+}
+
+/* Técnicos en modo oscuro */
+body.dark .tecnico[style*="#1976D2"] { background: #64b5f6 !important; }
+body.dark .tecnico[style*="#388E3C"] { background: #81c784 !important; }
+body.dark .tecnico[style*="#F57C00"] { background: #ffb74d !important; }
+body.dark .tecnico[style*="#7B1FA2"] { background: #ba68c8 !important; }
 </style>
 
 </head>
@@ -246,7 +269,8 @@ body.dark .boton:hover {
     </div>
     <?php endif; ?>
 
-    <button class="boton" onclick="window.print()">🖨️ Imprimir</button>
+    <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
+
     <button class="boton" onclick="toggleDarkMode()">🌙 Tema</button>
 
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
@@ -299,6 +323,7 @@ while ($dia <= $diasMes) {
 </div>
 
 <script>
+// Tema oscuro persistente
 function toggleDarkMode() {
     document.body.classList.toggle("dark");
     localStorage.setItem("tema", document.body.classList.contains("dark") ? "dark" : "light");
@@ -307,6 +332,16 @@ function toggleDarkMode() {
 if (localStorage.getItem("tema") === "dark") {
     document.body.classList.add("dark");
 }
+
+// Auto-actualizar si cambia el día real
+setInterval(() => {
+    const hoy = new Date().toISOString().slice(0, 10);
+    const fechaMostrada = "<?= date('Y-m-d') ?>";
+
+    if (hoy !== fechaMostrada) {
+        location.reload();
+    }
+}, 60000);
 </script>
 
 </body>
