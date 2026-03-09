@@ -1,12 +1,30 @@
 FROM php:8.2-apache
 
-RUN apt-get update && apt-get install -y libpq-dev \
+# Instalar dependencias del sistema necesarias para Dompdf
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    fonts-dejavu-core \
     && docker-php-ext-install pdo pdo_pgsql
 
+# Habilitar mod_rewrite
 RUN a2enmod rewrite
 
+# Instalar Composer dentro del contenedor
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copiar proyecto
 COPY . /var/www/html/
 
+# Instalar dependencias PHP (incluye dompdf/dompdf)
+RUN composer install --no-dev --optimize-autoloader
+
+# Configurar Apache para usar /public como DocumentRoot
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
 RUN printf "<VirtualHost *:80>\n\
@@ -17,14 +35,10 @@ RUN printf "<VirtualHost *:80>\n\
         Require all granted\n\
     </Directory>\n\
 \n\
-    <Directory /var/www/html/api>\n\
-        AllowOverride All\n\
-        Require all granted\n\
-    </Directory>\n\
-\n\
 </VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
 
 CMD ["apache2-foreground"]
+
 
