@@ -48,6 +48,9 @@ $colores = [
 $hoy = date('Y-m-d');
 $tecnicoHoy = $mapa[$hoy] ?? "Sin guardia";
 
+// Mostrar info de hoy solo si estamos en el mes actual
+$mostrarHoy = ($mes == date('n') && $anio == date('Y'));
+
 // Meses en español
 $meses = [
     1 => "ENERO", 2 => "FEBRERO", 3 => "MARZO", 4 => "ABRIL",
@@ -122,7 +125,7 @@ h1 {
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* Todas las columnas del mismo ancho */
+    table-layout: fixed;
 }
 
 .tabla-calendario th {
@@ -133,25 +136,37 @@ h1 {
 
 .tabla-calendario td {
     height: 90px;
-    vertical-align: top;
     padding: 5px;
     border: 1px solid #ddd;
     font-size: 14px;
     background: white;
 
-    /* Alinear siempre número arriba y técnico debajo */
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: flex-start;
+
+    overflow: hidden;
 }
 
+/* Número del día */
 .dia-numero {
-    display: block;
     font-weight: bold;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-/* Día actual SIN fondo */
+/* Icono del día actual */
+.icono-hoy {
+    width: 10px;
+    height: 10px;
+    background: #1976D2;
+    border-radius: 50%;
+}
+
+/* Día actual */
 .hoy {
     border: 3px solid #000;
 }
@@ -172,12 +187,12 @@ h1 {
 
 /* Etiqueta del técnico */
 .tecnico {
-    display: inline-block;
     margin-top: 4px;
     padding: 3px;
     border-radius: 4px;
     color: white;
     font-size: 13px;
+    display: inline-block;
 }
 </style>
 
@@ -191,9 +206,11 @@ h1 {
 <div class="navegacion no-print">
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
+    <?php if ($mostrarHoy): ?>
     <div class="info-hoy">
         <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= $tecnicoHoy ?></strong>
     </div>
+    <?php endif; ?>
 
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 </div>
@@ -220,7 +237,10 @@ while ($dia <= $diasMes) {
     if ($dow == 7) $clase = "domingo";
 
     echo "<td class='$clase'>";
-    echo "<div class='dia-numero'>$dia</div>";
+
+    echo "<div class='dia-numero'>";
+    if ($fecha == $hoy) echo "<span class='icono-hoy'></span>";
+    echo "$dia</div>";
 
     if ($tecnico) {
         $color = $colores[$tecnico] ?? "#333";
