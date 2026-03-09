@@ -48,6 +48,16 @@ $colores = [
 $hoy = date('Y-m-d');
 $tecnicoHoy = $mapa[$hoy] ?? "Sin guardia";
 
+// Formato moderno del mes
+$fmt = new IntlDateFormatter(
+    'es_MX',
+    IntlDateFormatter::NONE,
+    IntlDateFormatter::NONE,
+    null,
+    null,
+    'LLLL yyyy'
+);
+$nombreMes = ucfirst($fmt->format($primerDia));
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -145,7 +155,7 @@ h1 {
 
 <div class="contenedor">
 
-<h1><?= strtoupper(strftime('%B %Y', $primerDia)) ?></h1>
+<h1><?= strtoupper($nombreMes) ?></h1>
 
 <div class="navegacion">
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>">◀</a>
