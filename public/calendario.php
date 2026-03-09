@@ -72,6 +72,7 @@ body {
     background: #f4f6f9;
     margin: 0;
     padding: 20px;
+    transition: background 0.3s, color 0.3s;
 }
 
 .contenedor {
@@ -81,6 +82,7 @@ body {
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: background 0.3s, color 0.3s;
 }
 
 h1 {
@@ -92,6 +94,8 @@ h1 {
 .navegacion {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 20px;
 }
 
@@ -144,7 +148,7 @@ h1 {
     overflow: hidden;
 }
 
-/* Contenedor interno que controla el orden */
+/* Contenedor interno */
 .celda {
     display: block;
     width: 100%;
@@ -186,7 +190,7 @@ h1 {
     background: #EF9A9A !important;
 }
 
-/* Etiqueta del técnico */
+/* Técnico */
 .tecnico {
     margin-top: 4px;
     padding: 3px;
@@ -194,6 +198,34 @@ h1 {
     color: white;
     font-size: 13px;
     display: inline-block;
+}
+
+/* MODO OSCURO */
+body.dark {
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
+
+body.dark .contenedor {
+    background: #2c2c2c;
+    color: #e0e0e0;
+}
+
+body.dark .tabla-calendario th {
+    background: #333;
+}
+
+body.dark .tabla-calendario td {
+    background: #3a3a3a;
+    border-color: #555;
+}
+
+body.dark .boton {
+    background: #444;
+}
+
+body.dark .boton:hover {
+    background: #666;
 }
 </style>
 
@@ -205,6 +237,7 @@ h1 {
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion no-print">
+
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
     <?php if ($mostrarHoy): ?>
@@ -212,6 +245,9 @@ h1 {
         <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= $tecnicoHoy ?></strong>
     </div>
     <?php endif; ?>
+
+    <button class="boton" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="boton" onclick="toggleDarkMode()">🌙 Tema</button>
 
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 </div>
@@ -238,7 +274,6 @@ while ($dia <= $diasMes) {
     if ($dow == 7) $clase = "domingo";
 
     echo "<td class='$clase'>";
-
     echo "<div class='celda'>";
 
     echo "<div class='dia-numero'>";
@@ -250,7 +285,7 @@ while ($dia <= $diasMes) {
         echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
     }
 
-    echo "</div>"; // cierre celda interna
+    echo "</div>";
     echo "</td>";
 
     if ($dow == 7) echo "</tr><tr>";
@@ -262,6 +297,17 @@ while ($dia <= $diasMes) {
 </table>
 
 </div>
+
+<script>
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("tema", document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("tema") === "dark") {
+    document.body.classList.add("dark");
+}
+</script>
 
 </body>
 </html>
