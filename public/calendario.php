@@ -8,7 +8,7 @@ $anio = isset($_GET['anio']) ? intval($_GET['anio']) : date('Y');
 // Primer día del mes
 $primerDia = mktime(0, 0, 0, $mes, 1, $anio);
 $diasMes = date('t', $primerDia);
-$diaSemana = date('N', $primerDia); // 1 = lunes
+$diaSemana = date('N', $primerDia);
 
 // Mes anterior y siguiente
 $mesAnterior = $mes - 1;
@@ -21,7 +21,7 @@ if ($mesSiguiente > 12) { $mesSiguiente = 1; $anioSiguiente++; }
 
 // Obtener guardias del mes
 $stmt = $pdo->prepare("
-    SELECT id, fecha, tecnico
+    SELECT fecha, tecnico
     FROM guardias
     WHERE EXTRACT(MONTH FROM fecha) = :mes
       AND EXTRACT(YEAR FROM fecha) = :anio
@@ -36,7 +36,7 @@ foreach ($guardias as $g) {
     $mapa[$g['fecha']] = $g['tecnico'];
 }
 
-// Colores profesionales
+// Colores por técnico
 $colores = [
     "JUAN CARLOS" => "#1976D2",
     "SERGIO"      => "#388E3C",
@@ -46,22 +46,12 @@ $colores = [
 
 // Día actual
 $hoy = date('Y-m-d');
-$tecnicoHoy = $mapa[$hoy] ?? "Sin guardia";
 
-// Meses en español (sin IntlDateFormatter)
+// Meses en español
 $meses = [
-    1 => "ENERO",
-    2 => "FEBRERO",
-    3 => "MARZO",
-    4 => "ABRIL",
-    5 => "MAYO",
-    6 => "JUNIO",
-    7 => "JULIO",
-    8 => "AGOSTO",
-    9 => "SEPTIEMBRE",
-    10 => "OCTUBRE",
-    11 => "NOVIEMBRE",
-    12 => "DICIEMBRE"
+    1 => "ENERO", 2 => "FEBRERO", 3 => "MARZO", 4 => "ABRIL",
+    5 => "MAYO", 6 => "JUNIO", 7 => "JULIO", 8 => "AGOSTO",
+    9 => "SEPTIEMBRE", 10 => "OCTUBRE", 11 => "NOVIEMBRE", 12 => "DICIEMBRE"
 ];
 
 $nombreMes = $meses[$mes] . " " . $anio;
@@ -92,6 +82,7 @@ body {
 h1 {
     text-align: center;
     margin-bottom: 5px;
+    font-size: 28px;
 }
 
 .navegacion {
@@ -100,16 +91,25 @@ h1 {
     margin-bottom: 20px;
 }
 
-.navegacion a {
+.boton {
+    background: #1976D2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
     text-decoration: none;
-    font-size: 22px;
-    color: #333;
-    padding: 5px 10px;
+}
+
+.boton:hover {
+    background: #0D47A1;
 }
 
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed; /* Hace que todas las columnas tengan el mismo ancho */
 }
 
 .tabla-calendario th {
@@ -124,6 +124,7 @@ h1 {
     padding: 5px;
     border: 1px solid #ddd;
     font-size: 14px;
+    background: white;
 }
 
 .dia-numero {
@@ -132,7 +133,6 @@ h1 {
 
 .hoy {
     border: 3px solid #000;
-    background: #FFF59D !important;
 }
 
 .festivo {
@@ -165,9 +165,9 @@ h1 {
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
-    <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>">◀</a>
-    <div><strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= $tecnicoHoy ?></strong></div>
-    <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>">▶</a>
+    <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
+    <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">Exportar PDF</a>
+    <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 </div>
 
 <table class="tabla-calendario">
@@ -177,10 +177,7 @@ h1 {
 
 <tr>
 <?php
-// Celdas vacías antes del primer día
-for ($i = 1; $i < $diaSemana; $i++) {
-    echo "<td></td>";
-}
+for ($i = 1; $i < $diaSemana; $i++) echo "<td></td>";
 
 $dia = 1;
 while ($dia <= $diasMes) {
@@ -189,21 +186,16 @@ while ($dia <= $diasMes) {
     $tecnico = $mapa[$fecha] ?? null;
 
     $clase = "";
-    $color = "";
-
     if ($fecha == $hoy) $clase = "hoy";
     if ($tecnico === "FESTIVO") $clase = "festivo";
     if ($dow == 6) $clase = "sabado";
     if ($dow == 7) $clase = "domingo";
 
-    if (isset($colores[$tecnico])) {
-        $color = $colores[$tecnico];
-    }
-
     echo "<td class='$clase'>";
     echo "<div class='dia-numero'>$dia</div>";
 
     if ($tecnico) {
+        $color = $colores[$tecnico] ?? "#333";
         echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
     }
 

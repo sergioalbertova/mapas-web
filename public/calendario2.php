@@ -166,17 +166,25 @@ h1 {
     display: inline-block;
 }
 
-/* Estilos para impresión */
+/* IMPRESIÓN CON COLORES */
 @media print {
+
     .navegacion, .boton-imprimir {
         display: none !important;
     }
+
     body {
         background: white;
     }
+
     .contenedor {
         box-shadow: none;
         border: none;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
 </style>
