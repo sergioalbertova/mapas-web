@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Instalar dependencias del sistema necesarias para Dompdf
+# Dependencias necesarias para Dompdf
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libfreetype6-dev \
@@ -18,13 +18,13 @@ RUN a2enmod rewrite
 # Instalar Composer dentro del contenedor
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copiar proyecto
+# Copiar proyecto completo
 COPY . /var/www/html/
 
-# Instalar dependencias PHP (incluye dompdf/dompdf)
-RUN composer install --no-dev --optimize-autoloader
+# Instalar dependencias PHP (incluye dompdf)
+RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html
 
-# Configurar Apache para usar /public como DocumentRoot
+# Configurar Apache
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
 RUN printf "<VirtualHost *:80>\n\
@@ -40,5 +40,3 @@ RUN printf "<VirtualHost *:80>\n\
 EXPOSE 80
 
 CMD ["apache2-foreground"]
-
-
