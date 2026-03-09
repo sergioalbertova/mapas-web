@@ -83,6 +83,7 @@ body {
 h1 {
     text-align: center;
     margin-bottom: 5px;
+    font-size: 28px;
 }
 
 .navegacion {
@@ -96,6 +97,20 @@ h1 {
     font-size: 22px;
     color: #333;
     padding: 5px 10px;
+}
+
+.boton-imprimir {
+    background: #1976D2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.boton-imprimir:hover {
+    background: #0D47A1;
 }
 
 .tabla-calendario {
@@ -115,7 +130,7 @@ h1 {
     padding: 5px;
     border: 1px solid #ddd;
     font-size: 14px;
-    background: white; /* Fondo blanco por defecto */
+    background: white;
 }
 
 .dia-numero {
@@ -127,7 +142,7 @@ h1 {
     border: 3px solid #000;
 }
 
-/* Festivo con fondo */
+/* Festivo */
 .festivo {
     background: #FFE082 !important;
 }
@@ -150,6 +165,20 @@ h1 {
     font-size: 13px;
     display: inline-block;
 }
+
+/* Estilos para impresión */
+@media print {
+    .navegacion, .boton-imprimir {
+        display: none !important;
+    }
+    body {
+        background: white;
+    }
+    .contenedor {
+        box-shadow: none;
+        border: none;
+    }
+}
 </style>
 
 </head>
@@ -161,7 +190,7 @@ h1 {
 
 <div class="navegacion">
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>">◀</a>
-    <div><strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= $tecnicoHoy ?></strong></div>
+    <button class="boton-imprimir" onclick="window.print()">Imprimir</button>
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>">▶</a>
 </div>
 
@@ -185,7 +214,7 @@ while ($dia <= $diasMes) {
 
     $clase = "";
 
-    if ($fecha == $hoy) $clase = "hoy"; // sin fondo
+    if ($fecha == $hoy) $clase = "hoy";
     if ($tecnico === "FESTIVO") $clase = "festivo";
     if ($dow == 6) $clase = "sabado";
     if ($dow == 7) $clase = "domingo";
