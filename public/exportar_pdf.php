@@ -1,6 +1,7 @@
 <?php
-require __DIR__ . "/../vendor/autoload.php";
-require __DIR__ . "/../db.php";
+require __DIR__ . "/db.php";   // ← CORREGIDO: todo está en /public
+
+require __DIR__ . "/vendor/autoload.php"; // Ajusta si tu vendor está en otro lugar
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
