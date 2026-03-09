@@ -46,6 +46,7 @@ $colores = [
 
 // Día actual
 $hoy = date('Y-m-d');
+$tecnicoHoy = $mapa[$hoy] ?? "Sin guardia";
 
 // Meses en español
 $meses = [
@@ -106,10 +107,22 @@ h1 {
     background: #0D47A1;
 }
 
+.info-hoy {
+    font-size: 14px;
+    padding-top: 8px;
+}
+
+/* Ocultar en impresión */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* Hace que todas las columnas tengan el mismo ancho */
+    table-layout: fixed; /* Todas las columnas del mismo ancho */
 }
 
 .tabla-calendario th {
@@ -125,20 +138,30 @@ h1 {
     border: 1px solid #ddd;
     font-size: 14px;
     background: white;
+
+    /* Alinear siempre número arriba y técnico debajo */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .dia-numero {
+    display: block;
     font-weight: bold;
+    margin-bottom: 4px;
 }
 
+/* Día actual SIN fondo */
 .hoy {
     border: 3px solid #000;
 }
 
+/* Festivo */
 .festivo {
     background: #FFE082 !important;
 }
 
+/* Fines de semana */
 .sabado {
     background: #FFCDD2 !important;
 }
@@ -147,13 +170,14 @@ h1 {
     background: #EF9A9A !important;
 }
 
+/* Etiqueta del técnico */
 .tecnico {
-    margin-top: 5px;
+    display: inline-block;
+    margin-top: 4px;
     padding: 3px;
     border-radius: 4px;
     color: white;
     font-size: 13px;
-    display: inline-block;
 }
 </style>
 
@@ -164,9 +188,13 @@ h1 {
 
 <h1><?= $nombreMes ?></h1>
 
-<div class="navegacion">
+<div class="navegacion no-print">
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
-    <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">Exportar PDF</a>
+
+    <div class="info-hoy">
+        <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= $tecnicoHoy ?></strong>
+    </div>
+
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 </div>
 
