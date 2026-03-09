@@ -122,6 +122,7 @@ h1 {
     }
 }
 
+/* TABLA */
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
@@ -140,13 +141,13 @@ h1 {
     border: 1px solid #ddd;
     font-size: 14px;
     background: white;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-
     overflow: hidden;
+}
+
+/* Contenedor interno que controla el orden */
+.celda {
+    display: block;
+    width: 100%;
 }
 
 /* Número del día */
@@ -238,6 +239,8 @@ while ($dia <= $diasMes) {
 
     echo "<td class='$clase'>";
 
+    echo "<div class='celda'>";
+
     echo "<div class='dia-numero'>";
     if ($fecha == $hoy) echo "<span class='icono-hoy'></span>";
     echo "$dia</div>";
@@ -247,6 +250,7 @@ while ($dia <= $diasMes) {
         echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
     }
 
+    echo "</div>"; // cierre celda interna
     echo "</td>";
 
     if ($dow == 7) echo "</tr><tr>";
