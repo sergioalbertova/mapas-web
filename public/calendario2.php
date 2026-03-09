@@ -36,24 +36,23 @@ foreach ($guardias as $g) {
     $mapa[$g['fecha']] = $g['tecnico'];
 }
 
+// Colores profesionales por técnico
+$colores = [
+    "JUAN CARLOS" => "#1976D2",
+    "SERGIO"      => "#388E3C",
+    "ANTONIETA"   => "#F57C00",
+    "ERIK"        => "#7B1FA2",
+];
+
 // Día actual
 $hoy = date('Y-m-d');
 $tecnicoHoy = $mapa[$hoy] ?? "Sin guardia";
 
 // Meses en español
 $meses = [
-    1 => "ENERO",
-    2 => "FEBRERO",
-    3 => "MARZO",
-    4 => "ABRIL",
-    5 => "MAYO",
-    6 => "JUNIO",
-    7 => "JULIO",
-    8 => "AGOSTO",
-    9 => "SEPTIEMBRE",
-    10 => "OCTUBRE",
-    11 => "NOVIEMBRE",
-    12 => "DICIEMBRE"
+    1 => "ENERO", 2 => "FEBRERO", 3 => "MARZO", 4 => "ABRIL",
+    5 => "MAYO", 6 => "JUNIO", 7 => "JULIO", 8 => "AGOSTO",
+    9 => "SEPTIEMBRE", 10 => "OCTUBRE", 11 => "NOVIEMBRE", 12 => "DICIEMBRE"
 ];
 
 $nombreMes = $meses[$mes] . " " . $anio;
@@ -123,15 +122,17 @@ h1 {
     font-weight: bold;
 }
 
+/* Día actual SIN fondo */
 .hoy {
     border: 3px solid #000;
-    background: #FFF59D !important;
 }
 
+/* Festivo con fondo */
 .festivo {
     background: #FFE082 !important;
 }
 
+/* Fines de semana */
 .sabado {
     background: #FFCDD2 !important;
 }
@@ -140,11 +141,11 @@ h1 {
     background: #EF9A9A !important;
 }
 
+/* Etiqueta del técnico */
 .tecnico {
     margin-top: 5px;
     padding: 3px;
     border-radius: 4px;
-    background: #333;
     color: white;
     font-size: 13px;
     display: inline-block;
@@ -184,7 +185,7 @@ while ($dia <= $diasMes) {
 
     $clase = "";
 
-    if ($fecha == $hoy) $clase = "hoy";
+    if ($fecha == $hoy) $clase = "hoy"; // sin fondo
     if ($tecnico === "FESTIVO") $clase = "festivo";
     if ($dow == 6) $clase = "sabado";
     if ($dow == 7) $clase = "domingo";
@@ -193,7 +194,8 @@ while ($dia <= $diasMes) {
     echo "<div class='dia-numero'>$dia</div>";
 
     if ($tecnico) {
-        echo "<div class='tecnico'>" . htmlspecialchars($tecnico) . "</div>";
+        $color = $colores[$tecnico] ?? "#333";
+        echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
     }
 
     echo "</td>";
