@@ -12,63 +12,101 @@ if (!isset($_SESSION['user_id'])) {
 <title>Panel principal</title>
 
 <style>
+/* ============================
+   PALETA COX - TEMA CLARO
+   ============================ */
 :root {
-    --bg: #f3f6fb;
-    --card-bg: #ffffff;
-    --text: #1f2933;
-    --subtext: #6b7280;
-    --primary: #1e88e5;
-    --primary-dark: #1565c0;
+    --bg: #F4F7FA;
+    --sidebar-bg: #FFFFFF;
+    --card-bg: #FFFFFF;
+    --text: #1F2933;
+    --subtext: #6B7280;
+    --primary: #0054A6;
+    --primary-hover: #003F7D;
+    --accent-cyan: #00AEEF;
+    --accent-red: #EF3E42;
     --shadow: rgba(0,0,0,0.08);
 }
 
-/* Modo oscuro */
+/* ============================
+   TEMA OSCURO
+   ============================ */
 body.dark {
-    --bg: #1e1e1e;
-    --card-bg: #2a2a2a;
-    --text: #e5e5e5;
-    --subtext: #bdbdbd;
-    --shadow: rgba(0,0,0,0.4);
+    --bg: #1A1D21;
+    --sidebar-bg: #24272C;
+    --card-bg: #2C2F34;
+    --text: #E5E7EB;
+    --subtext: #9CA3AF;
+    --primary: #00AEEF;
+    --primary-hover: #0088C0;
+    --shadow: rgba(0,0,0,0.45);
 }
 
+/* ============================
+   ESTILOS GENERALES
+   ============================ */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
     background: var(--bg);
     color: var(--text);
     transition: 0.3s;
+    display: flex;
 }
 
-.header {
+/* ============================
+   SIDEBAR
+   ============================ */
+.sidebar {
+    width: 240px;
+    background: var(--sidebar-bg);
+    height: 100vh;
+    box-shadow: 4px 0 20px var(--shadow);
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+}
+
+.sidebar h2 {
+    margin: 0 0 25px;
+    font-size: 22px;
+    color: var(--primary);
+}
+
+.nav-item {
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 15px;
+}
+
+.nav-item:hover {
     background: var(--primary);
     color: white;
-    padding: 18px 30px;
-    font-size: 22px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
-.header button {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
+.nav-item a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
-.header button:hover {
-    background: rgba(255,255,255,0.35);
+/* ============================
+   CONTENIDO PRINCIPAL
+   ============================ */
+.main {
+    margin-left: 260px;
+    padding: 40px;
+    width: calc(100% - 260px);
 }
 
-.container {
-    max-width: 1100px;
-    margin: 40px auto;
+.cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 25px;
-    padding: 0 20px;
 }
 
 .card {
@@ -76,9 +114,8 @@ body {
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0 8px 25px var(--shadow);
-    text-align: center;
-    cursor: pointer;
     transition: 0.25s;
+    cursor: pointer;
 }
 
 .card:hover {
@@ -96,59 +133,68 @@ body {
     font-size: 14px;
 }
 
-.card a {
-    text-decoration: none;
-    color: inherit;
-}
-
-.logout {
-    background: #e53935;
-    padding: 10px 15px;
+/* ============================
+   BOTÓN TEMA
+   ============================ */
+.theme-btn {
+    margin-top: auto;
+    padding: 10px;
+    background: var(--primary);
     color: white;
-    border-radius: 6px;
-    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-.logout:hover {
-    background: #c62828;
+.theme-btn:hover {
+    background: var(--primary-hover);
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <div>Bienvenido, <?= $_SESSION['usuario'] ?></div>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>COX Panel</h2>
 
-    <div>
-        <button onclick="toggleTheme()">🌙 Tema</button>
-        <a class="logout" href="logout.php">Cerrar sesión</a>
-    </div>
+    <div class="nav-item"><a href="index.php">🏠 Inicio</a></div>
+    <div class="nav-item"><a href="calendario.php">📅 Calendario</a></div>
+    <div class="nav-item"><a href="dashboard.php">🗺️ Mapeo de nodos</a></div>
+    <div class="nav-item"><a href="cambiar_password.php">🔐 Cambiar contraseña</a></div>
+    <div class="nav-item"><a href="logout.php">🚪 Cerrar sesión</a></div>
+
+    <button class="theme-btn" onclick="toggleTheme()">🌙 Tema</button>
 </div>
 
-<div class="container">
+<!-- CONTENIDO PRINCIPAL -->
+<div class="main">
+    <h1>Bienvenido, <?= $_SESSION['usuario'] ?></h1>
 
-    <a href="calendario.php">
-        <div class="card">
-            <h3>📅 Calendario</h3>
-            <p>Ver guardias y programación</p>
-        </div>
-    </a>
+    <div class="cards">
 
-    <a href="dashboard.php">
-        <div class="card">
-            <h3>🗺️ Mapeo de nodos</h3>
-            <p>Entrar al sistema de nodos</p>
-        </div>
-    </a>
+        <a href="calendario.php" style="text-decoration:none;color:inherit;">
+            <div class="card">
+                <h3>📅 Calendario</h3>
+                <p>Ver guardias y programación</p>
+            </div>
+        </a>
 
-    <a href="cambiar_password.php">
-        <div class="card">
-            <h3>🔐 Cambiar contraseña</h3>
-            <p>Actualizar tu acceso</p>
-        </div>
-    </a>
+        <a href="dashboard.php" style="text-decoration:none;color:inherit;">
+            <div class="card">
+                <h3>🗺️ Mapeo de nodos</h3>
+                <p>Entrar al sistema de nodos</p>
+            </div>
+        </a>
 
+        <a href="cambiar_password.php" style="text-decoration:none;color:inherit;">
+            <div class="card">
+                <h3>🔐 Cambiar contraseña</h3>
+                <p>Actualizar tu acceso</p>
+            </div>
+        </a>
+
+    </div>
 </div>
 
 <script>
