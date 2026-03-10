@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: index.html");
+    header("Location: index.php");
     exit;
 }
 ?>
@@ -18,7 +18,7 @@ if (isset($_SESSION['user_id'])) {
     <div class="login-illustration">
         <div class="illu-card">
             <h2>Bienvenido</h2>
-            <p>Accede a tu panel para gestionar tus nodos y calendarios.</p>
+            <p>Accede a tu panel para gestionar tus sistemas.</p>
             <div class="illu-placeholder">
                 <!-- Aquí podrías poner una imagen <img> si quieres -->
                 <span>Ilustración</span>
