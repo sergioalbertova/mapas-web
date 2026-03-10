@@ -1,41 +1,61 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 session_start();
-require "db.php";
-
-header("Content-Type: application/json");
-
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    echo json_encode(["status" => "error", "message" => "Método no permitido"]);
+if (isset($_SESSION['user_id'])) {
+    header("Location: index.html");
     exit;
 }
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
 
-$usuario = trim($_POST["usuario"] ?? "");
-$clave = trim($_POST["clave"] ?? "");
+<div class="login-wrapper">
+    <div class="login-illustration">
+        <div class="illu-card">
+            <h2>Bienvenido</h2>
+            <p>Accede a tu panel para gestionar tus nodos y calendarios.</p>
+            <div class="illu-placeholder">
+                <!-- Aquí podrías poner una imagen <img> si quieres -->
+                <span>Ilustración</span>
+            </div>
+        </div>
+    </div>
 
-if ($usuario === "" || $clave === "") {
-    echo json_encode(["status" => "error", "message" => "Todos los campos son obligatorios"]);
-    exit;
-}
+    <div class="login-panel">
+        <div class="login-box">
+            <h3>Hola!</h3>
+            <p class="subtitle">Inicia sesión para comenzar</p>
 
-$stmt = $pdo->prepare("SELECT id, nombre, clave FROM usuarios WHERE usuario = :usuario LIMIT 1");
-$stmt->execute(["usuario" => $usuario]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>Usuario</label>
+                    <div class="input-with-icon">
+                        <span class="icon">👤</span>
+                        <input type="text" name="usuario" required autocomplete="username">
+                    </div>
+                </div>
 
-if (!$user) {
-    echo json_encode(["status" => "error", "message" => "Usuario no encontrado"]);
-    exit;
-}
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <div class="input-with-icon">
+                        <span class="icon">🔒</span>
+                        <input type="password" name="clave" required autocomplete="current-password">
+                    </div>
+                </div>
 
-if ($clave !== $user["clave"]) {
-    echo json_encode(["status" => "error", "message" => "Contraseña incorrecta"]);
-    exit;
-}
+                <button type="submit" class="btn">Entrar</button>
+            </form>
 
-$_SESSION["user_id"] = $user["id"];
-$_SESSION["user_name"] = $user["nombre"];
+            <p id="msg"></p>
+        </div>
+    </div>
+</div>
 
-echo json_encode(["status" => "success"]);
-exit;
+<script src="login.js"></script>
+</body>
+</html>
