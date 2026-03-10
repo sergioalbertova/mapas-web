@@ -9,7 +9,8 @@ $nueva     = $_POST['nueva'];
 $confirmar = $_POST['confirmar'];
 
 if ($nueva !== $confirmar) {
-    die("Las contraseñas nuevas no coinciden");
+    echo "<script>alert('Las contraseñas nuevas no coinciden'); window.history.back();</script>";
+    exit;
 }
 
 $stmt = $pdo->prepare("SELECT clave FROM usuarios WHERE id = :id");
@@ -17,7 +18,8 @@ $stmt->execute(['id' => $id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!password_verify($actual, $user['clave'])) {
-    die("La contraseña actual es incorrecta");
+    echo "<script>alert('La contraseña actual es incorrecta'); window.history.back();</script>";
+    exit;
 }
 
 $nuevaHash = password_hash($nueva, PASSWORD_DEFAULT);
@@ -25,4 +27,7 @@ $nuevaHash = password_hash($nueva, PASSWORD_DEFAULT);
 $stmt = $pdo->prepare("UPDATE usuarios SET clave = :c WHERE id = :id");
 $stmt->execute(['c' => $nuevaHash, 'id' => $id]);
 
-echo "Contraseña actualizada correctamente";
+echo "<script>
+alert('Contraseña actualizada correctamente. Inicia sesión nuevamente.');
+window.location.href = 'login.php';
+</script>";
