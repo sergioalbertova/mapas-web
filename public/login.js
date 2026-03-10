@@ -4,7 +4,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const formData = new FormData(e.target);
 
     try {
-        const res = await fetch("login.php", {
+        const res = await fetch("auth.php", {
             method: "POST",
             body: formData
         });
@@ -17,7 +17,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             msg.style.color = "green";
 
             setTimeout(() => {
-                window.location.href = "dashboard.php";
+                window.location.href = "index.html";  // ← AQUÍ VA TU NUEVO SISTEMA
             }, 800);
         } else {
             msg.textContent = data.message;

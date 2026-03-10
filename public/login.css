@@ -1,7 +1,8 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0078ff, #00c6ff);
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #1e88e5, #42a5f5);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -17,12 +18,13 @@ body {
     background: white;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
 h2 {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+    color: #333;
 }
 
 .input-group {
@@ -31,7 +33,7 @@ h2 {
 
 label {
     font-size: 14px;
-    color: #333;
+    color: #555;
 }
 
 input {
@@ -40,25 +42,32 @@ input {
     margin-top: 5px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+input:focus {
+    border-color: #1e88e5;
+    outline: none;
 }
 
 .btn {
     width: 100%;
     padding: 12px;
-    background: #0078ff;
-    color: white;
+    background: #1e88e5;
     border: none;
+    color: white;
+    font-size: 16px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    margin-top: 10px;
 }
 
 .btn:hover {
-    background: #005fcc;
+    background: #1565c0;
 }
 
 #msg {
-    margin-top: 15px;
     text-align: center;
-    font-weight: bold;
+    margin-top: 15px;
+    font-size: 14px;
 }
