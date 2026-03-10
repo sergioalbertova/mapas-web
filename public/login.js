@@ -27,7 +27,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             msg.style.color = "green";
 
             setTimeout(() => {
-                window.location.href = "index.html";
+                window.location.href = "index.php";
             }, 800);
         } else {
             msg.textContent = data.message || "Credenciales inválidas";
