@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 
 <style>
 /* ============================
-   PALETA CORPORATIVA - TEMA CLARO
+   PALETA CORPORATIVA
    ============================ */
 :root {
     --bg: #F4F7FA;
@@ -113,11 +113,6 @@ body {
     width: 20px;
     height: 20px;
     fill: currentColor;
-    transition: transform 0.25s ease;
-}
-
-.sidebar.collapsed .nav-item svg {
-    transform: scale(1.15);
 }
 
 .sidebar.collapsed .nav-text {
@@ -125,7 +120,7 @@ body {
 }
 
 /* ============================
-   TOOLTIP (CORREGIDO)
+   TOOLTIP
    ============================ */
 .tooltip {
     position: absolute;
@@ -150,58 +145,18 @@ body {
 }
 
 /* ============================
-   BOTÓN DE COLAPSAR
-   ============================ */
-.toggle-btn {
-    margin-bottom: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* ============================
-   TOPBAR
-   ============================ */
-.topbar {
-    position: fixed;
-    left: 240px;
-    top: 0;
-    height: 60px;
-    width: calc(100% - 240px);
-    background: var(--sidebar-bg);
-    box-shadow: 0 2px 10px var(--shadow);
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    gap: 20px;
-    z-index: 1500;
-    transition: left 0.25s ease, width 0.25s ease;
-}
-
-.sidebar.collapsed ~ .topbar {
-    left: 70px;
-    width: calc(100% - 70px);
-}
-
-.logo {
-    height: 36px;
-}
-
-/* ============================
    CONTENIDO PRINCIPAL
    ============================ */
 .main {
     margin-left: 240px;
-    margin-top: 80px;
-    padding: 30px;
+    padding: 40px;
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease, width 0.25s ease;
-    position: relative;
-    z-index: 1;
+    display: flex;
+    justify-content: center;
 }
 
-.sidebar.collapsed ~ .topbar + .main {
+.sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
@@ -217,7 +172,6 @@ body {
     margin-bottom: 25px;
     font-weight: 600;
     color: var(--primary);
-    animation: fadeIn 0.4s ease;
 }
 
 /* ============================
@@ -255,12 +209,6 @@ body {
     color: var(--subtext);
     font-size: 12px;
 }
-
-/* Animación */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
 </style>
 </head>
 
@@ -276,7 +224,6 @@ body {
 
     <h2>Panel</h2>
 
-    <!-- INICIO -->
     <div class="nav-item">
         <a href="index.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M10 2L2 8h2v8h4V12h4v4h4V8h2z"/></svg>
@@ -285,7 +232,6 @@ body {
         <span class="tooltip">Inicio</span>
     </div>
 
-    <!-- CALENDARIO -->
     <div class="nav-item">
         <a href="calendario.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
@@ -294,7 +240,6 @@ body {
         <span class="tooltip">Calendario</span>
     </div>
 
-    <!-- MAPEO -->
     <div class="nav-item">
         <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
@@ -303,7 +248,6 @@ body {
         <span class="tooltip">Mapeo de nodos</span>
     </div>
 
-    <!-- CAMBIAR CONTRASEÑA -->
     <div class="nav-item">
         <a href="cambiar_password.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
@@ -312,7 +256,6 @@ body {
         <span class="tooltip">Cambiar contraseña</span>
     </div>
 
-    <!-- CERRAR SESIÓN -->
     <div class="nav-item">
         <a href="logout.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
@@ -321,7 +264,6 @@ body {
         <span class="tooltip">Cerrar sesión</span>
     </div>
 
-    <!-- TEMA OSCURO -->
     <div class="nav-item" onclick="toggleTheme()">
         <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
         <span class="nav-text">Tema oscuro</span>
@@ -330,14 +272,8 @@ body {
 
 </div>
 
-<!-- TOPBAR -->
-<div class="topbar">
-    <img src="logo.png" class="logo">
-    <span class="top-title">Panel Administrativo</span>
-</div>
-
 <!-- CONTENIDO PRINCIPAL -->
-<div class="main" id="main">
+<div class="main">
     <div class="main-content">
 
         <h1>Bienvenido, <?= $_SESSION['usuario'] ?></h1>
