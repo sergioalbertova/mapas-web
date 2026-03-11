@@ -207,39 +207,10 @@ body {
 }
 
 /* ============================
-   TOPBAR
-   ============================ */
-.topbar {
-    position: fixed;
-    left: 240px;
-    top: 0;
-    height: 60px;
-    width: calc(100% - 240px);
-    background: var(--sidebar-bg);
-    box-shadow: 0 2px 10px var(--shadow);
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    gap: 20px;
-    z-index: 1500;
-    transition: left 0.25s ease, width 0.25s ease;
-}
-
-.sidebar.collapsed ~ .topbar {
-    left: 70px;
-    width: calc(100% - 70px);
-}
-
-.logo {
-    height: 36px;
-}
-
-/* ============================
-   CONTENIDO PRINCIPAL
+   CONTENIDO PRINCIPAL (SIN TOPBAR)
    ============================ */
 .main {
     margin-left: 240px;
-    margin-top: 80px;
     padding: 30px;
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease, width 0.25s ease;
@@ -247,11 +218,14 @@ body {
     justify-content: center;
 }
 
-.sidebar.collapsed ~ .topbar + .main {
+.sidebar.collapsed + .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
 
+/* ============================
+   CALENDARIO
+   ============================ */
 .contenedor {
     max-width: 900px;
     width: 100%;
@@ -261,9 +235,6 @@ body {
     box-shadow: 0 4px 20px var(--shadow);
 }
 
-/* ============================
-   CALENDARIO
-   ============================ */
 h1 {
     text-align: center;
     margin-bottom: 5px;
@@ -402,12 +373,6 @@ h1 {
         <span class="tooltip">Tema oscuro</span>
     </div>
 
-</div>
-
-<!-- TOPBAR -->
-<div class="topbar">
-    <img src="logo.png" class="logo">
-    <span class="top-title">Panel Administrativo</span>
 </div>
 
 <!-- CONTENIDO PRINCIPAL -->
