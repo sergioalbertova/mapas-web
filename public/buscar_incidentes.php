@@ -2,19 +2,29 @@
 require "db.php";
 
 $q = $_GET['q'] ?? '';
+$like = "%$q%";
 
 $sql = $pdo->prepare("
-    SELECT *
+    SELECT categoria,
+           subcategoria,
+           Desbreve,
+           Tema,
+           Descdetallada,
+           Id,
+           Solucion,
+           prioridad,
+           impacto,
+           urgencia
     FROM IncidentesTI
-    WHERE 
-        categoria LIKE ? OR
-        subcategoria LIKE ? OR
-        Desbreve LIKE ? OR
-        Tema LIKE ? OR
-        Descdetallada LIKE ? OR
-        Solucion LIKE ?
+    WHERE
+        categoria      LIKE :q
+        OR subcategoria   LIKE :q
+        OR Desbreve       LIKE :q
+        OR Tema           LIKE :q
+        OR Descdetallada  LIKE :q
+        OR Solucion       LIKE :q
+    ORDER BY Id
 ");
-$like = "%$q%";
-$sql->execute([$like,$like,$like,$like,$like,$like]);
+$sql->execute([':q' => $like]);
 
 echo json_encode($sql->fetchAll(PDO::FETCH_ASSOC));
