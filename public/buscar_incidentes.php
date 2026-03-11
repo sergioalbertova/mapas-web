@@ -7,11 +7,11 @@ $like = "%$q%";
 $sql = $pdo->prepare("
     SELECT categoria,
            subcategoria,
-           Desbreve,
+           desbreve,
            Tema,
-           Descdetallada,
-           Id,
-           Solucion,
+           descdetallada,
+           id,
+           solucion,
            prioridad,
            impacto,
            urgencia
@@ -19,10 +19,10 @@ $sql = $pdo->prepare("
     WHERE
         categoria      LIKE :q
         OR subcategoria   LIKE :q
-        OR Desbreve       LIKE :q
-        OR Tema           LIKE :q
-        OR Descdetallada  LIKE :q
-        OR Solucion       LIKE :q
+        OR desbreve       LIKE :q
+        OR tema           LIKE :q
+        OR descdetallada  LIKE :q
+        OR solucion       LIKE :q
     ORDER BY Id
 ");
 $sql->execute([':q' => $like]);
