@@ -193,8 +193,8 @@ body {
     padding: 30px;
     width: calc(100% - 240px);
     transition: 0.3s;
-    display: flex;
-    justify-content: center;
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar.collapsed ~ .topbar + .main {
@@ -202,6 +202,26 @@ body {
     width: calc(100% - 70px);
 }
 
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ============================
+   TÍTULO BIENVENIDO
+   ============================ */
+.welcome-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: var(--primary);
+    text-align: center;
+}
+
+/* ============================
+   TARJETAS
+   ============================ */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -311,30 +331,34 @@ body {
 
 <!-- CONTENIDO PRINCIPAL -->
 <div class="main" id="main">
-    <h1>Bienvenido, <?= $_SESSION['usuario'] ?></h1>
+    <div class="main-content">
 
-    <div class="cards">
+        <h1 class="welcome-title">Bienvenido, <?= $_SESSION['usuario'] ?></h1>
 
-        <a href="calendario.php" style="text-decoration:none;color:inherit;">
-            <div class="card">
-                <h3>📅 Calendario</h3>
-                <p>Ver guardias y programación</p>
-            </div>
-        </a>
+        <div class="cards">
 
-        <a href="dashboard.php" style="text-decoration:none;color:inherit;">
-            <div class="card">
-                <h3>🗺️ Mapeo de nodos</h3>
-                <p>Entrar al sistema de nodos</p>
-            </div>
-        </a>
+            <a href="calendario.php" style="text-decoration:none;color:inherit;">
+                <div class="card">
+                    <h3>📅 Calendario</h3>
+                    <p>Ver guardias y programación</p>
+                </div>
+            </a>
 
-        <a href="cambiar_password.php" style="text-decoration:none;color:inherit;">
-            <div class="card">
-                <h3>🔐 Cambiar contraseña</h3>
-                <p>Actualizar tu acceso</p>
-            </div>
-        </a>
+            <a href="dashboard.php" style="text-decoration:none;color:inherit;">
+                <div class="card">
+                    <h3>🗺️ Mapeo de nodos</h3>
+                    <p>Entrar al sistema de nodos</p>
+                </div>
+            </a>
+
+            <a href="cambiar_password.php" style="text-decoration:none;color:inherit;">
+                <div class="card">
+                    <h3>🔐 Cambiar contraseña</h3>
+                    <p>Actualizar tu acceso</p>
+                </div>
+            </a>
+
+        </div>
 
     </div>
 </div>

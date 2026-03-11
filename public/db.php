@@ -1,4 +1,9 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
+
+$pdo = new PDO("mysql:host=localhost;dbname=tu_db;charset=utf8", "user", "pass");
+?>
+<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
