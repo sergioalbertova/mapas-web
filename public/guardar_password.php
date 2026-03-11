@@ -27,6 +27,8 @@ $nuevaHash = password_hash($nueva, PASSWORD_DEFAULT);
 $stmt = $pdo->prepare("UPDATE usuarios SET clave = :c WHERE id = :id");
 $stmt->execute(['c' => $nuevaHash, 'id' => $id]);
 
+session_destroy();
+
 echo "<script>
 alert('Contraseña actualizada correctamente. Inicia sesión nuevamente.');
 window.location.href = 'login.php';

@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 
 <style>
 /* ============================
-   PALETA COX - TEMA CLARO
+   PALETA CORPORATIVA - TEMA CLARO
    ============================ */
 :root {
     --bg: #F4F7FA;
@@ -132,18 +132,47 @@ body {
 }
 
 /* ============================
-   CONTENIDO PRINCIPAL
+   TOPBAR
    ============================ */
-.main {
-    margin-left: 260px;
-    padding: 40px;
-    width: calc(100% - 260px);
+.topbar {
+    position: fixed;
+    left: 240px;
+    top: 0;
+    height: 60px;
+    width: calc(100% - 240px);
+    background: var(--sidebar-bg);
+    box-shadow: 0 2px 10px var(--shadow);
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    gap: 20px;
+    z-index: 10;
     transition: 0.3s;
 }
 
-.sidebar.collapsed + .main {
-    margin-left: 100px;
-    width: calc(100% - 100px);
+.sidebar.collapsed ~ .topbar {
+    left: 80px;
+    width: calc(100% - 80px);
+}
+
+.logo {
+    height: 36px;
+}
+
+/* ============================
+   CONTENIDO PRINCIPAL
+   ============================ */
+.main {
+    margin-left: 240px;
+    margin-top: 80px;
+    padding: 40px;
+    width: calc(100% - 240px);
+    transition: 0.3s;
+}
+
+.sidebar.collapsed ~ .topbar + .main {
+    margin-left: 80px;
+    width: calc(100% - 80px);
 }
 
 .cards {
@@ -154,16 +183,18 @@ body {
 
 .card {
     background: var(--card-bg);
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px var(--shadow);
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px var(--shadow);
     transition: 0.25s;
     cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(6px);
 }
 
 .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 30px var(--shadow);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 14px 32px var(--shadow);
 }
 
 .card h3 {
@@ -183,13 +214,12 @@ body {
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
 
-    <!-- Botón de colapsar -->
     <div class="toggle-btn" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         <span class="nav-text">Menú</span>
     </div>
 
-    <h2>COX Panel</h2>
+    <h2>Panel</h2>
 
     <div class="nav-item">
         <a href="index.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
@@ -226,12 +256,17 @@ body {
         </a>
     </div>
 
-    <!-- Tema oscuro dentro del menú -->
     <div class="nav-item" onclick="toggleTheme()">
         <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
         <span class="nav-text">Tema oscuro</span>
     </div>
 
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <img src="logo.png" class="logo">
+    <span class="top-title">Panel Administrativo</span>
 </div>
 
 <!-- CONTENIDO PRINCIPAL -->
@@ -276,7 +311,6 @@ if (localStorage.getItem("theme") === "dark") {
 
 function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
-    const main = document.getElementById("main");
     sidebar.classList.toggle("collapsed");
 }
 </script>
