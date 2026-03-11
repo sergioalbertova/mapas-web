@@ -64,20 +64,21 @@ body {
     background: var(--sidebar-bg);
     height: 100vh;
     box-shadow: 4px 0 20px var(--shadow);
-    padding: 25px 20px;
+    padding: 20px 15px;
     display: flex;
     flex-direction: column;
     position: fixed;
     transition: 0.3s;
+    overflow: hidden;
 }
 
 .sidebar.collapsed {
-    width: 80px;
+    width: 70px;
 }
 
 .sidebar h2 {
-    margin: 0 0 25px;
-    font-size: 22px;
+    margin: 0 0 20px;
+    font-size: 20px;
     color: var(--primary);
     transition: 0.3s;
 }
@@ -90,9 +91,9 @@ body {
    ITEMS DEL MENÚ
    ============================ */
 .nav-item {
-    padding: 12px 14px;
+    padding: 10px 12px;
     border-radius: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     cursor: pointer;
     transition: 0.2s;
     font-size: 15px;
@@ -106,18 +107,17 @@ body {
 }
 
 .nav-item svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     fill: currentColor;
 }
 
-.nav-text {
-    transition: 0.3s;
+.sidebar.collapsed .nav-item {
+    justify-content: center;
 }
 
 .sidebar.collapsed .nav-text {
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 
 /* ============================
@@ -151,8 +151,8 @@ body {
 }
 
 .sidebar.collapsed ~ .topbar {
-    left: 80px;
-    width: calc(100% - 80px);
+    left: 70px;
+    width: calc(100% - 70px);
 }
 
 .logo {
@@ -165,31 +165,30 @@ body {
 .main {
     margin-left: 240px;
     margin-top: 80px;
-    padding: 40px;
+    padding: 30px;
     width: calc(100% - 240px);
     transition: 0.3s;
 }
 
 .sidebar.collapsed ~ .topbar + .main {
-    margin-left: 80px;
-    width: calc(100% - 80px);
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
 }
 
 .card {
     background: var(--card-bg);
-    padding: 28px;
-    border-radius: 18px;
+    padding: 20px;
+    border-radius: 14px;
     box-shadow: 0 6px 18px var(--shadow);
     transition: 0.25s;
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(6px);
 }
 
 .card:hover {
@@ -198,13 +197,13 @@ body {
 }
 
 .card h3 {
-    margin-bottom: 10px;
-    font-size: 22px;
+    margin-bottom: 8px;
+    font-size: 20px;
 }
 
 .card p {
     color: var(--subtext);
-    font-size: 14px;
+    font-size: 13px;
 }
 </style>
 </head>
