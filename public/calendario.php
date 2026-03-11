@@ -1,11 +1,11 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
 date_default_timezone_set('America/Mexico_City');
-
-$pdo = new PDO("mysql:host=localhost;dbname=tu_db;charset=utf8", "user", "pass");
-?>
-
-
-<?php
 require "db.php";
 
 // Obtener mes y año desde la URL o usar actuales
@@ -74,28 +74,201 @@ $nombreMes = $meses[$mes] . " " . $anio;
 <title>Calendario de Guardias</title>
 
 <style>
+/* ============================
+   PALETA CORPORATIVA
+   ============================ */
+:root {
+    --bg: #F4F7FA;
+    --sidebar-bg: #FFFFFF;
+    --sidebar-hover: #E8EEF5;
+    --card-bg: #FFFFFF;
+    --text: #1F2933;
+    --subtext: #6B7280;
+    --primary: #0054A6;
+    --primary-hover: #003F7D;
+    --accent-cyan: #00AEEF;
+    --accent-red: #EF3E42;
+    --shadow: rgba(0,0,0,0.08);
+}
+
+/* ============================
+   TEMA OSCURO
+   ============================ */
+body.dark {
+    --bg: #1A1D21;
+    --sidebar-bg: #24272C;
+    --sidebar-hover: #2F3338;
+    --card-bg: #2C2F34;
+    --text: #E5E7EB;
+    --subtext: #9CA3AF;
+    --primary: #00AEEF;
+    --primary-hover: #0088C0;
+    --shadow: rgba(0,0,0,0.45);
+}
+
+/* ============================
+   ESTILOS GENERALES
+   ============================ */
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
     margin: 0;
-    padding: 20px;
-    transition: background 0.3s, color 0.3s;
+    font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s;
+    display: flex;
+}
+
+/* ============================
+   SIDEBAR
+   ============================ */
+.sidebar {
+    width: 240px;
+    background: var(--sidebar-bg);
+    height: 100vh;
+    box-shadow: 4px 0 20px var(--shadow);
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    transition: width 0.25s ease;
+    overflow: visible;
+    z-index: 2000;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+    color: var(--primary);
+    transition: opacity 0.25s ease;
+}
+
+.sidebar.collapsed h2 {
+    opacity: 0;
+}
+
+/* ============================
+   ITEMS DEL MENÚ
+   ============================ */
+.nav-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: visible;
+}
+
+.nav-item:hover {
+    background: var(--sidebar-hover);
+}
+
+.nav-item svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.sidebar.collapsed .nav-text {
+    display: none;
+}
+
+/* ============================
+   TOOLTIP
+   ============================ */
+.tooltip {
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--sidebar-bg);
+    padding: 6px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px var(--shadow);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, left 0.2s ease;
+    z-index: 99999;
+}
+
+.sidebar.collapsed .nav-item:hover .tooltip {
+    opacity: 1;
+    left: 75px;
+}
+
+/* ============================
+   TOPBAR
+   ============================ */
+.topbar {
+    position: fixed;
+    left: 240px;
+    top: 0;
+    height: 60px;
+    width: calc(100% - 240px);
+    background: var(--sidebar-bg);
+    box-shadow: 0 2px 10px var(--shadow);
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    gap: 20px;
+    z-index: 1500;
+    transition: left 0.25s ease, width 0.25s ease;
+}
+
+.sidebar.collapsed ~ .topbar {
+    left: 70px;
+    width: calc(100% - 70px);
+}
+
+.logo {
+    height: 36px;
+}
+
+/* ============================
+   CONTENIDO PRINCIPAL
+   ============================ */
+.main {
+    margin-left: 240px;
+    margin-top: 80px;
+    padding: 30px;
+    width: calc(100% - 240px);
+    transition: margin-left 0.25s ease, width 0.25s ease;
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar.collapsed ~ .topbar + .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 .contenedor {
     max-width: 900px;
-    margin: auto;
-    background: white;
+    width: 100%;
+    background: var(--card-bg);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    transition: background 0.3s, color 0.3s;
+    box-shadow: 0 4px 20px var(--shadow);
 }
 
+/* ============================
+   CALENDARIO
+   ============================ */
 h1 {
     text-align: center;
     margin-bottom: 5px;
     font-size: 28px;
+    color: var(--primary);
 }
 
 .navegacion {
@@ -107,7 +280,7 @@ h1 {
 }
 
 .boton {
-    background: #1976D2;
+    background: var(--primary);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -118,22 +291,9 @@ h1 {
 }
 
 .boton:hover {
-    background: #0D47A1;
+    background: var(--primary-hover);
 }
 
-.info-hoy {
-    font-size: 14px;
-    padding-top: 8px;
-}
-
-/* Ocultar en impresión */
-@media print {
-    .no-print {
-        display: none !important;
-    }
-}
-
-/* TABLA */
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
@@ -141,7 +301,7 @@ h1 {
 }
 
 .tabla-calendario th {
-    background: #1976D2;
+    background: var(--primary);
     color: white;
     padding: 10px;
 }
@@ -151,17 +311,9 @@ h1 {
     padding: 5px;
     border: 1px solid #ddd;
     font-size: 14px;
-    background: white;
-    overflow: hidden;
+    background: var(--card-bg);
 }
 
-/* Contenedor interno */
-.celda {
-    display: block;
-    width: 100%;
-}
-
-/* Número del día */
 .dia-numero {
     font-weight: bold;
     margin-bottom: 4px;
@@ -170,34 +322,17 @@ h1 {
     gap: 6px;
 }
 
-/* Icono del día actual */
 .icono-hoy {
     width: 10px;
     height: 10px;
-    background: #1976D2;
+    background: var(--primary);
     border-radius: 50%;
 }
 
-/* Día actual */
 .hoy {
-    border: 3px solid #000;
+    border: 3px solid var(--primary);
 }
 
-/* Festivo */
-.festivo {
-    background: #FFE082 !important;
-}
-
-/* Fines de semana */
-.sabado {
-    background: #FFCDD2 !important;
-}
-
-.domingo {
-    background: #EF9A9A !important;
-}
-
-/* Técnico */
 .tecnico {
     margin-top: 4px;
     padding: 3px;
@@ -206,67 +341,83 @@ h1 {
     font-size: 13px;
     display: inline-block;
 }
-
-/* MODO OSCURO */
-body.dark {
-    background: #1e1e1e;
-    color: #e0e0e0;
-}
-
-body.dark .contenedor {
-    background: #2c2c2c;
-    color: #e0e0e0;
-}
-
-body.dark .tabla-calendario th {
-    background: #333;
-}
-
-body.dark .tabla-calendario td {
-    background: #3a3a3a;
-    border-color: #555;
-}
-
-body.dark .boton {
-    background: #444;
-}
-
-body.dark .boton:hover {
-    background: #666;
-}
-
-/* Colores especiales en modo oscuro */
-body.dark .festivo {
-    background: #8d6e63 !important;
-}
-
-body.dark .sabado {
-    background: #6d2c41 !important;
-}
-
-body.dark .domingo {
-    background: #8e3b46 !important;
-}
-
-body.dark .hoy {
-    border: 3px solid #64b5f6 !important;
-}
-
-/* Técnicos en modo oscuro */
-body.dark .tecnico[style*="#1976D2"] { background: #64b5f6 !important; }
-body.dark .tecnico[style*="#388E3C"] { background: #81c784 !important; }
-body.dark .tecnico[style*="#F57C00"] { background: #ffb74d !important; }
-body.dark .tecnico[style*="#7B1FA2"] { background: #ba68c8 !important; }
 </style>
 
 </head>
 <body>
 
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+    <div class="toggle-btn" onclick="toggleSidebar()">
+        <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        <span class="nav-text">Menú</span>
+    </div>
+
+    <h2>Panel</h2>
+
+    <div class="nav-item">
+        <a href="index.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M10 2L2 8h2v8h4V12h4v4h4V8h2z"/></svg>
+            <span class="nav-text">Inicio</span>
+        </a>
+        <span class="tooltip">Inicio</span>
+    </div>
+
+    <div class="nav-item">
+        <a href="calendario.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
+            <span class="nav-text">Calendario</span>
+        </a>
+        <span class="tooltip">Calendario</span>
+    </div>
+
+    <div class="nav-item">
+        <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
+            <span class="nav-text">Mapeo de nodos</span>
+        </a>
+        <span class="tooltip">Mapeo de nodos</span>
+    </div>
+
+    <div class="nav-item">
+        <a href="cambiar_password.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
+            <span class="nav-text">Cambiar contraseña</span>
+        </a>
+        <span class="tooltip">Cambiar contraseña</span>
+    </div>
+
+    <div class="nav-item">
+        <a href="logout.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
+            <span class="nav-text">Cerrar sesión</span>
+        </a>
+        <span class="tooltip">Cerrar sesión</span>
+    </div>
+
+    <div class="nav-item" onclick="toggleTheme()">
+        <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
+        <span class="nav-text">Tema oscuro</span>
+        <span class="tooltip">Tema oscuro</span>
+    </div>
+
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <img src="logo.png" class="logo">
+    <span class="top-title">Panel Administrativo</span>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="main">
+
 <div class="contenedor">
 
 <h1><?= $nombreMes ?></h1>
 
-<div class="navegacion no-print">
+<div class="navegacion">
 
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
@@ -278,7 +429,7 @@ body.dark .tecnico[style*="#7B1FA2"] { background: #ba68c8 !important; }
 
     <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
 
-    <button class="boton" onclick="toggleDarkMode()">🌙 Tema</button>
+    <button class="boton" onclick="toggleTheme()">🌙 Tema</button>
 
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 </div>
@@ -328,27 +479,22 @@ while ($dia <= $diasMes) {
 </table>
 
 </div>
+</div>
 
 <script>
-// Tema oscuro persistente
-function toggleDarkMode() {
+function toggleTheme() {
     document.body.classList.toggle("dark");
-    localStorage.setItem("tema", document.body.classList.contains("dark") ? "dark" : "light");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 }
 
-if (localStorage.getItem("tema") === "dark") {
+if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 
-// Auto-actualizar si cambia el día real
-setInterval(() => {
-    const hoy = new Date().toISOString().slice(0, 10);
-    const fechaMostrada = "<?= date('Y-m-d') ?>";
-
-    if (hoy !== fechaMostrada) {
-        location.reload();
-    }
-}, 60000);
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
+}
 </script>
 
 </body>
