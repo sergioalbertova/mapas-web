@@ -245,13 +245,7 @@ button:hover {
         <span class="tooltip">Mapeo de nodos</span>
     </div>
 
-    <div class="nav-item">
-        <a href="cambiar_password.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
-            <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
-            <span class="nav-text">Cambiar contraseña</span>
-        </a>
-        <span class="tooltip">Cambiar contraseña</span>
-    </div>
+    
 
     <div class="nav-item">
         <a href="logout.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">

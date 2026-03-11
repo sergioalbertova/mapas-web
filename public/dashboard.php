@@ -63,6 +63,7 @@ body {
     z-index: 2000;
 }
 .sidebar.collapsed { width: 70px; }
+
 .sidebar h2 {
     margin: 0 0 20px;
     font-size: 20px;
@@ -82,14 +83,15 @@ body {
     align-items: center;
     gap: 12px;
     position: relative;
-    overflow: visible;
 }
 .nav-item:hover { background: var(--sidebar-hover); }
+
 .nav-item svg {
     width: 20px;
     height: 20px;
     fill: currentColor;
 }
+
 .sidebar.collapsed .nav-text { display: none; }
 
 .tooltip {
@@ -102,11 +104,9 @@ body {
     border-radius: 6px;
     box-shadow: 0 2px 8px var(--shadow);
     font-size: 13px;
-    white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease, left 0.2s ease;
-    z-index: 99999;
+    transition: 0.2s;
 }
 .sidebar.collapsed .nav-item:hover .tooltip {
     opacity: 1;
@@ -118,7 +118,7 @@ body {
     margin-left: 240px;
     padding: 25px;
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease, width 0.25s ease;
+    transition: 0.25s ease;
 }
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
@@ -174,7 +174,7 @@ body {
 }
 .panel-datos input {
     width: 100%;
-    margin-bottom: 10px;
+    box-sizing: border-box;
     padding: 8px;
     border-radius: 6px;
     border: 1px solid #ccc;
@@ -192,8 +192,6 @@ body {
 .tabla-scroll {
     max-height: 350px;
     overflow-y: auto;
-    border: 1px solid #ccc;
-    margin-top: 10px;
     border-radius: 6px;
 }
 table {
@@ -209,9 +207,15 @@ td {
     padding: 6px;
     border: 1px solid #ccc;
 }
+
+/* Fila seleccionada */
 .fila-seleccionada {
     background-color: #cce5ff !important;
-    font-weight: bold;
+    color: #000 !important;
+}
+body.dark .fila-seleccionada {
+    background-color: #004b7a !important;
+    color: #ffffff !important;
 }
 
 /* MAPA */
@@ -220,7 +224,6 @@ td {
     width: 100%;
     max-width: 1200px;
     margin: 25px auto;
-    overflow: hidden;
     border: 2px solid #7f8c8d;
     border-radius: 10px;
     box-shadow: 0 3px 10px var(--shadow);
@@ -248,7 +251,7 @@ td {
 <body>
 
 <div class="sidebar" id="sidebar">
-    <div class="toggle-btn" onclick="toggleSidebar()">
+    <div class="nav-item" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         <span class="nav-text">Menú</span>
     </div>
@@ -271,7 +274,14 @@ td {
         <span class="tooltip">Calendario</span>
     </div>
 
-    
+    <div class="nav-item">
+        <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
+            <span class="nav-text">Mapeo de nodos</span>
+        </a>
+        <span class="tooltip">Mapeo de nodos</span>
+    </div>
+
     <div class="nav-item">
         <a href="cambiar_password.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
@@ -340,9 +350,9 @@ td {
         </div>
 
         <div class="tabla-box">
-            <h3 style="display:flex; align-items:center; gap:15px; margin-top:0;">
+            <h3 style="margin-top:0;display:flex;align-items:center;gap:15px;">
                 Listado
-                <span style="font-size:14px; color:var(--subtext);">
+                <span style="font-size:14px;color:var(--subtext);">
                     🟢 Nodo con usuario &nbsp;&nbsp;
                     🟡 Nodo sin usuario &nbsp;&nbsp;
                     🔴 Ubicación libre
