@@ -68,8 +68,9 @@ body {
     display: flex;
     flex-direction: column;
     position: fixed;
-    transition: 0.3s;
-    overflow: hidden;
+    transition: width 0.25s ease;
+    overflow: visible;
+    z-index: 2000;
 }
 
 .sidebar.collapsed {
@@ -80,7 +81,7 @@ body {
     margin: 0 0 20px;
     font-size: 20px;
     color: var(--primary);
-    transition: 0.3s;
+    transition: opacity 0.25s ease;
 }
 
 .sidebar.collapsed h2 {
@@ -95,12 +96,13 @@ body {
     border-radius: 8px;
     margin-bottom: 8px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: background 0.2s ease;
     font-size: 15px;
     display: flex;
     align-items: center;
     gap: 12px;
     position: relative;
+    overflow: visible;
 }
 
 .nav-item:hover {
@@ -111,10 +113,11 @@ body {
     width: 20px;
     height: 20px;
     fill: currentColor;
+    transition: transform 0.25s ease;
 }
 
-.sidebar.collapsed .nav-item {
-    justify-content: center;
+.sidebar.collapsed .nav-item svg {
+    transform: scale(1.15);
 }
 
 .sidebar.collapsed .nav-text {
@@ -122,27 +125,28 @@ body {
 }
 
 /* ============================
-   TOOLTIP
+   TOOLTIP (CORREGIDO)
    ============================ */
 .tooltip {
     position: absolute;
-    left: 75px;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
     background: var(--sidebar-bg);
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 6px;
     box-shadow: 0 2px 8px var(--shadow);
     font-size: 13px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-50%);
-    top: 50%;
-    transition: 0.2s;
-    z-index: 9999;
+    transition: opacity 0.2s ease, left 0.2s ease;
+    z-index: 99999;
 }
 
 .sidebar.collapsed .nav-item:hover .tooltip {
     opacity: 1;
+    left: 75px;
 }
 
 /* ============================
@@ -171,8 +175,8 @@ body {
     align-items: center;
     padding-left: 20px;
     gap: 20px;
-    z-index: 10;
-    transition: 0.3s;
+    z-index: 1500;
+    transition: left 0.25s ease, width 0.25s ease;
 }
 
 .sidebar.collapsed ~ .topbar {
@@ -192,7 +196,7 @@ body {
     margin-top: 80px;
     padding: 30px;
     width: calc(100% - 240px);
-    transition: 0.3s;
+    transition: margin-left 0.25s ease, width 0.25s ease;
     position: relative;
     z-index: 1;
 }
@@ -208,15 +212,12 @@ body {
     align-items: center;
 }
 
-/* ============================
-   TÍTULO BIENVENIDO
-   ============================ */
-.welcome-title {
+.main-content h1 {
     font-size: 26px;
-    font-weight: 600;
     margin-bottom: 25px;
+    font-weight: 600;
     color: var(--primary);
-    text-align: center;
+    animation: fadeIn 0.4s ease;
 }
 
 /* ============================
@@ -235,7 +236,7 @@ body {
     padding: 16px;
     border-radius: 12px;
     box-shadow: 0 4px 12px var(--shadow);
-    transition: 0.25s;
+    transition: 0.25s ease;
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.06);
 }
@@ -253,6 +254,12 @@ body {
 .card p {
     color: var(--subtext);
     font-size: 12px;
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -274,8 +281,8 @@ body {
         <a href="index.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M10 2L2 8h2v8h4V12h4v4h4V8h2z"/></svg>
             <span class="nav-text">Inicio</span>
-            <span class="tooltip">Inicio</span>
         </a>
+        <span class="tooltip">Inicio</span>
     </div>
 
     <!-- CALENDARIO -->
@@ -283,8 +290,8 @@ body {
         <a href="calendario.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
             <span class="nav-text">Calendario</span>
-            <span class="tooltip">Calendario</span>
         </a>
+        <span class="tooltip">Calendario</span>
     </div>
 
     <!-- MAPEO -->
@@ -292,8 +299,8 @@ body {
         <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
             <span class="nav-text">Mapeo de nodos</span>
-            <span class="tooltip">Mapeo de nodos</span>
         </a>
+        <span class="tooltip">Mapeo de nodos</span>
     </div>
 
     <!-- CAMBIAR CONTRASEÑA -->
@@ -301,8 +308,8 @@ body {
         <a href="cambiar_password.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
             <span class="nav-text">Cambiar contraseña</span>
-            <span class="tooltip">Cambiar contraseña</span>
         </a>
+        <span class="tooltip">Cambiar contraseña</span>
     </div>
 
     <!-- CERRAR SESIÓN -->
@@ -310,8 +317,8 @@ body {
         <a href="logout.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
             <span class="nav-text">Cerrar sesión</span>
-            <span class="tooltip">Cerrar sesión</span>
         </a>
+        <span class="tooltip">Cerrar sesión</span>
     </div>
 
     <!-- TEMA OSCURO -->
@@ -333,7 +340,7 @@ body {
 <div class="main" id="main">
     <div class="main-content">
 
-        <h1 class="welcome-title">Bienvenido, <?= $_SESSION['usuario'] ?></h1>
+        <h1>Bienvenido, <?= $_SESSION['usuario'] ?></h1>
 
         <div class="cards">
 
