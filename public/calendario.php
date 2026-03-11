@@ -335,13 +335,7 @@ h1 {
         <span class="tooltip">Inicio</span>
     </div>
 
-    <div class="nav-item">
-        <a href="calendario.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
-            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
-            <span class="nav-text">Calendario</span>
-        </a>
-        <span class="tooltip">Calendario</span>
-    </div>
+    
 
     <div class="nav-item">
         <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
