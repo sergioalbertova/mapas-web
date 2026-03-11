@@ -138,6 +138,7 @@ body {
     transform: translateY(-50%);
     top: 50%;
     transition: 0.2s;
+    z-index: 9999;
 }
 
 .sidebar.collapsed .nav-item:hover .tooltip {
@@ -192,6 +193,8 @@ body {
     padding: 30px;
     width: calc(100% - 240px);
     transition: 0.3s;
+    display: flex;
+    justify-content: center;
 }
 
 .sidebar.collapsed ~ .topbar + .main {
@@ -204,6 +207,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 18px;
     max-width: 900px;
+    width: 100%;
 }
 
 .card {
