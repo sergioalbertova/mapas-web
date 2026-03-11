@@ -274,14 +274,7 @@ body.dark .fila-seleccionada {
         <span class="tooltip">Calendario</span>
     </div>
 
-    <div class="nav-item">
-        <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
-            <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
-            <span class="nav-text">Mapeo de nodos</span>
-        </a>
-        <span class="tooltip">Mapeo de nodos</span>
-    </div>
-
+   
     <div class="nav-item">
         <a href="cambiar_password.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
