@@ -1,5 +1,5 @@
 <?php
-session_start();
+require "session_config.php";
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;

@@ -1,10 +1,14 @@
 <?php
 require "session_config.php";
+require "db.php";
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
+$id = $_SESSION['user_id'];
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -133,11 +137,36 @@ body {
     width: calc(100% - 70px);
 }
 
+/* TARJETAS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
 .card {
     background: var(--card-bg);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 3px 10px var(--shadow);
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.card svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--primary);
+    margin-bottom: 10px;
+}
+.card a {
+    text-decoration: none;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: bold;
 }
 </style>
 </head>
@@ -209,11 +238,33 @@ body {
     </div>
 </div>
 
+
 <!-- MAIN -->
 <div class="main">
-    <div class="card">
-        <h2>Bienvenido, <?php echo $_SESSION['user_id']; ?></h2>
-        <p>Selecciona una opción del menú para comenzar.</p>
+    <h2>Bienvenido, <?php echo htmlspecialchars($nombreUsuario); ?></h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
+            <a href="calendario.php">Calendario</a>
+        </div>
+
+        <div class="card">
+            <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
+            <a href="dashboard.php">Mapeo de nodos</a>
+        </div>
+
+        <div class="card">
+            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
+            <a href="incidentes.php">Incidentes TI</a>
+        </div>
+
+        <div class="card">
+            <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
+            <a href="cambiar_password.php">Cambiar contraseña</a>
+        </div>
+
     </div>
 </div>
 
