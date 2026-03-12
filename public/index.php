@@ -1,5 +1,6 @@
 <?php
-session_start();
+require "session_config.php";
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
@@ -9,12 +10,9 @@ if (!isset($_SESSION['user_id'])) {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Panel principal</title>
+<title>Inicio</title>
 
 <style>
-/* ============================
-   PALETA CORPORATIVA
-   ============================ */
 :root {
     --bg: #F4F7FA;
     --sidebar-bg: #FFFFFF;
@@ -24,14 +22,9 @@ if (!isset($_SESSION['user_id'])) {
     --subtext: #6B7280;
     --primary: #0054A6;
     --primary-hover: #003F7D;
-    --accent-cyan: #00AEEF;
-    --accent-red: #EF3E42;
     --shadow: rgba(0,0,0,0.08);
 }
 
-/* ============================
-   TEMA OSCURO
-   ============================ */
 body.dark {
     --bg: #1A1D21;
     --sidebar-bg: #24272C;
@@ -44,21 +37,16 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
-/* ============================
-   ESTILOS GENERALES
-   ============================ */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
     background: var(--bg);
     color: var(--text);
-    transition: 0.3s;
     display: flex;
+    transition: 0.3s;
 }
 
-/* ============================
-   SIDEBAR
-   ============================ */
+/* SIDEBAR */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -72,10 +60,7 @@ body {
     overflow: visible;
     z-index: 2000;
 }
-
-.sidebar.collapsed {
-    width: 70px;
-}
+.sidebar.collapsed { width: 70px; }
 
 .sidebar h2 {
     margin: 0 0 20px;
@@ -83,14 +68,8 @@ body {
     color: var(--primary);
     transition: opacity 0.25s ease;
 }
+.sidebar.collapsed h2 { opacity: 0; }
 
-.sidebar.collapsed h2 {
-    opacity: 0;
-}
-
-/* ============================
-   ITEMS DEL MENÚ
-   ============================ */
 .nav-item {
     padding: 10px 12px;
     border-radius: 8px;
@@ -102,11 +81,15 @@ body {
     align-items: center;
     gap: 12px;
     position: relative;
-    overflow: visible;
 }
+.nav-item:hover { background: var(--sidebar-hover); }
 
-.nav-item:hover {
-    background: var(--sidebar-hover);
+.nav-item a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: inherit;
+    text-decoration: none;
 }
 
 .nav-item svg {
@@ -115,13 +98,8 @@ body {
     fill: currentColor;
 }
 
-.sidebar.collapsed .nav-text {
-    display: none;
-}
+.sidebar.collapsed .nav-text { display: none; }
 
-/* ============================
-   TOOLTIP
-   ============================ */
 .tooltip {
     position: absolute;
     left: 80px;
@@ -138,76 +116,28 @@ body {
     transition: opacity 0.2s ease, left 0.2s ease;
     z-index: 99999;
 }
-
 .sidebar.collapsed .nav-item:hover .tooltip {
     opacity: 1;
     left: 75px;
 }
 
-/* ============================
-   CONTENIDO PRINCIPAL
-   ============================ */
+/* MAIN */
 .main {
     margin-left: 240px;
-    padding: 40px;
+    padding: 25px;
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease, width 0.25s ease;
-    display: flex;
-    justify-content: center;
 }
-
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
 
-.main-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.main-content h1 {
-    font-size: 26px;
-    margin-bottom: 25px;
-    font-weight: 600;
-    color: var(--primary);
-}
-
-/* ============================
-   TARJETAS
-   ============================ */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 18px;
-    max-width: 900px;
-    width: 100%;
-}
-
 .card {
     background: var(--card-bg);
-    padding: 16px;
+    padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px var(--shadow);
-    transition: 0.25s ease;
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.06);
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px var(--shadow);
-}
-
-.card h3 {
-    margin-bottom: 6px;
-    font-size: 17px;
-}
-
-.card p {
-    color: var(--subtext);
-    font-size: 12px;
+    box-shadow: 0 3px 10px var(--shadow);
 }
 </style>
 </head>
@@ -216,10 +146,10 @@ body {
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-
-    <div class="toggle-btn" onclick="toggleSidebar()">
+    <div class="nav-item" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         <span class="nav-text">Menú</span>
+        <span class="tooltip">Colapsar menú</span>
     </div>
 
     <h2>Panel</h2>
@@ -239,14 +169,6 @@ body {
         </a>
         <span class="tooltip">Calendario</span>
     </div>
-    
-     <div class="nav-item">
-        <a href="incidentes.php">
-            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <span class="nav-text">Incidentes TI</span>
-        </a>
-        <span class="tooltip">Incidentes TI</span>
-    </div>
 
     <div class="nav-item">
         <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
@@ -254,6 +176,14 @@ body {
             <span class="nav-text">Mapeo de nodos</span>
         </a>
         <span class="tooltip">Mapeo de nodos</span>
+    </div>
+
+    <div class="nav-item">
+        <a href="incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
+            <span class="nav-text">Incidentes TI</span>
+        </a>
+        <span class="tooltip">Incidentes TI</span>
     </div>
 
     <div class="nav-item">
@@ -277,56 +207,27 @@ body {
         <span class="nav-text">Tema oscuro</span>
         <span class="tooltip">Tema oscuro</span>
     </div>
-
 </div>
 
-<!-- CONTENIDO PRINCIPAL -->
+<!-- MAIN -->
 <div class="main">
-    <div class="main-content">
-
-        <h1>Bienvenido, <?= $_SESSION['usuario'] ?></h1>
-
-        <div class="cards">
-
-            <a href="calendario.php" style="text-decoration:none;color:inherit;">
-                <div class="card">
-                    <h3>📅 Calendario</h3>
-                    <p>Ver guardias y programación</p>
-                </div>
-            </a>
-
-            <a href="dashboard.php" style="text-decoration:none;color:inherit;">
-                <div class="card">
-                    <h3>🗺️ Mapeo de nodos</h3>
-                    <p>Entrar al sistema de nodos</p>
-                </div>
-            </a>
-
-            <a href="cambiar_password.php" style="text-decoration:none;color:inherit;">
-                <div class="card">
-                    <h3>🔐 Cambiar contraseña</h3>
-                    <p>Actualizar tu acceso</p>
-                </div>
-            </a>
-
-        </div>
-
+    <div class="card">
+        <h2>Bienvenido, <?php echo $_SESSION['user_id']; ?></h2>
+        <p>Selecciona una opción del menú para comenzar.</p>
     </div>
 </div>
 
 <script>
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+}
+
 function toggleTheme() {
     document.body.classList.toggle("dark");
     localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 }
-
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
-}
-
-function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    sidebar.classList.toggle("collapsed");
 }
 </script>
 
