@@ -180,8 +180,10 @@ body {
 /* CONTENIDO PRINCIPAL       */
 /* ========================= */
 .main {
+    max-width: 1100px;
     margin-left: 240px;
-    margin-top: 70px;
+    margin-right: auto;
+    margin-top: 95px;
     padding: 25px;
     transition: margin-left 0.25s ease;
 }
@@ -244,13 +246,12 @@ td {
         <span class="tooltip">Inicio</span>
     </div>
 
-    <!-- Entrada al sistema ITIL -->
     <div class="nav-item">
-        <a href="itil_incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+        <a href="incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <span class="nav-text">Incidentes ITIL</span>
+            <span class="nav-text">Incidentes TI</span>
         </a>
-        <span class="tooltip">Incidentes ITIL</span>
+        <span class="tooltip">Incidentes TI</span>
     </div>
 
     <div class="nav-item">
@@ -262,19 +263,11 @@ td {
     </div>
 
     <div class="nav-item">
-        <a href="calendario.php"  style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+        <a href="calendario.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
             <span class="nav-text">Calendario</span>
         </a>
         <span class="tooltip">Calendario</span>
-    </div>
-
-     <div class="nav-item">
-        <a href="incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
-            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <span class="nav-text">Incidentes TI</span>
-        </a>
-        <span class="tooltip">Incidentes TI</span>
     </div>
 
     <div class="nav-item">
@@ -344,7 +337,7 @@ td {
 <!-- ========================= -->
 <!-- CONTENIDO PRINCIPAL       -->
 <!-- ========================= -->
-<center><div class="main">
+<div class="main">
     <h2>Incidentes registrados</h2>
 
     <div class="table-box">
@@ -367,11 +360,20 @@ td {
             </tr>
         </table>
     </div>
-</div></center>
+</div>
 
 <script>
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
 }
 </script>
 
