@@ -402,7 +402,7 @@ let pisoActual = null;
 
 const ajustesPorPiso = {
     1: { offsetX: 15, offsetY: -200 },
-    2: { offsetX: -10, offsetY: -250 },
+    2: { offsetX: -10, offsetY: -230 },
     3: { offsetX: 0, offsetY: -250 },
     4: { offsetX: 0, offsetY: 0 },
     5: { offsetX: 0, offsetY: 0 }
