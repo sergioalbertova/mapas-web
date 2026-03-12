@@ -89,11 +89,11 @@ body {
 .nav-item:hover { background: var(--sidebar-hover); }
 
 .nav-item a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: inherit;
-    text-decoration: none;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:inherit;
+    text-decoration:none;
 }
 
 .nav-item svg {
@@ -137,30 +137,43 @@ body {
     width: calc(100% - 70px);
 }
 
+/* TITULO CENTRADO */
+.main h2 {
+    text-align: center;
+    margin-top: 10px;
+}
+
 /* TARJETAS */
 .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    display: flex;
+    justify-content: center;
     gap: 25px;
+    flex-wrap: wrap;
     margin-top: 25px;
 }
 
 .card {
+    width: 220px;
+    height: 180px;
     background: var(--card-bg);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 3px 10px var(--shadow);
     text-align: center;
     transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 .card:hover {
     transform: translateY(-5px);
 }
 .card svg {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     fill: var(--primary);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 .card a {
     text-decoration: none;
@@ -237,7 +250,6 @@ body {
         <span class="tooltip">Tema oscuro</span>
     </div>
 </div>
-
 
 <!-- MAIN -->
 <div class="main">

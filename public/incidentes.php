@@ -337,11 +337,11 @@ body.dark .selected-row {
         <label>Descripción:</label>
         <textarea id="det_desc"></textarea>
         <button class="copy-btn" onclick="copyText('det_desc')">Copiar</button>
-
+<br/>
         <label>Descripción detallada:</label>
         <textarea id="det_det"></textarea>
         <button class="copy-btn" onclick="copyText('det_det')">Copiar</button>
-
+<br/>
         <label>Solución:</label>
         <textarea id="det_sol"></textarea>
         <button class="copy-btn" onclick="copyText('det_sol')">Copiar</button>
