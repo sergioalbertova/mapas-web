@@ -186,12 +186,14 @@ body {
 
 <body>
 
-<!-- SIDEBAR -->
+<!-- ========================= -->
+<!-- SIDEBAR COMPLETO          -->
+<!-- ========================= -->
 <div class="sidebar" id="sidebar">
-    <div class="nav-item" onclick="toggleSidebar()">
+
+    <div class="toggle-btn" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         <span class="nav-text">Menú</span>
-        <span class="tooltip">Colapsar menú</span>
     </div>
 
     <h2>Panel</h2>
@@ -204,12 +206,13 @@ body {
         <span class="tooltip">Inicio</span>
     </div>
 
+    <!-- Entrada al sistema ITIL -->
     <div class="nav-item">
-        <a href="calendario.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
-            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
-            <span class="nav-text">Calendario</span>
+        <a href="itil_incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
+            <span class="nav-text">Incidentes ITIL</span>
         </a>
-        <span class="tooltip">Calendario</span>
+        <span class="tooltip">Incidentes ITIL</span>
     </div>
 
     <div class="nav-item">
@@ -221,6 +224,14 @@ body {
     </div>
 
     <div class="nav-item">
+        <a href="calendario.php"  style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
+            <span class="nav-text">Calendario</span>
+        </a>
+        <span class="tooltip">Calendario</span>
+    </div>
+
+     <div class="nav-item">
         <a href="incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
             <span class="nav-text">Incidentes TI</span>
@@ -249,6 +260,7 @@ body {
         <span class="nav-text">Tema oscuro</span>
         <span class="tooltip">Tema oscuro</span>
     </div>
+
 </div>
 
 <!-- MAIN -->
