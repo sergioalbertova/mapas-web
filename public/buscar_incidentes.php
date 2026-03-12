@@ -2,13 +2,13 @@
 require "db.php";
 
 $q = $_GET['q'] ?? '';
-$like = "%$q%";
+$q = trim($q);
 
 $sql = $pdo->prepare("
     SELECT categoria,
            subcategoria,
            desbreve,
-           Tema,
+           tema,
            descdetallada,
            id,
            solucion,
@@ -17,14 +17,16 @@ $sql = $pdo->prepare("
            urgencia
     FROM IncidentesTI
     WHERE
-        categoria      LIKE :q
-        OR subcategoria   LIKE :q
-        OR desbreve       LIKE :q
-        OR tema           LIKE :q
-        OR descdetallada  LIKE :q
-        OR solucion       LIKE :q
+        categoria      ILIKE :q
+        OR subcategoria   ILIKE :q
+        OR desbreve       ILIKE :q
+        OR tema           ILIKE :q
+        OR descdetallada  ILIKE :q
+        OR solucion       ILIKE :q
     ORDER BY Id
 ");
+
+$like = '%' . $q . '%';
 $sql->execute([':q' => $like]);
 
 echo json_encode($sql->fetchAll(PDO::FETCH_ASSOC));
