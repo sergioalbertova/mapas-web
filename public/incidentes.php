@@ -388,9 +388,9 @@ function cargarIncidentes(q = "") {
                 tr.innerHTML = `
                     <td>${row.categoria}</td>
                     <td>${row.subcategoria}</td>
-                    <td>${row.Desbreve}</td>
-                    <td>${row.Descdetallada}</td>
-                    <td>${row.Solucion}</td>
+                    <td>${row.desbreve}</td>
+                    <td>${row.descdetallada}</td>
+                    <td>${row.solucion}</td>
                 `;
 
                 tr.addEventListener("click", () => {
@@ -398,9 +398,9 @@ function cargarIncidentes(q = "") {
                     tr.classList.add("selected-row");
 
                     document.getElementById("details").style.display = "block";
-                    document.getElementById("det_desc").value = row.Desbreve;
-                    document.getElementById("det_det").value = row.Descdetallada;
-                    document.getElementById("det_sol").value = row.Solucion;
+                    document.getElementById("det_desc").value = row.desbreve;
+                    document.getElementById("det_det").value = row.descdetallada;
+                    document.getElementById("det_sol").value = row.solucion;
                     document.getElementById("det_pri").innerText = row.prioridad;
                     document.getElementById("det_imp").innerText = row.impacto;
                     document.getElementById("det_urg").innerText = row.urgencia;
