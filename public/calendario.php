@@ -336,7 +336,7 @@ h1 {
     </div>
 
      <div class="nav-item">
-        <a href="incidentes.php">
+        <a href="incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
             <span class="nav-text">Incidentes TI</span>
         </a>
