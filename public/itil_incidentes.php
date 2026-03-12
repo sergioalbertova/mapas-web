@@ -344,7 +344,7 @@ td {
 <!-- ========================= -->
 <!-- CONTENIDO PRINCIPAL       -->
 <!-- ========================= -->
-<div class="main">
+<center><div class="main">
     <h2>Incidentes registrados</h2>
 
     <div class="table-box">
@@ -367,7 +367,7 @@ td {
             </tr>
         </table>
     </div>
-</div>
+</div></center>
 
 <script>
 function toggleSidebar() {
