@@ -137,9 +137,10 @@ body {
     padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2100;
-    transition: left 0.25s ease;
+    transition: left 0.25s ease; /* ← ESTA LÍNEA ES LA CLAVE */
 }
 .sidebar.collapsed ~ .itil-topbar { left: 70px; }
+
 
 .itil-topbar a {
     text-decoration: none;
