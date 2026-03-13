@@ -5,7 +5,12 @@ require __DIR__ . "/db.php";
 /* ============================================================
    OBTENER TÉCNICO LOGUEADO (usuario + nombre)
    ============================================================ */
-$id_tecnico = $_SESSION['user_id'];
+
+if (!isset($_SESSION['user_id'])) {
+    die("Error: No hay sesión iniciada.");
+}
+
+$id_tecnico = intval($_SESSION['user_id']);
 
 $stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
 $stmt->execute([$id_tecnico]);
@@ -18,7 +23,7 @@ if ($tecnico) {
 }
 
 /* ============================================================
-   OBTENER CATÁLOGO DE APOYOS (YA CON PRIORIDAD/IMPACTO/URGENCIA)
+   OBTENER CATÁLOGO DE APOYOS
    ============================================================ */
 $stmt2 = $pdo->query("
     SELECT idapoyo, tituloincidente, descripcion, prioridad, impacto, urgencia
