@@ -180,16 +180,17 @@ body {
 /* CONTENIDO PRINCIPAL       */
 /* ========================= */
 .main {
+    width: 100%;
     max-width: 1100px;
-    margin-left: 240px;
-    margin-right: auto;
-    margin-top: 95px;
+    margin: 95px auto 0 auto; /* centrado real */
     padding: 25px;
     transition: margin-left 0.25s ease;
 }
+
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
 }
+
 
 /* ========================= */
 /* TABLA DE INCIDENTES       */
@@ -374,6 +375,7 @@ function toggleTheme() {
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
+
 
 
 if (localStorage.getItem("theme") === "dark") {

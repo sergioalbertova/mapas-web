@@ -5,10 +5,6 @@ require __DIR__ . "/db.php";
 // Obtener técnicos (tabla usuarios)
 $stmt = $pdo->query("SELECT id, nombre FROM usuarios WHERE activo = TRUE ORDER BY nombre");
 $tecnicos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Obtener usuarios finales (activeuser)
-$stmt2 = $pdo->query("SELECT idu, nomuser FROM activeuser ORDER BY nomuser");
-$usuarios_finales = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -181,10 +177,9 @@ body {
 /* CONTENIDO PRINCIPAL       */
 /* ========================= */
 .main {
+    width: 100%;
     max-width: 1100px;
-    margin-left: 240px;
-    margin-right: auto;
-    margin-top: 95px;
+    margin: 95px auto 0 auto;
     padding: 25px;
     transition: margin-left 0.25s ease;
 }
@@ -235,6 +230,31 @@ button {
 }
 button:hover {
     background: var(--primary-hover);
+}
+
+/* ========================= */
+/* LISTA DE AUTOCOMPLETADO   */
+/* ========================= */
+.lista {
+    background: var(--card-bg);
+    border: 1px solid var(--sidebar-hover);
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 5px;
+    display: none;
+    position: absolute;
+    width: 100%;
+    z-index: 3000;
+}
+
+.lista div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.lista div:hover {
+    background: var(--sidebar-hover);
 }
 </style>
 </head>
@@ -359,12 +379,9 @@ button:hover {
         <form action="itil_incidente_guardar.php" method="POST">
 
             <label>Usuario afectado</label>
-            <select name="usuario_final_id" id="usuario_final_id" required>
-                <option value="">Seleccione...</option>
-                <?php foreach ($usuarios_finales as $u): ?>
-                    <option value="<?= $u['idu'] ?>"><?= htmlspecialchars($u['nomuser']) ?></option>
-                <?php endforeach; ?>
-            </select>
+            <input type="text" id="buscar_usuario" placeholder="Escriba el nombre..." autocomplete="off">
+            <div id="lista_usuarios" class="lista"></div>
+            <input type="hidden" name="usuario_final_id" id="usuario_final_id" required>
 
             <label>Ubicación</label>
             <input type="text" id="ubicacion" name="ubicacion_detalle" readonly>
@@ -426,19 +443,47 @@ if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 
-// Autocompletar datos del usuario final
-document.getElementById("usuario_final_id").addEventListener("change", function() {
-    let id = this.value;
+/* ========================= */
+/* AUTOCOMPLETADO DE USUARIOS */
+/* ========================= */
+const buscar = document.getElementById("buscar_usuario");
+const lista = document.getElementById("lista_usuarios");
+const hiddenId = document.getElementById("usuario_final_id");
 
-    if (id === "") return;
+buscar.addEventListener("input", function() {
+    let q = this.value.trim();
 
-    fetch("itil_usuario_info.php?id=" + id)
+    if (q.length < 2) {
+        lista.style.display = "none";
+        return;
+    }
+
+    fetch("itil_usuario_buscar.php?q=" + q)
         .then(res => res.json())
         .then(data => {
-            document.getElementById("ubicacion").value =
-                data.ubicacion + " / Piso " + data.piso + " / Escritorio " + data.ubimapa2;
+            lista.innerHTML = "";
+            lista.style.display = "block";
 
-            document.getElementById("inventario").value = data.hor1;
+            data.forEach(u => {
+                let item = document.createElement("div");
+                item.textContent = u.nomuser;
+                item.onclick = () => {
+                    buscar.value = u.nomuser;
+                    hiddenId.value = u.idu;
+                    lista.style.display = "none";
+
+                    // Autocompletar datos del usuario
+                    fetch("itil_usuario_info.php?id=" + u.idu)
+                        .then(r => r.json())
+                        .then(info => {
+                            document.getElementById("ubicacion").value =
+                                info.ubicacion + " / Piso " + info.piso + " / Escritorio " + info.ubimapa2;
+
+                            document.getElementById("inventario").value = info.hor1;
+                        });
+                };
+                lista.appendChild(item);
+            });
         });
 });
 </script>
