@@ -157,7 +157,7 @@ body {
 }
 
 /* ========================= */
-/* TOPBAR ITIL               */
+/* TOPBAR ITIL (CENTRADO)    */
 /* ========================= */
 .itil-topbar {
     position: fixed;
@@ -168,14 +168,14 @@ body {
     background: var(--sidebar-bg);
     display: flex;
     align-items: center;
-    gap: 25px;
-    padding: 0 25px;
+    justify-content: center; /* ← CENTRA LOS ELEMENTOS */
+    gap: 35px;               /* ← SEPARACIÓN MÁS AMPLIA */
+    padding: 0 15px;         /* ← EVITA QUE SE CORTEN A LA DERECHA */
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2100;
     transition: left 0.25s ease, width 0.25s ease;
 }
 
-/* CORRECCIÓN CLAVE */
 #sidebar.collapsed + .itil-topbar {
     left: 70px;
     width: calc(100% - 70px);
