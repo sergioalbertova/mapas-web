@@ -2,20 +2,24 @@
 require __DIR__ . "/session_config.php";
 require __DIR__ . "/db.php";
 
-// ===============================
-// OBTENER TÉCNICO LOGUEADO
-// ===============================
+/* ============================================================
+   OBTENER TÉCNICO LOGUEADO (usuario + nombre)
+   ============================================================ */
 $id_tecnico = $_SESSION['user_id'];
 
-$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
 $stmt->execute([$id_tecnico]);
 $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$nombreTecnico = $tecnico ? $tecnico['nombre'] : "Usuario no encontrado";
+if ($tecnico) {
+    $nombreTecnico = $tecnico['usuario'] . " - " . $tecnico['nombre'];
+} else {
+    $nombreTecnico = "Usuario no encontrado (ID $id_tecnico)";
+}
 
-// ===============================
-// OBTENER CATÁLOGO DE APOYOS
-// ===============================
+/* ============================================================
+   OBTENER CATÁLOGO DE APOYOS
+   ============================================================ */
 $stmt2 = $pdo->query("SELECT idapoyo, tituloincidente, descripcion FROM catapoyo ORDER BY tituloincidente");
 $catalogo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -71,6 +75,14 @@ body {
 }
 .sidebar.collapsed { width: 70px; }
 
+.sidebar a {
+    color: var(--text);
+    text-decoration: none;
+}
+.sidebar a:hover {
+    color: var(--primary);
+}
+
 .nav-item {
     padding: 10px 12px;
     border-radius: 8px;
@@ -81,12 +93,6 @@ body {
     cursor: pointer;
 }
 .nav-item:hover { background: var(--sidebar-hover); }
-
-.nav-item svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
 
 /* ====== TOPBAR ITIL ====== */
 .itil-topbar {
@@ -110,16 +116,13 @@ body {
     font-weight: bold;
     padding: 8px 12px;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
 /* ====== MAIN ====== */
 .main {
     width: 100%;
-    max-width: 1100px;
+    max-width: 950px;
     margin: 95px auto 0 auto;
     padding: 25px;
 }
