@@ -1,24 +1,22 @@
 <?php
-require __DIR__ . "/session_config.php";
-require __DIR__ . "/db.php";
+require "session_config.php";
+require "db.php";
 
-// Obtener datos del técnico logueado
-$id_tecnico = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
+
+// Obtener nombre real del usuario
 $stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
-$stmt->execute([$id_tecnico]);
-$tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
-$nombreTecnico = $tecnico ? $tecnico['nombre'] : "Técnico";
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Nuevo incidente ITIL</title>
+<title>Inicio</title>
 
 <style>
-/* ========================= */
-/* VARIABLES DE COLOR        */
-/* ========================= */
 :root {
     --bg: #F4F7FA;
     --sidebar-bg: #FFFFFF;
@@ -43,9 +41,6 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
-/* ========================= */
-/* ESTILOS GENERALES         */
-/* ========================= */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
@@ -55,9 +50,7 @@ body {
     transition: 0.3s;
 }
 
-/* ========================= */
-/* SIDEBAR CORPORATIVO       */
-/* ========================= */
+/* SIDEBAR */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -68,6 +61,7 @@ body {
     flex-direction: column;
     position: fixed;
     transition: width 0.25s ease;
+    overflow: visible;
     z-index: 2000;
 }
 .sidebar.collapsed { width: 70px; }
@@ -86,6 +80,7 @@ body {
     margin-bottom: 8px;
     cursor: pointer;
     transition: background 0.2s ease;
+    font-size: 15px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -109,9 +104,6 @@ body {
 
 .sidebar.collapsed .nav-text { display: none; }
 
-/* ========================= */
-/* TOOLTIP DEL SIDEBAR       */
-/* ========================= */
 .tooltip {
     position: absolute;
     left: 80px;
@@ -133,131 +125,61 @@ body {
     left: 75px;
 }
 
-/* ========================= */
-/* BARRA SUPERIOR ITIL       */
-/* ========================= */
-.itil-topbar {
-    position: fixed;
-    top: 0;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    padding: 0 25px;
-    gap: 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 1500;
-    transition: left 0.25s ease;
-}
-.sidebar.collapsed ~ .itil-topbar {
-    left: 70px;
-}
-
-.itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: 0.2s;
-}
-.itil-topbar a:hover {
-    background: var(--sidebar-hover);
-}
-
-.itil-topbar svg {
-    width: 18px;
-    height: 18px;
-    fill: var(--text);
-}
-
-/* ========================= */
-/* CONTENIDO PRINCIPAL       */
-/* ========================= */
+/* MAIN */
 .main {
-    width: 100%;
-    max-width: 1100px;
-    margin: 95px auto 0 auto;
+    margin-left: 240px;
     padding: 25px;
-    transition: margin-left 0.25s ease;
+    width: calc(100% - 240px);
+    transition: margin-left 0.25s ease, width 0.25s ease;
 }
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
-/* ========================= */
-/* FORMULARIO ITIL           */
-/* ========================= */
-.form-box {
+/* TITULO CENTRADO */
+.main h2 {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* TARJETAS */
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.card {
+    width: 220px;
+    height: 180px;
     background: var(--card-bg);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 3px 10px var(--shadow);
+    text-align: center;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-
-label {
-    font-weight: bold;
-    display: block;
-    margin-top: 15px;
+.card:hover {
+    transform: translateY(-5px);
 }
-
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    border-radius: 6px;
-    border: 1px solid var(--sidebar-hover);
-    background: var(--bg);
+.card svg {
+    width: 50px;
+    height: 50px;
+    fill: var(--primary);
+    margin-bottom: 12px;
+}
+.card a {
+    text-decoration: none;
     color: var(--text);
-}
-
-textarea {
-    height: 120px;
-    resize: vertical;
-}
-
-button {
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-}
-button:hover {
-    background: var(--primary-hover);
-}
-
-/* ========================= */
-/* LISTA DE AUTOCOMPLETADO   */
-/* ========================= */
-.lista {
-    background: var(--card-bg);
-    border: 1px solid var(--sidebar-hover);
-    border-radius: 6px;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-top: 5px;
-    display: none;
-    position: absolute;
-    width: 100%;
-    z-index: 3000;
-}
-
-.lista div {
-    padding: 10px;
-    cursor: pointer;
-}
-
-.lista div:hover {
-    background: var(--sidebar-hover);
+    font-size: 18px;
+    font-weight: bold;
 }
 </style>
 </head>
@@ -277,23 +199,24 @@ button:hover {
     <h2>Panel</h2>
 
     <div class="nav-item">
-        <a href="index.php">
+        <a href="index.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M10 2L2 8h2v8h4V12h4v4h4V8h2z"/></svg>
             <span class="nav-text">Inicio</span>
         </a>
         <span class="tooltip">Inicio</span>
     </div>
 
+    <!-- Entrada al sistema ITIL -->
     <div class="nav-item">
-        <a href="incidentes.php">
+        <a href="itil_incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <span class="nav-text">Incidentes TI</span>
+            <span class="nav-text">Incidentes ITIL</span>
         </a>
-        <span class="tooltip">Incidentes TI</span>
+        <span class="tooltip">Incidentes ITIL</span>
     </div>
 
     <div class="nav-item">
-        <a href="dashboard.php">
+        <a href="dashboard.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
             <span class="nav-text">Mapeo de nodos</span>
         </a>
@@ -301,15 +224,23 @@ button:hover {
     </div>
 
     <div class="nav-item">
-        <a href="calendario.php">
+        <a href="calendario.php"  style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
             <span class="nav-text">Calendario</span>
         </a>
         <span class="tooltip">Calendario</span>
     </div>
 
+     <div class="nav-item">
+        <a href="incidentes.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
+            <span class="nav-text">Incidentes TI</span>
+        </a>
+        <span class="tooltip">Incidentes TI</span>
+    </div>
+
     <div class="nav-item">
-        <a href="cambiar_password.php">
+        <a href="cambiar_password.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
             <span class="nav-text">Cambiar contraseña</span>
         </a>
@@ -317,7 +248,7 @@ button:hover {
     </div>
 
     <div class="nav-item">
-        <a href="logout.php">
+        <a href="logout.php" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
             <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
             <span class="nav-text">Cerrar sesión</span>
         </a>
@@ -332,99 +263,32 @@ button:hover {
 
 </div>
 
-<!-- ========================= -->
-<!-- BARRA SUPERIOR ITIL       -->
-<!-- ========================= -->
-<div class="itil-topbar">
-    <a href="itil_incidentes.php">
-        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
-        Incidentes
-    </a>
-
-    <a href="itil_incidente_nuevo.php">
-        <svg><path d="M12 5v14m7-7H5"/></svg>
-        Nuevo incidente
-    </a>
-
-    <a href="itil_problemas.php">
-        <svg><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
-        Problemas
-    </a>
-
-    <a href="itil_cambios.php">
-        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Cambios
-    </a>
-
-    <a href="itil_solicitudes.php">
-        <svg><path d="M3 6h18v12H3z"/></svg>
-        Solicitudes
-    </a>
-
-    <a href="itil_sla.php">
-        <svg><path d="M12 2v20m10-10H2"/></svg>
-        SLA
-    </a>
-
-    <a href="itil_estadisticas.php">
-        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8"/></svg>
-        Estadísticas
-    </a>
-</div>
-
-<!-- ========================= -->
-<!-- CONTENIDO PRINCIPAL       -->
-<!-- ========================= -->
+<!-- MAIN -->
 <div class="main">
-    <h2>Registrar nuevo incidente</h2>
+    <h2>Bienvenido, <?php echo htmlspecialchars($nombreUsuario); ?></h2>
 
-    <div class="form-box">
-        <form action="itil_incidente_guardar.php" method="POST">
+    <div class="cards">
 
-            <label>Usuario afectado</label>
-            <input type="text" id="buscar_usuario" placeholder="Escriba el nombre..." autocomplete="off">
-            <div id="lista_usuarios" class="lista"></div>
-            <input type="hidden" name="usuario_final_id" id="usuario_final_id" required>
+        <div class="card">
+            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
+            <a href="calendario.php">Calendario</a>
+        </div>
 
-            <label>Ubicación</label>
-            <input type="text" id="ubicacion" name="ubicacion_detalle" readonly>
+        <div class="card">
+            <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
+            <a href="dashboard.php">Mapeo de nodos</a>
+        </div>
 
-            <label>Inventario del equipo</label>
-            <input type="text" id="inventario" name="activo_inventario" readonly>
+        <div class="card">
+            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
+            <a href="incidentes.php">Incidentes TI</a>
+        </div>
 
-            <label>Título del incidente</label>
-            <input type="text" name="titulo" required>
+        <div class="card">
+            <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
+            <a href="cambiar_password.php">Cambiar contraseña</a>
+        </div>
 
-            <label>Descripción</label>
-            <textarea name="descripcion" required></textarea>
-
-            <label>Prioridad</label>
-            <select name="prioridad" required>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-            </select>
-
-            <label>Impacto</label>
-            <select name="impacto" required>
-                <option value="Alto">Alto</option>
-                <option value="Medio">Medio</option>
-                <option value="Bajo">Bajo</option>
-            </select>
-
-            <label>Urgencia</label>
-            <select name="urgencia" required>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-            </select>
-
-            <label>Técnico asignado</label>
-            <input type="text" value="<?= htmlspecialchars($nombreTecnico) ?>" readonly>
-            <input type="hidden" name="tecnico_asignado" value="<?= $id_tecnico ?>">
-
-            <button type="submit">Registrar incidente</button>
-        </form>
     </div>
 </div>
 
@@ -437,54 +301,9 @@ function toggleTheme() {
     document.body.classList.toggle("dark");
     localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 }
-
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
-
-/* ========================= */
-/* AUTOCOMPLETADO DE USUARIOS */
-/* ========================= */
-const buscar = document.getElementById("buscar_usuario");
-const lista = document.getElementById("lista_usuarios");
-const hiddenId = document.getElementById("usuario_final_id");
-
-buscar.addEventListener("input", function() {
-    let q = this.value.trim();
-
-    if (q.length < 2) {
-        lista.style.display = "none";
-        return;
-    }
-
-    fetch("itil_usuario_buscar.php?q=" + q)
-        .then(res => res.json())
-        .then(data => {
-            lista.innerHTML = "";
-            lista.style.display = "block";
-
-            data.forEach(u => {
-                let item = document.createElement("div");
-                item.textContent = u.nomuser;
-                item.onclick = () => {
-                    buscar.value = u.nomuser;
-                    hiddenId.value = u.idu;
-                    lista.style.display = "none";
-
-                    // Autocompletar datos del usuario
-                    fetch("itil_usuario_info.php?id=" + u.idu)
-                        .then(r => r.json())
-                        .then(info => {
-                            document.getElementById("ubicacion").value =
-                                info.ubicacion + " / Piso " + info.piso + " / Escritorio " + info.ubimapa2;
-
-                            document.getElementById("inventario").value = info.hor1;
-                        });
-                };
-                lista.appendChild(item);
-            });
-        });
-});
 </script>
 
 </body>
