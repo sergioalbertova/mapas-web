@@ -1,23 +1,23 @@
 <?php
-// Tiempo de vida de la sesión (24 horas)
-$session_lifetime = 86400; // 24 * 60 * 60
-
-// Configurar parámetros de la cookie de sesión
-session_set_cookie_params([
-    'lifetime' => $session_lifetime,
-    'path' => '/',
-    'secure' => false,   // cámbialo a true si usas HTTPS
-    'httponly' => true,
-    'samesite' => 'Lax'
-]);
-
-// Ajustar el garbage collector
-ini_set('session.gc_maxlifetime', $session_lifetime);
-ini_set('session.cookie_lifetime', $session_lifetime);
-
-// Iniciar sesión
 session_start();
 
-// Renovar la cookie en cada request (mantiene la sesión viva mientras el usuario navega)
-setcookie(session_name(), session_id(), time() + $session_lifetime, "/");
+// Tiempo máximo de inactividad (ej. 8 horas)
+$max_inactividad = 8 * 60 * 60;
+
+if (isset($_SESSION['ultimo_movimiento'])) {
+    if (time() - $_SESSION['ultimo_movimiento'] > $max_inactividad) {
+        session_unset();
+        session_destroy();
+        header("Location: login.php?msg=session_expired");
+        exit;
+    }
+}
+
+$_SESSION['ultimo_movimiento'] = time();
+
+// Validar sesión activa
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php?msg=no_session");
+    exit;
+}
 ?>

@@ -2,22 +2,25 @@
 require __DIR__ . "/session_config.php";
 require __DIR__ . "/db.php";
 
-if (!isset($_SESSION['user_id'])) {
-    die("Error: No hay sesión iniciada.");
-}
+/* ============================================================
+   OBTENER TÉCNICO LOGUEADO (usuario + nombre)
+   ============================================================ */
 
-$id_tecnico = intval($_SESSION['user_id']);
+$tecnico_id = intval($_SESSION['user_id']);
 
 $stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
-$stmt->execute([$id_tecnico]);
+$stmt->execute([$tecnico_id]);
 $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($tecnico) {
     $nombreTecnico = $tecnico['usuario'] . " - " . $tecnico['nombre'];
 } else {
-    $nombreTecnico = "Usuario no encontrado (ID $id_tecnico)";
+    $nombreTecnico = "Usuario no encontrado (ID $tecnico_id)";
 }
 
+/* ============================================================
+   OBTENER CATÁLOGO DE APOYOS
+   ============================================================ */
 $stmt2 = $pdo->query("
     SELECT idapoyo, tituloincidente, descripcion, prioridad, impacto, urgencia
     FROM catapoyo
@@ -32,6 +35,7 @@ $catalogo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 <title>Nuevo incidente ITIL</title>
 
 <style>
+/* ====== VARIABLES ====== */
 :root {
     --bg: #F4F7FA;
     --sidebar-bg: #FFFFFF;
@@ -55,6 +59,7 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
+/* ====== GENERAL ====== */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
@@ -63,7 +68,7 @@ body {
     display: flex;
 }
 
-/* SIDEBAR */
+/* ====== SIDEBAR ====== */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -107,7 +112,7 @@ body {
     fill: currentColor;
 }
 
-/* TOPBAR ITIL */
+/* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
     top: 0;
@@ -142,7 +147,7 @@ body {
     fill: currentColor;
 }
 
-/* MAIN */
+/* ====== MAIN ====== */
 .main {
     width: 100%;
     max-width: 950px;
@@ -150,7 +155,7 @@ body {
     padding: 25px;
 }
 
-/* FORM */
+/* ====== FORM ====== */
 .form-box {
     background: var(--card-bg);
     padding: 25px;
@@ -165,7 +170,7 @@ input, select, textarea {
 }
 textarea { height: 120px; resize: vertical; }
 
-/* BOTÓN */
+/* ====== BOTÓN AZUL ====== */
 button {
     margin-top: 25px;
     padding: 14px 22px;
@@ -184,7 +189,7 @@ button:hover {
     transform: scale(1.03);
 }
 
-/* AUTOCOMPLETE */
+/* ====== AUTOCOMPLETE ====== */
 .lista {
     background: var(--card-bg);
     border: 1px solid var(--sidebar-hover);
@@ -199,7 +204,7 @@ button:hover {
 .lista div { padding: 10px; cursor: pointer; }
 .lista div:hover { background: var(--sidebar-hover); }
 
-/* FILA 3 CAMPOS */
+/* ====== FILA 3 CAMPOS ====== */
 .fila-3 {
     display: flex;
     gap: 20px;
@@ -212,7 +217,9 @@ button:hover {
 
 <body>
 
+<!-- ====== SIDEBAR ====== -->
 <div class="sidebar" id="sidebar">
+
     <div class="nav-item" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         <span class="nav-text">Menú</span>
@@ -266,45 +273,55 @@ button:hover {
         <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
         <span class="nav-text">Tema oscuro</span>
     </div>
+
 </div>
 
+<!-- ====== TOPBAR ITIL ====== -->
 <div class="itil-topbar">
     <a href="itil_incidentes.php">
         <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
         Incidentes
     </a>
+
     <a href="itil_incidente_nuevo.php">
         <svg><path d="M12 5v14m7-7H5"/></svg>
         Nuevo incidente
     </a>
+
     <a href="itil_problemas.php">
         <svg><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
         Problemas
     </a>
+
     <a href="itil_cambios.php">
         <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
         Cambios
     </a>
+
     <a href="itil_solicitudes.php">
         <svg><path d="M3 6h18v12H3z"/></svg>
         Solicitudes
     </a>
+
     <a href="itil_sla.php">
         <svg><path d="M12 2v20m10-10H2"/></svg>
         SLA
     </a>
+
     <a href="itil_estadisticas.php">
         <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8"/></svg>
         Estadísticas
     </a>
 </div>
 
+<!-- ====== MAIN ====== -->
 <div class="main">
     <h2>Registrar nuevo incidente</h2>
 
     <div class="form-box">
         <form action="itil_incidente_guardar.php" method="POST">
 
+            <!-- AUTOCOMPLETADO USUARIO -->
             <label>Usuario afectado</label>
             <input type="text" id="buscar_usuario" placeholder="Escriba el nombre..." autocomplete="off">
             <div id="lista_usuarios" class="lista"></div>
@@ -316,8 +333,9 @@ button:hover {
             <label>Inventario del equipo</label>
             <input type="text" id="inventario" name="activo_inventario" readonly>
 
+            <!-- TITULO DEL INCIDENTE -->
             <label>Título del incidente</label>
-            <select id="titulo_select">
+            <select id="titulo_select" name="titulo" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($catalogo as $c): ?>
                     <option 
@@ -335,6 +353,7 @@ button:hover {
             <label>Descripción</label>
             <textarea name="descripcion" id="descripcion" required></textarea>
 
+            <!-- PRIORIDAD / IMPACTO / URGENCIA -->
             <div class="fila-3">
                 <div>
                     <label>Prioridad</label>
@@ -364,9 +383,10 @@ button:hover {
                 </div>
             </div>
 
+            <!-- TECNICO -->
             <label>Técnico asignado</label>
             <input type="text" value="<?= htmlspecialchars($nombreTecnico) ?>" readonly>
-            <input type="hidden" name="tecnico_asignado" value="<?= $id_tecnico ?>">
+            <input type="hidden" name="tecnico_asignado" value="<?= $tecnico_id ?>">
 
             <button type="submit">Registrar incidente</button>
         </form>

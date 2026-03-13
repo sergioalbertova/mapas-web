@@ -18,7 +18,7 @@ $requeridos = [
     'prioridad',
     'impacto',
     'urgencia',
-    'titulo_select'
+    'titulo'
 ];
 
 foreach ($requeridos as $campo) {
@@ -31,7 +31,7 @@ foreach ($requeridos as $campo) {
 $usuario_final_id   = $_POST['usuario_final_id'];   // usuario afectado
 $ubicacion_detalle  = $_POST['ubicacion_detalle'];
 $activo_inventario  = $_POST['activo_inventario'];
-$titulo             = $_POST['titulo_select'];      // viene del combo
+$titulo             = $_POST['titulo'];             // viene del combo
 $descripcion        = $_POST['descripcion'];
 $prioridad          = $_POST['prioridad'];
 $impacto            = $_POST['impacto'];
@@ -69,7 +69,6 @@ $stmt->execute([
     $ubicacion_detalle
 ]);
 
-// Redirigir con mensaje
 header("Location: itil_incidentes.php?msg=ok");
 exit;
 ?>
