@@ -11,12 +11,7 @@ $stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
 $stmt->execute([$id_tecnico]);
 $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Si no encuentra el usuario, mostrar el ID para depurar
-if (!$tecnico) {
-    $nombreTecnico = "Usuario ID $id_tecnico no encontrado";
-} else {
-    $nombreTecnico = $tecnico['nombre'];
-}
+$nombreTecnico = $tecnico ? $tecnico['nombre'] : "Usuario no encontrado";
 
 // ===============================
 // OBTENER CATÁLOGO DE APOYOS
@@ -87,6 +82,12 @@ body {
 }
 .nav-item:hover { background: var(--sidebar-hover); }
 
+.nav-item svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
 /* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
@@ -102,6 +103,18 @@ body {
     box-shadow: 0 2px 8px var(--shadow);
 }
 .sidebar.collapsed ~ .itil-topbar { left: 70px; }
+
+.itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.itil-topbar a:hover { background: var(--sidebar-hover); }
 
 /* ====== MAIN ====== */
 .main {
@@ -140,6 +153,15 @@ textarea { height: 120px; resize: vertical; }
 }
 .lista div { padding: 10px; cursor: pointer; }
 .lista div:hover { background: var(--sidebar-hover); }
+
+/* ====== FILA 3 CAMPOS ====== */
+.fila-3 {
+    display: flex;
+    gap: 20px;
+}
+.fila-3 > div {
+    flex: 1;
+}
 </style>
 </head>
 
@@ -149,6 +171,7 @@ textarea { height: 120px; resize: vertical; }
 <div class="sidebar" id="sidebar">
     <div class="nav-item" onclick="toggleSidebar()">Menú</div>
     <h2>Panel</h2>
+
     <div class="nav-item"><a href="index.php">Inicio</a></div>
     <div class="nav-item"><a href="incidentes.php">Incidentes TI</a></div>
     <div class="nav-item"><a href="dashboard.php">Mapeo de nodos</a></div>
@@ -200,32 +223,38 @@ textarea { height: 120px; resize: vertical; }
                 <?php endforeach; ?>
             </select>
 
-            <input type="text" name="titulo" id="titulo" required>
-
             <label>Descripción</label>
             <textarea name="descripcion" id="descripcion" required></textarea>
 
             <!-- PRIORIDAD / IMPACTO / URGENCIA -->
-            <label>Prioridad</label>
-            <select name="prioridad" required>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-            </select>
+            <div class="fila-3">
+                <div>
+                    <label>Prioridad</label>
+                    <select name="prioridad" required>
+                        <option value="Alta">Alta</option>
+                        <option value="Media">Media</option>
+                        <option value="Baja">Baja</option>
+                    </select>
+                </div>
 
-            <label>Impacto</label>
-            <select name="impacto" required>
-                <option value="Alto">Alto</option>
-                <option value="Medio">Medio</option>
-                <option value="Bajo">Bajo</option>
-            </select>
+                <div>
+                    <label>Impacto</label>
+                    <select name="impacto" required>
+                        <option value="Alto">Alto</option>
+                        <option value="Medio">Medio</option>
+                        <option value="Bajo">Bajo</option>
+                    </select>
+                </div>
 
-            <label>Urgencia</label>
-            <select name="urgencia" required>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-            </select>
+                <div>
+                    <label>Urgencia</label>
+                    <select name="urgencia" required>
+                        <option value="Alta">Alta</option>
+                        <option value="Media">Media</option>
+                        <option value="Baja">Baja</option>
+                    </select>
+                </div>
+            </div>
 
             <!-- TECNICO -->
             <label>Técnico asignado</label>
@@ -295,17 +324,13 @@ buscar.addEventListener("input", function() {
         });
 });
 
-/* ====== CATÁLOGO: LLENAR TÍTULO Y DESCRIPCIÓN ====== */
+/* ====== CATÁLOGO: LLENAR DESCRIPCIÓN ====== */
 const selectTitulo = document.getElementById("titulo_select");
-const inputTitulo = document.getElementById("titulo");
 const txtDescripcion = document.getElementById("descripcion");
 
 selectTitulo.addEventListener("change", function() {
     const opt = this.options[this.selectedIndex];
-    const titulo = opt.value;
     const desc = opt.getAttribute("data-desc") || "";
-
-    inputTitulo.value = titulo;
     txtDescripcion.value = desc;
 });
 </script>
