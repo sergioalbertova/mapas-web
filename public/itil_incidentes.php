@@ -1,27 +1,21 @@
 <?php
-require __DIR__ . "/session_config.php";
-require __DIR__ . "/db.php";
+require "session_config.php";
+require "db.php";
 
 /* ============================================================
-   OBTENER TÉCNICO LOGUEADO (usuario + nombre)
+   OBTENER TÉCNICO LOGUEADO
    ============================================================ */
-
 $tecnico_id = intval($_SESSION['user_id']);
 
 $stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
 $stmt->execute([$tecnico_id]);
 $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($tecnico) {
-    $nombreTecnico = $tecnico['usuario'] . " - " . $tecnico['nombre'];
-} else {
-    $nombreTecnico = "Usuario no encontrado (ID $tecnico_id)";
-}
+$nombreTecnico = $tecnico ? $tecnico['usuario'] . " - " . $tecnico['nombre'] : "Usuario";
 
 /* ============================================================
    OBTENER INCIDENTES
    ============================================================ */
-
 $sql = "
 SELECT 
     i.id,
@@ -43,10 +37,12 @@ $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Incidentes registrados</title>
+<title>Incidentes ITIL</title>
 
 <style>
-/* ====== VARIABLES ====== */
+/* ========================= */
+/* VARIABLES                 */
+/* ========================= */
 :root {
     --bg: #F4F7FA;
     --sidebar-bg: #FFFFFF;
@@ -58,6 +54,7 @@ $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     --primary-hover: #003F7D;
     --shadow: rgba(0,0,0,0.08);
 }
+
 body.dark {
     --bg: #1A1D21;
     --sidebar-bg: #24272C;
@@ -70,7 +67,9 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
-/* ====== GENERAL ====== */
+/* ========================= */
+/* GENERAL                   */
+/* ========================= */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
@@ -79,15 +78,20 @@ body {
     display: flex;
 }
 
-/* ====== SIDEBAR ====== */
+/* ========================= */
+/* SIDEBAR ORIGINAL          */
+/* ========================= */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
     height: 100vh;
-    padding: 20px 15px;
-    position: fixed;
     box-shadow: 4px 0 20px var(--shadow);
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
     transition: width 0.25s ease;
+    overflow: visible;
     z-index: 2000;
 }
 .sidebar.collapsed { width: 70px; }
@@ -96,16 +100,21 @@ body {
     margin: 0 0 20px;
     font-size: 20px;
     color: var(--primary);
+    transition: opacity 0.25s ease;
 }
+.sidebar.collapsed h2 { opacity: 0; }
 
 .nav-item {
     padding: 10px 12px;
     border-radius: 8px;
     margin-bottom: 8px;
     cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 15px;
     display: flex;
     align-items: center;
     gap: 12px;
+    position: relative;
 }
 .nav-item:hover { background: var(--sidebar-hover); }
 
@@ -123,13 +132,39 @@ body {
     fill: currentColor;
 }
 
-/* ====== TOPBAR ITIL ====== */
+.sidebar.collapsed .nav-text { display: none; }
+
+/* TOOLTIP */
+.tooltip {
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--sidebar-bg);
+    padding: 6px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px var(--shadow);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, left 0.2s ease;
+    z-index: 99999;
+}
+.sidebar.collapsed .nav-item:hover .tooltip {
+    opacity: 1;
+    left: 75px;
+}
+
+/* ========================= */
+/* TOPBAR ITIL               */
+/* ========================= */
 .itil-topbar {
     position: fixed;
     top: 0;
     left: 240px;
-    right: 0;
     height: 55px;
+    width: calc(100% - 240px);
     background: var(--sidebar-bg);
     display: flex;
     align-items: center;
@@ -137,9 +172,12 @@ body {
     padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2100;
-    transition: left 0.25s ease;
+    transition: left 0.25s ease, width 0.25s ease;
 }
-.sidebar.collapsed ~ .itil-topbar { left: 70px; }
+.sidebar.collapsed ~ .itil-topbar {
+    left: 70px;
+    width: calc(100% - 70px);
+}
 
 .itil-topbar a {
     text-decoration: none;
@@ -153,26 +191,24 @@ body {
 }
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
-.itil-topbar svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
-/* ====== MAIN ====== */
+/* ========================= */
+/* MAIN                      */
+/* ========================= */
 .main {
-    width: 100%;
-    max-width: 1200px;
     margin-left: 240px;
+    width: calc(100% - 240px);
     margin-top: 95px;
     padding: 25px;
-    transition: margin-left 0.25s ease;
+    transition: margin-left 0.25s ease, width 0.25s ease;
 }
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
-/* ====== TABLA ====== */
+/* ========================= */
+/* TABLA                     */
+/* ========================= */
 .table-box {
     background: var(--card-bg);
     padding: 20px;
@@ -211,10 +247,12 @@ td {
 
 <body>
 
-<!-- ====== SIDEBAR ====== -->
+<!-- ========================= -->
+<!-- SIDEBAR REAL              -->
+<!-- ========================= -->
 <div class="sidebar" id="sidebar">
 
-    <div class="nav-item" onclick="toggleSidebar()">
+    <div class="toggle-btn" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         <span class="nav-text">Menú</span>
     </div>
@@ -226,13 +264,15 @@ td {
             <svg><path d="M10 2L2 8h2v8h4V12h4v4h4V8h2z"/></svg>
             <span class="nav-text">Inicio</span>
         </a>
+        <span class="tooltip">Inicio</span>
     </div>
 
     <div class="nav-item">
-        <a href="incidentes.php">
+        <a href="itil_incidentes.php">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <span class="nav-text">Incidentes TI</span>
+            <span class="nav-text">Incidentes ITIL</span>
         </a>
+        <span class="tooltip">Incidentes ITIL</span>
     </div>
 
     <div class="nav-item">
@@ -240,6 +280,7 @@ td {
             <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
             <span class="nav-text">Mapeo de nodos</span>
         </a>
+        <span class="tooltip">Mapeo de nodos</span>
     </div>
 
     <div class="nav-item">
@@ -247,6 +288,15 @@ td {
             <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
             <span class="nav-text">Calendario</span>
         </a>
+        <span class="tooltip">Calendario</span>
+    </div>
+
+    <div class="nav-item">
+        <a href="incidentes.php">
+            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
+            <span class="nav-text">Incidentes TI</span>
+        </a>
+        <span class="tooltip">Incidentes TI</span>
     </div>
 
     <div class="nav-item">
@@ -254,6 +304,7 @@ td {
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
             <span class="nav-text">Cambiar contraseña</span>
         </a>
+        <span class="tooltip">Cambiar contraseña</span>
     </div>
 
     <div class="nav-item">
@@ -261,16 +312,20 @@ td {
             <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
             <span class="nav-text">Cerrar sesión</span>
         </a>
+        <span class="tooltip">Cerrar sesión</span>
     </div>
 
     <div class="nav-item" onclick="toggleTheme()">
         <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
         <span class="nav-text">Tema oscuro</span>
+        <span class="tooltip">Tema oscuro</span>
     </div>
 
 </div>
 
-<!-- ====== TOPBAR ITIL ====== -->
+<!-- ========================= -->
+<!-- TOPBAR ITIL               -->
+<!-- ========================= -->
 <div class="itil-topbar">
     <a href="itil_incidentes.php">
         <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
@@ -308,7 +363,9 @@ td {
     </a>
 </div>
 
-<!-- ====== MAIN ====== -->
+<!-- ========================= -->
+<!-- MAIN                      -->
+<!-- ========================= -->
 <div class="main">
     <div class="table-box">
         <h2>Incidentes registrados</h2>
