@@ -174,7 +174,9 @@ body {
     z-index: 2100;
     transition: left 0.25s ease, width 0.25s ease;
 }
-.sidebar.collapsed ~ .itil-topbar {
+
+/* CORRECCIÓN CLAVE */
+#sidebar.collapsed + .itil-topbar {
     left: 70px;
     width: calc(100% - 70px);
 }
@@ -201,7 +203,7 @@ body {
     padding: 25px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
-.sidebar.collapsed ~ .main {
+#sidebar.collapsed + .itil-topbar + .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
