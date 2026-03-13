@@ -157,7 +157,7 @@ body {
 }
 
 /* ========================= */
-/* TOPBAR ITIL (CENTRADO)    */
+/* TOPBAR ITIL OPTIMIZADO    */
 /* ========================= */
 .itil-topbar {
     position: fixed;
@@ -168,9 +168,9 @@ body {
     background: var(--sidebar-bg);
     display: flex;
     align-items: center;
-    justify-content: center; /* ← CENTRA LOS ELEMENTOS */
-    gap: 35px;               /* ← SEPARACIÓN MÁS AMPLIA */
-    padding: 0 15px;         /* ← EVITA QUE SE CORTEN A LA DERECHA */
+    justify-content: space-evenly;
+    gap: 10px;
+    padding: 0 10px;
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2100;
     transition: left 0.25s ease, width 0.25s ease;
@@ -182,16 +182,27 @@ body {
 }
 
 .itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: bold;
-    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
     border-radius: 6px;
-    display:flex;
-    align-items:center;
-    gap:8px;
+    font-weight: bold;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 14px;
 }
-.itil-topbar a:hover { background: var(--sidebar-hover); }
+
+.itil-topbar a:hover {
+    background: var(--sidebar-hover);
+}
+
+.itil-topbar svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
 
 /* ========================= */
 /* MAIN                      */
@@ -329,6 +340,7 @@ td {
 <!-- TOPBAR ITIL               -->
 <!-- ========================= -->
 <div class="itil-topbar">
+
     <a href="itil_incidentes.php">
         <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
         Incidentes
@@ -336,7 +348,7 @@ td {
 
     <a href="itil_incidente_nuevo.php">
         <svg><path d="M12 5v14m7-7H5"/></svg>
-        Nuevo incidente
+        Nuevo
     </a>
 
     <a href="itil_problemas.php">
@@ -363,6 +375,7 @@ td {
         <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8"/></svg>
         Estadísticas
     </a>
+
 </div>
 
 <!-- ========================= -->
