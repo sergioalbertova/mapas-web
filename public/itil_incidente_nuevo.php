@@ -18,9 +18,13 @@ if ($tecnico) {
 }
 
 /* ============================================================
-   OBTENER CATÁLOGO DE APOYOS
+   OBTENER CATÁLOGO DE APOYOS (YA CON PRIORIDAD/IMPACTO/URGENCIA)
    ============================================================ */
-$stmt2 = $pdo->query("SELECT idapoyo, tituloincidente, descripcion FROM catapoyo ORDER BY tituloincidente");
+$stmt2 = $pdo->query("
+    SELECT idapoyo, tituloincidente, descripcion, prioridad, impacto, urgencia
+    FROM catapoyo
+    ORDER BY tituloincidente
+");
 $catalogo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -63,7 +67,7 @@ body {
     display: flex;
 }
 
-/* ====== SIDEBAR (idéntico al de itil_incidentes.php) ====== */
+/* ====== SIDEBAR ====== */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -80,20 +84,16 @@ body {
     margin: 0 0 20px;
     font-size: 20px;
     color: var(--primary);
-    transition: opacity 0.25s ease;
 }
-.sidebar.collapsed h2 { opacity: 0; }
 
 .nav-item {
     padding: 10px 12px;
     border-radius: 8px;
     margin-bottom: 8px;
     cursor: pointer;
-    transition: background 0.2s ease;
     display: flex;
     align-items: center;
     gap: 12px;
-    position: relative;
 }
 .nav-item:hover { background: var(--sidebar-hover); }
 
@@ -111,8 +111,6 @@ body {
     fill: currentColor;
 }
 
-.sidebar.collapsed .nav-text { display: none; }
-
 /* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
@@ -123,15 +121,11 @@ body {
     background: var(--sidebar-bg);
     display: flex;
     align-items: center;
-    padding: 0 25px;
     gap: 25px;
+    padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
-    z-index: 1500;
-    transition: left 0.25s ease;
 }
-.sidebar.collapsed ~ .itil-topbar {
-    left: 70px;
-}
+.sidebar.collapsed ~ .itil-topbar { left: 70px; }
 
 .itil-topbar a {
     text-decoration: none;
@@ -139,20 +133,8 @@ body {
     font-weight: bold;
     padding: 8px 12px;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: 0.2s;
 }
-.itil-topbar a:hover {
-    background: var(--sidebar-hover);
-}
-
-.itil-topbar svg {
-    width: 18px;
-    height: 18px;
-    fill: var(--text);
-}
+.itil-topbar a:hover { background: var(--sidebar-hover); }
 
 /* ====== MAIN ====== */
 .main {
@@ -176,6 +158,25 @@ input, select, textarea {
     background: var(--bg); color: var(--text);
 }
 textarea { height: 120px; resize: vertical; }
+
+/* ====== BOTÓN AZUL ====== */
+button {
+    margin-top: 25px;
+    padding: 14px 22px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 3px 6px var(--shadow);
+    transition: 0.2s;
+}
+button:hover {
+    background: var(--primary-hover);
+    transform: scale(1.03);
+}
 
 /* ====== AUTOCOMPLETE ====== */
 .lista {
@@ -326,8 +327,13 @@ textarea { height: 120px; resize: vertical; }
             <select id="titulo_select">
                 <option value="">Seleccione...</option>
                 <?php foreach ($catalogo as $c): ?>
-                    <option value="<?= htmlspecialchars($c['tituloincidente']) ?>"
-                            data-desc="<?= htmlspecialchars($c['descripcion']) ?>">
+                    <option 
+                        value="<?= htmlspecialchars($c['tituloincidente']) ?>"
+                        data-desc="<?= htmlspecialchars($c['descripcion']) ?>"
+                        data-prio="<?= htmlspecialchars($c['prioridad']) ?>"
+                        data-imp="<?= htmlspecialchars($c['impacto']) ?>"
+                        data-urg="<?= htmlspecialchars($c['urgencia']) ?>"
+                    >
                         <?= htmlspecialchars($c['tituloincidente']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -340,7 +346,7 @@ textarea { height: 120px; resize: vertical; }
             <div class="fila-3">
                 <div>
                     <label>Prioridad</label>
-                    <select name="prioridad" required>
+                    <select name="prioridad" id="prioridad" required>
                         <option value="Alta">Alta</option>
                         <option value="Media">Media</option>
                         <option value="Baja">Baja</option>
@@ -349,7 +355,7 @@ textarea { height: 120px; resize: vertical; }
 
                 <div>
                     <label>Impacto</label>
-                    <select name="impacto" required>
+                    <select name="impacto" id="impacto" required>
                         <option value="Alto">Alto</option>
                         <option value="Medio">Medio</option>
                         <option value="Bajo">Bajo</option>
@@ -358,7 +364,7 @@ textarea { height: 120px; resize: vertical; }
 
                 <div>
                     <label>Urgencia</label>
-                    <select name="urgencia" required>
+                    <select name="urgencia" id="urgencia" required>
                         <option value="Alta">Alta</option>
                         <option value="Media">Media</option>
                         <option value="Baja">Baja</option>
@@ -434,14 +440,20 @@ buscar.addEventListener("input", function() {
         });
 });
 
-/* ====== CATÁLOGO: LLENAR DESCRIPCIÓN ====== */
+/* ====== CATÁLOGO: LLENAR DESCRIPCIÓN + PRIORIDAD + IMPACTO + URGENCIA ====== */
 const selectTitulo = document.getElementById("titulo_select");
 const txtDescripcion = document.getElementById("descripcion");
+const selPrio = document.getElementById("prioridad");
+const selImp = document.getElementById("impacto");
+const selUrg = document.getElementById("urgencia");
 
 selectTitulo.addEventListener("change", function() {
     const opt = this.options[this.selectedIndex];
-    const desc = opt.getAttribute("data-desc") || "";
-    txtDescripcion.value = desc;
+
+    txtDescripcion.value = opt.getAttribute("data-desc") || "";
+    selPrio.value = opt.getAttribute("data-prio") || "Alta";
+    selImp.value = opt.getAttribute("data-imp") || "Alto";
+    selUrg.value = opt.getAttribute("data-urg") || "Alta";
 });
 </script>
 
