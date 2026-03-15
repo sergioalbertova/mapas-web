@@ -144,6 +144,11 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
+/* FIX: Títulos tipo “Prioridad”, “Impacto”, “Urgencia”, etc. en modo oscuro */
+body.dark .text-muted {
+    color: #B0BEC5 !important; /* gris claro visible */
+}
+
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
