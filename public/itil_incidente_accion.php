@@ -55,7 +55,8 @@ switch ($accion) {
         $estado_anterior = $incidente['estado'] ?? 'Abierto';
 
         /* 🚫 BLOQUEO: No permitir Resuelto sin solución */
-        if ($estado_nuevo === 'Resuelto' && empty(trim($incidente['solucion']))) {
+        $solucion_actual = isset($incidente['solucion']) ? trim((string)$incidente['solucion']) : '';
+        if ($estado_nuevo === 'Resuelto' && $solucion_actual === '') {
             $_SESSION['error'] = "Debes registrar una solución antes de marcar el incidente como Resuelto.";
             volver($incidente_id);
         }
@@ -116,7 +117,8 @@ switch ($accion) {
        AGREGAR NOTA
        ============================ */
     case 'agregar_nota':
-        $nota = trim($_POST['nota'] ?? '');
+        $nota_raw = $_POST['nota'] ?? '';
+        $nota = trim((string)$nota_raw);
         if ($nota === '') die("Nota vacía.");
 
         $sql = "INSERT INTO itil_incidente_notas (incidente_id, usuario_id, nota)
@@ -131,7 +133,8 @@ switch ($accion) {
        REGISTRAR SOLUCIÓN
        ============================ */
     case 'registrar_solucion':
-        $solucion = trim($_POST['solucion'] ?? '');
+        $sol_raw = $_POST['solucion'] ?? '';
+        $solucion = trim((string)$sol_raw);
         if ($solucion === '') die("Solución vacía.");
 
         $estado_anterior = $incidente['estado'] ?? 'Abierto';
