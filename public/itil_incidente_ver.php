@@ -488,9 +488,11 @@ textarea.form-control {
                     <span class="badge-estado <?= $claseEstado ?>">
                         <?= htmlspecialchars($estado) ?>
                     </span>
-                    <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalEstado">
-                        Cambiar estado
-                    </button>
+                    <?php if ($estado !== 'Cerrado'): ?>
+                        <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalEstado">
+                         Cambiar estado
+                        </button>
+                    <?php endif; ?>
                 </div>
                 <div class="row mt-2">
                     <div class="col-6">
