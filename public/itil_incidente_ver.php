@@ -466,15 +466,17 @@ textarea.form-control {
                     </div>
                     <div class="col-6">
                         <small class="text-muted">Fecha asignación</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_asignacion']) ?></span>
+                        <span><?= htmlspecialchars($incidente['fecha_asignacion'] ?? '') ?></span>
+
                     </div>
                     <div class="col-6 mt-1">
                         <small class="text-muted">Fecha resolución</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_resolucion']) ?></span>
+                        <span><?= htmlspecialchars($incidente['fecha_resolucion'] ?? '') ?></span>
                     </div>
                     <div class="col-6 mt-1">
                         <small class="text-muted">Fecha cierre</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_cierre']) ?></span>
+                       <span><?= htmlspecialchars($incidente['fecha_cierre'] ?? '') ?></span>
+
                     </div>
                 </div>
             </div>
