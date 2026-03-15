@@ -120,6 +120,8 @@ if ($restante >= 2) {
 }
 
 body.dark {
+    color: #4FC3F7 !important; /* azul claro visible */
+
     --bg: #1A1D21;
     --sidebar-bg: #24272C;
     --sidebar-hover: #2F3338;
