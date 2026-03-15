@@ -45,11 +45,20 @@ function volver($id) {
 
 switch ($accion) {
 
+    /* ============================
+       CAMBIAR ESTADO
+       ============================ */
     case 'cambiar_estado':
         $estado_nuevo = $_POST['estado_nuevo'] ?? null;
         if (!$estado_nuevo) die("Estado nuevo requerido.");
 
-        $estado_anterior = $incidente['estado'];
+        $estado_anterior = $incidente['estado'] ?? 'Abierto';
+
+        /* 🚫 BLOQUEO: No permitir Resuelto sin solución */
+        if ($estado_nuevo === 'Resuelto' && empty(trim($incidente['solucion']))) {
+            $_SESSION['error'] = "Debes registrar una solución antes de marcar el incidente como Resuelto.";
+            volver($incidente_id);
+        }
 
         $sql = "UPDATE itil_incidentes SET estado = :estado";
         $params = [':estado' => $estado_nuevo, ':id' => $incidente_id];
@@ -74,11 +83,14 @@ switch ($accion) {
         volver($incidente_id);
         break;
 
+    /* ============================
+       REASIGNAR TÉCNICO
+       ============================ */
     case 'reasignar_tecnico':
         $tecnico_nuevo = isset($_POST['tecnico_nuevo']) ? (int)$_POST['tecnico_nuevo'] : 0;
         if (!$tecnico_nuevo) die("Técnico nuevo requerido.");
 
-        $tecnico_anterior = $incidente['tecnico_asignado'];
+        $tecnico_anterior = $incidente['tecnico_asignado'] ?? null;
 
         $sql = "UPDATE itil_incidentes 
                 SET tecnico_asignado = :tec, fecha_asignacion = COALESCE(fecha_asignacion, now())
@@ -93,13 +105,16 @@ switch ($accion) {
             $pdo,
             $incidente_id,
             $usuario_actual_id,
-            "Técnico: " . ($tecnico_anterior ?: 'N/D'),
+            "Técnico: " . ($tecnico_anterior !== null ? $tecnico_anterior : 'N/D'),
             "Técnico: " . $tecnico_nuevo
         );
 
         volver($incidente_id);
         break;
 
+    /* ============================
+       AGREGAR NOTA
+       ============================ */
     case 'agregar_nota':
         $nota = trim($_POST['nota'] ?? '');
         if ($nota === '') die("Nota vacía.");
@@ -112,11 +127,14 @@ switch ($accion) {
         volver($incidente_id);
         break;
 
+    /* ============================
+       REGISTRAR SOLUCIÓN
+       ============================ */
     case 'registrar_solucion':
         $solucion = trim($_POST['solucion'] ?? '');
         if ($solucion === '') die("Solución vacía.");
 
-        $estado_anterior = $incidente['estado'];
+        $estado_anterior = $incidente['estado'] ?? 'Abierto';
         $estado_nuevo = $estado_anterior;
 
         if ($estado_anterior !== 'Resuelto' && $estado_anterior !== 'Cerrado') {

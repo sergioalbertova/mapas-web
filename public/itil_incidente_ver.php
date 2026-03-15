@@ -447,7 +447,11 @@ textarea.form-control {
         <h4 class="mb-0">Incidente #<?= htmlspecialchars((string)$incidente['id']) ?></h4>
         <span class="badge bg-secondary"><?= htmlspecialchars($incidente['categoria'] ?? 'Sin categoría') ?></span>
     </div>
-
+<?php if (!empty($_SESSION['error'])): ?>
+<div class="alert alert-danger">
+    <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+</div>
+<?php endif; ?>
     <div class="row g-3">
         <!-- INFO GENERAL -->
         <div class="col-md-6">
