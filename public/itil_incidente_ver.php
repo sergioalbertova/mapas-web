@@ -33,6 +33,19 @@ if (!$incidente) {
 }
 
 /* ============================
+   FORMATEO DE FECHAS
+   ============================ */
+function fmt_fecha($valor) {
+    if (!$valor) return '';
+    try {
+        $dt = new DateTime($valor);
+        return $dt->format('Y-m-d H:i'); // sin segundos ni microsegundos
+    } catch (Exception $e) {
+        return $valor;
+    }
+}
+
+/* ============================
    OBTENER NOTAS
    ============================ */
 $sqlNotas = "
@@ -79,9 +92,9 @@ function sla_objetivo_horas($prioridad) {
     }
 }
 
-$fecha_reporte = $incidente['fecha_reporte'] ? new DateTime($incidente['fecha_reporte']) : new DateTime();
+$fecha_reporte_dt = $incidente['fecha_reporte'] ? new DateTime($incidente['fecha_reporte']) : new DateTime();
 $ahora = new DateTime();
-$diff = $fecha_reporte->diff($ahora);
+$diff = $fecha_reporte_dt->diff($ahora);
 $horas_transcurridas = ($diff->days * 24) + $diff->h + ($diff->i / 60);
 
 $objetivo = sla_objetivo_horas($incidente['prioridad'] ?? '');
@@ -120,16 +133,14 @@ if ($restante >= 2) {
 }
 
 body.dark {
-    color: #4FC3F7 !important; /* azul claro visible */
-
     --bg: #1A1D21;
     --sidebar-bg: #24272C;
     --sidebar-hover: #2F3338;
     --card-bg: #2C2F34;
     --text: #E5E7EB;
     --subtext: #9CA3AF;
-    --primary: #00AEEF;
-    --primary-hover: #0088C0;
+    --primary: #4FC3F7; /* más claro en oscuro */
+    --primary-hover: #81D4FA;
     --shadow: rgba(0,0,0,0.45);
 }
 
@@ -287,6 +298,11 @@ body {
     color: var(--subtext);
 }
 
+/* Títulos generales en oscuro */
+body.dark h4 {
+    color: #E5E7EB;
+}
+
 /* BADGES ESTADO */
 .badge-estado {
     font-size: 12px;
@@ -370,9 +386,7 @@ textarea.form-control {
     </div>
 
     <div class="nav-item" onclick="toggleDarkMode()">
-        <svg id="darkToggleIcon" viewBox="0 0 24 24">
-            <!-- se actualiza por JS -->
-        </svg>
+        <svg id="darkToggleIcon" viewBox="0 0 24 24"></svg>
         <span class="nav-text" id="darkToggleText">Tema oscuro</span>
         <span class="tooltip" id="darkToggleTooltip">Tema oscuro</span>
     </div>
@@ -472,19 +486,19 @@ textarea.form-control {
                 <div class="row mt-2">
                     <div class="col-6">
                         <small class="text-muted">Fecha reporte</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_reporte'] ?? '') ?></span>
+                        <span><?= htmlspecialchars(fmt_fecha($incidente['fecha_reporte'] ?? '')) ?></span>
                     </div>
                     <div class="col-6">
                         <small class="text-muted">Fecha asignación</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_asignacion'] ?? '') ?></span>
+                        <span><?= htmlspecialchars(fmt_fecha($incidente['fecha_asignacion'] ?? '')) ?></span>
                     </div>
                     <div class="col-6 mt-1">
                         <small class="text-muted">Fecha resolución</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_resolucion'] ?? '') ?></span>
+                        <span><?= htmlspecialchars(fmt_fecha($incidente['fecha_resolucion'] ?? '')) ?></span>
                     </div>
                     <div class="col-6 mt-1">
                         <small class="text-muted">Fecha cierre</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_cierre'] ?? '') ?></span>
+                        <span><?= htmlspecialchars(fmt_fecha($incidente['fecha_cierre'] ?? '')) ?></span>
                     </div>
                 </div>
             </div>
@@ -598,7 +612,7 @@ textarea.form-control {
                         <?php foreach ($notas as $n): ?>
                             <div class="list-group-item px-0 py-1" style="background:transparent; border:none;">
                                 <small class="text-muted">
-                                    <?= htmlspecialchars($n['fecha'] ?? '') ?> · 
+                                    <?= htmlspecialchars(fmt_fecha($n['fecha'] ?? '')) ?> · 
                                     <?= htmlspecialchars($n['usuario_nombre'] ?? 'N/D') ?>
                                 </small><br>
                                 <span><?= nl2br(htmlspecialchars($n['nota'] ?? '')) ?></span>
@@ -619,7 +633,7 @@ textarea.form-control {
                         <?php foreach ($historial as $h): ?>
                             <div class="list-group-item px-0 py-1" style="background:transparent; border:none;">
                                 <small class="text-muted">
-                                    <?= htmlspecialchars($h['fecha'] ?? '') ?> · 
+                                    <?= htmlspecialchars(fmt_fecha($h['fecha'] ?? '')) ?> · 
                                     <?= htmlspecialchars($h['usuario_nombre'] ?? 'N/D') ?>
                                 </small><br>
                                 <span>
