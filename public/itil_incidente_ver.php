@@ -551,9 +551,11 @@ textarea.form-control {
                         ?>
                         <strong><?= htmlspecialchars($tecNombre ?: 'Sin asignar') ?></strong>
                     </div>
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalTecnico">
-                        Reasignar
+                    <?php if ($incidente['estado'] !== 'Cerrado'): ?>
+                    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalReasignar">
+                        Reasignar técnico
                     </button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -613,7 +615,9 @@ textarea.form-control {
                     <div class="mb-2">
                         <textarea name="nota" class="form-control" rows="3" placeholder="Agregar nota interna..." required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-sm btn-primary">Guardar nota</button>
+                    <?php if ($incidente['estado'] !== 'Cerrado'): ?>
+                        <button class="btn btn-primary btn-sm">Guardar nota</button>
+                    <?php endif; ?>
                 </form>
                 <hr class="my-2">
                 <?php if (count($notas) === 0): ?>
