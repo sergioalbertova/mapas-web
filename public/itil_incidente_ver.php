@@ -79,12 +79,12 @@ function sla_objetivo_horas($prioridad) {
     }
 }
 
-$fecha_reporte = new DateTime($incidente['fecha_reporte']);
+$fecha_reporte = $incidente['fecha_reporte'] ? new DateTime($incidente['fecha_reporte']) : new DateTime();
 $ahora = new DateTime();
 $diff = $fecha_reporte->diff($ahora);
 $horas_transcurridas = ($diff->days * 24) + $diff->h + ($diff->i / 60);
 
-$objetivo = sla_objetivo_horas($incidente['prioridad']);
+$objetivo = sla_objetivo_horas($incidente['prioridad'] ?? '');
 $restante = $objetivo - $horas_transcurridas;
 
 if ($restante >= 2) {
@@ -102,7 +102,7 @@ if ($restante >= 2) {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Incidente #<?= htmlspecialchars($incidente['id']) ?></title>
+<title>Incidente #<?= htmlspecialchars((string)$incidente['id']) ?></title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -366,6 +366,14 @@ textarea.form-control {
         </a>
         <span class="tooltip">Cerrar sesión</span>
     </div>
+
+    <div class="nav-item" onclick="toggleDarkMode()">
+        <svg id="darkToggleIcon" viewBox="0 0 24 24">
+            <!-- se actualiza por JS -->
+        </svg>
+        <span class="nav-text" id="darkToggleText">Tema oscuro</span>
+        <span class="tooltip" id="darkToggleTooltip">Tema oscuro</span>
+    </div>
 </div>
 
 <div class="itil-topbar">
@@ -415,8 +423,8 @@ textarea.form-control {
 
 <div class="main">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Incidente #<?= htmlspecialchars($incidente['id']) ?></h4>
-        <span class="badge bg-secondary"><?= htmlspecialchars($incidente['categoria'] ?: 'Sin categoría') ?></span>
+        <h4 class="mb-0">Incidente #<?= htmlspecialchars((string)$incidente['id']) ?></h4>
+        <span class="badge bg-secondary"><?= htmlspecialchars($incidente['categoria'] ?? 'Sin categoría') ?></span>
     </div>
 
     <div class="row g-3">
@@ -426,30 +434,30 @@ textarea.form-control {
                 <h5>Información general</h5>
                 <div class="mb-1">
                     <small class="text-muted">Título</small><br>
-                    <strong><?= htmlspecialchars($incidente['titulo']) ?></strong>
+                    <strong><?= htmlspecialchars($incidente['titulo'] ?? '') ?></strong>
                 </div>
                 <div class="mb-1">
                     <small class="text-muted">Descripción</small><br>
-                    <span><?= nl2br(htmlspecialchars($incidente['descripcion'])) ?></span>
+                    <span><?= nl2br(htmlspecialchars($incidente['descripcion'] ?? '')) ?></span>
                 </div>
                 <div class="row mt-2">
                     <div class="col-4">
                         <small class="text-muted">Prioridad</small><br>
-                        <span><?= htmlspecialchars($incidente['prioridad']) ?></span>
+                        <span><?= htmlspecialchars($incidente['prioridad'] ?? '') ?></span>
                     </div>
                     <div class="col-4">
                         <small class="text-muted">Impacto</small><br>
-                        <span><?= htmlspecialchars($incidente['impacto']) ?></span>
+                        <span><?= htmlspecialchars($incidente['impacto'] ?? '') ?></span>
                     </div>
                     <div class="col-4">
                         <small class="text-muted">Urgencia</small><br>
-                        <span><?= htmlspecialchars($incidente['urgencia']) ?></span>
+                        <span><?= htmlspecialchars($incidente['urgencia'] ?? '') ?></span>
                     </div>
                 </div>
                 <div class="mt-2">
                     <small class="text-muted">Estado</small><br>
                     <?php
-                        $estado = $incidente['estado'];
+                        $estado = $incidente['estado'] ?? 'Abierto';
                         $claseEstado = "badge-estado-" . str_replace(" ", "\\ ", $estado);
                     ?>
                     <span class="badge-estado <?= $claseEstado ?>">
@@ -462,12 +470,11 @@ textarea.form-control {
                 <div class="row mt-2">
                     <div class="col-6">
                         <small class="text-muted">Fecha reporte</small><br>
-                        <span><?= htmlspecialchars($incidente['fecha_reporte']) ?></span>
+                        <span><?= htmlspecialchars($incidente['fecha_reporte'] ?? '') ?></span>
                     </div>
                     <div class="col-6">
                         <small class="text-muted">Fecha asignación</small><br>
                         <span><?= htmlspecialchars($incidente['fecha_asignacion'] ?? '') ?></span>
-
                     </div>
                     <div class="col-6 mt-1">
                         <small class="text-muted">Fecha resolución</small><br>
@@ -475,8 +482,7 @@ textarea.form-control {
                     </div>
                     <div class="col-6 mt-1">
                         <small class="text-muted">Fecha cierre</small><br>
-                       <span><?= htmlspecialchars($incidente['fecha_cierre'] ?? '') ?></span>
-
+                        <span><?= htmlspecialchars($incidente['fecha_cierre'] ?? '') ?></span>
                     </div>
                 </div>
             </div>
@@ -488,7 +494,7 @@ textarea.form-control {
                 <h5>Usuario que reporta</h5>
                 <div>
                     <small class="text-muted">Nombre</small><br>
-                    <strong><?= htmlspecialchars($incidente['usuario_reporta_nombre'] ?: 'N/D') ?></strong>
+                    <strong><?= htmlspecialchars($incidente['usuario_reporta_nombre'] ?? 'N/D') ?></strong>
                 </div>
             </div>
 
@@ -496,15 +502,15 @@ textarea.form-control {
                 <h5>Usuario afectado</h5>
                 <div>
                     <small class="text-muted">Nombre</small><br>
-                    <strong><?= htmlspecialchars($incidente['usuario_final_nombre'] ?: 'N/D') ?></strong>
+                    <strong><?= htmlspecialchars($incidente['usuario_final_nombre'] ?? 'N/D') ?></strong>
                 </div>
                 <div class="mt-2">
                     <small class="text-muted">Activo inventario</small><br>
-                    <span><?= htmlspecialchars($incidente['activo_inventario'] ?: 'No especificado') ?></span>
+                    <span><?= htmlspecialchars($incidente['activo_inventario'] ?? 'No especificado') ?></span>
                 </div>
                 <div class="mt-2">
                     <small class="text-muted">Ubicación / detalle</small><br>
-                    <span><?= nl2br(htmlspecialchars($incidente['ubicacion_detalle'] ?: 'No especificado')) ?></span>
+                    <span><?= nl2br(htmlspecialchars($incidente['ubicacion_detalle'] ?? 'No especificado')) ?></span>
                 </div>
             </div>
 
@@ -514,7 +520,7 @@ textarea.form-control {
                     <div>
                         <small class="text-muted">Nombre</small><br>
                         <?php
-                            $tecNombre = $incidente['tecnico_asignado_nombre'] ?: $incidente['tecnico_asignado_usuario'];
+                            $tecNombre = $incidente['tecnico_asignado_nombre'] ?: ($incidente['tecnico_asignado_usuario'] ?? '');
                         ?>
                         <strong><?= htmlspecialchars($tecNombre ?: 'Sin asignar') ?></strong>
                     </div>
@@ -529,7 +535,7 @@ textarea.form-control {
                 <div class="row">
                     <div class="col-4">
                         <small class="text-muted">Prioridad</small><br>
-                        <span><?= htmlspecialchars($incidente['prioridad'] ?: 'N/D') ?></span>
+                        <span><?= htmlspecialchars($incidente['prioridad'] ?? 'N/D') ?></span>
                     </div>
                     <div class="col-4">
                         <small class="text-muted">Objetivo</small><br>
@@ -556,7 +562,7 @@ textarea.form-control {
         <?php if (!empty($incidente['solucion'])): ?>
             <div class="mb-2">
                 <small class="text-muted">Solución registrada</small><br>
-                <span><?= nl2br(htmlspecialchars($incidente['solucion'])) ?></span>
+                <span><?= nl2br(htmlspecialchars($incidente['solucion'] ?? '')) ?></span>
             </div>
             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalSolucion">
                 Actualizar solución
@@ -590,10 +596,10 @@ textarea.form-control {
                         <?php foreach ($notas as $n): ?>
                             <div class="list-group-item px-0 py-1" style="background:transparent; border:none;">
                                 <small class="text-muted">
-                                    <?= htmlspecialchars($n['fecha']) ?> · 
-                                    <?= htmlspecialchars($n['usuario_nombre'] ?: 'N/D') ?>
+                                    <?= htmlspecialchars($n['fecha'] ?? '') ?> · 
+                                    <?= htmlspecialchars($n['usuario_nombre'] ?? 'N/D') ?>
                                 </small><br>
-                                <span><?= nl2br(htmlspecialchars($n['nota'])) ?></span>
+                                <span><?= nl2br(htmlspecialchars($n['nota'] ?? '')) ?></span>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -611,14 +617,14 @@ textarea.form-control {
                         <?php foreach ($historial as $h): ?>
                             <div class="list-group-item px-0 py-1" style="background:transparent; border:none;">
                                 <small class="text-muted">
-                                    <?= htmlspecialchars($h['fecha']) ?> · 
-                                    <?= htmlspecialchars($h['usuario_nombre'] ?: 'N/D') ?>
+                                    <?= htmlspecialchars($h['fecha'] ?? '') ?> · 
+                                    <?= htmlspecialchars($h['usuario_nombre'] ?? 'N/D') ?>
                                 </small><br>
                                 <span>
                                     Estado: 
-                                    <?= htmlspecialchars($h['estado_anterior'] ?: 'N/D') ?> 
+                                    <?= htmlspecialchars($h['estado_anterior'] ?? 'N/D') ?> 
                                     → 
-                                    <?= htmlspecialchars($h['estado_nuevo'] ?: 'N/D') ?>
+                                    <?= htmlspecialchars($h['estado_nuevo'] ?? 'N/D') ?>
                                 </span>
                             </div>
                         <?php endforeach; ?>
@@ -642,7 +648,7 @@ textarea.form-control {
         <input type="hidden" name="incidente_id" value="<?= $incidente_id ?>">
         <div class="mb-2">
             <label class="form-label">Estado actual</label>
-            <input type="text" class="form-control form-control-sm" value="<?= htmlspecialchars($incidente['estado']) ?>" disabled>
+            <input type="text" class="form-control form-control-sm" value="<?= htmlspecialchars($estado) ?>" disabled>
         </div>
         <div class="mb-2">
             <label class="form-label">Nuevo estado</label>
@@ -651,7 +657,7 @@ textarea.form-control {
                 $estados = ['Abierto','En progreso','Resuelto','Cerrado'];
                 foreach ($estados as $e):
                 ?>
-                    <option value="<?= $e ?>" <?= $e == $incidente['estado'] ? 'selected' : '' ?>>
+                    <option value="<?= $e ?>" <?= $e == $estado ? 'selected' : '' ?>>
                         <?= $e ?>
                     </option>
                 <?php endforeach; ?>
@@ -718,7 +724,7 @@ textarea.form-control {
         <input type="hidden" name="incidente_id" value="<?= $incidente_id ?>">
         <div class="mb-2">
             <label class="form-label">Solución</label>
-            <textarea name="solucion" class="form-control" rows="6" required><?= htmlspecialchars($incidente['solucion']) ?></textarea>
+            <textarea name="solucion" class="form-control" rows="6" required><?= htmlspecialchars($incidente['solucion'] ?? '') ?></textarea>
         </div>
         <small class="text-muted">
             Al registrar solución, el estado puede cambiar a <strong>Resuelto</strong> automáticamente.
@@ -737,6 +743,39 @@ textarea.form-control {
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
 }
+
+function setDarkIcon(isDark) {
+    const icon = document.getElementById("darkToggleIcon");
+    const text = document.getElementById("darkToggleText");
+    const tooltip = document.getElementById("darkToggleTooltip");
+    if (!icon) return;
+
+    if (isDark) {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1021 12.79z"/>';
+        text.textContent = "Tema claro";
+        tooltip.textContent = "Tema claro";
+    } else {
+        icon.innerHTML = '<path d="M12 3a1 1 0 011 1v1a1 1 0 01-2 0V4a1 1 0 011-1zm0 12a4 4 0 100-8 4 4 0 000 8zm7-3a1 1 0 010 2h-1a1 1 0 010-2h1zM6 12a1 1 0 01-1 1H4a1 1 0 010-2h1a1 1 0 011 1zm11.66-6.66a1 1 0 010 1.41l-.71.71a1 1 0 11-1.41-1.41l.71-.71a1 1 0 011.41 0zM7.46 16.54a1 1 0 010 1.41l-.71.71a1 1 0 01-1.41-1.41l.71-.71a1 1 0 011.41 0zM7.46 5.46a1 1 0 01-1.41 0l-.71-.71A1 1 0 016.75 3.34l.71.71a1 1 0 010 1.41zm11.19 11.19a1 1 0 01-1.41 0l-.71-.71a1 1 0 011.41-1.41l.71.71a1 1 0 010 1.41zM12 18a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1z"/>';
+        text.textContent = "Tema oscuro";
+        tooltip.textContent = "Tema oscuro";
+    }
+}
+
+function toggleDarkMode() {
+    const isDark = !document.body.classList.contains("dark");
+    document.body.classList.toggle("dark", isDark);
+    localStorage.setItem("tema", isDark ? "dark" : "light");
+    setDarkIcon(isDark);
+}
+
+(function initTheme() {
+    const saved = localStorage.getItem("tema");
+    const isDark = saved === "dark";
+    if (isDark) {
+        document.body.classList.add("dark");
+    }
+    setDarkIcon(isDark);
+})();
 </script>
 </body>
 </html>
