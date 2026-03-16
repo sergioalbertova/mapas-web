@@ -322,6 +322,44 @@ body.dark h4 {
 textarea.form-control {
     font-size: 14px;
 }
+
+
+/* NOTAS en modo oscuro */
+body.dark .nota-item,
+body.dark .nota-item * {
+    color: #ECEFF1 !important; /* texto claro */
+}
+
+body.dark .nota-item {
+    background-color: #2A2D31 !important; /* fondo oscuro */
+    border-color: #3A3D42 !important;     /* borde suave */
+}
+
+/* HISTORIAL en modo oscuro */
+body.dark .historial-item,
+body.dark .historial-item * {
+    color: #CFD8DC !important; /* gris claro legible */
+}
+
+body.dark .historial-item {
+    background-color: #26292D !important;
+    border-color: #3A3D42 !important;
+}
+
+/* FIX general para textos grises */
+body.dark .text-muted,
+body.dark small,
+body.dark .text-secondary {
+    color: #B0BEC5 !important;
+}
+
+/* FIX para list-group en modo oscuro */
+body.dark .list-group-item {
+    background-color: #1F2226 !important;
+    color: #ECEFF1 !important;
+    border-color: #33363A !important;
+}
+
 </style>
 </head>
 <body>
