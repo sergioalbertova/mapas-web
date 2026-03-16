@@ -84,6 +84,35 @@ switch ($accion) {
         volver($incidente_id);
         break;
 
+        case 'asociar_problema':
+
+    // Bloqueo ITIL: no permitir cambios si el incidente está cerrado
+    if ($incidente['estado'] === 'Cerrado') {
+        $_SESSION['error'] = "No puedes asociar un problema a un incidente cerrado.";
+        volver($incidente_id);
+    }
+
+    // Obtener el problema seleccionado
+    $problema_id = $_POST['problema_id'] ?? null;
+
+    // Guardar la relación en la base de datos
+    $sql = "UPDATE itil_incidentes SET problema_id = :pid WHERE id = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':pid' => $problema_id ?: null,
+        ':id'  => $incidente_id
+    ]);
+
+    // Registrar historial
+    $descripcion_hist = $problema_id
+        ? "Incidente asociado al problema #$problema_id"
+        : "Se eliminó la asociación con el problema";
+
+    registrar_historial($pdo, $incidente_id, $usuario_actual_id, "Problema", $descripcion_hist);
+
+    $_SESSION['ok'] = "Relación con problema actualizada correctamente.";
+    volver($incidente_id);
+    break;
     /* ============================
        REASIGNAR TÉCNICO
        ============================ */

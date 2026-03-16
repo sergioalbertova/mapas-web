@@ -80,6 +80,15 @@ $sqlTec = "SELECT id, nombre, usuario FROM usuarios WHERE activo = true ORDER BY
 $stmtTec = $pdo->query($sqlTec);
 $tecnicos = $stmtTec->fetchAll(PDO::FETCH_ASSOC);
 
+
+// Obtener lista de problemas activos
+$stmt = $pdo->query("
+    SELECT id, titulo, estado
+    FROM problemas
+    ORDER BY fecha_creacion DESC
+");
+
+
 /* ============================
    CÁLCULO SIMPLE DE SLA
    ============================ */
@@ -91,6 +100,11 @@ function sla_objetivo_horas($prioridad) {
         default:       return 12;
     }
 }
+
+
+
+
+$lista_problemas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $fecha_reporte_dt = $incidente['fecha_reporte'] ? new DateTime($incidente['fecha_reporte']) : new DateTime();
 $ahora = new DateTime();
@@ -531,6 +545,12 @@ body.dark .list-group-item {
                          Cambiar estado
                         </button>
                     <?php endif; ?>
+
+                    <?php if ($incidente['estado'] !== 'Cerrado'): ?>
+                        <button class="btn btn-sm btn-outline-warning ms-2" data-bs-toggle="modal" data-bs-target="#modalAsociarProblema">
+                        Asociar problema
+                        </button>
+                    <?php endif; ?>
                 </div>
                 <div class="row mt-2">
                     <div class="col-6">
@@ -805,6 +825,46 @@ body.dark .list-group-item {
       </div>
     </form>
   </div>
+</div>
+
+
+<!-- Modal: Asociar problema -->
+<div class="modal fade" id="modalAsociarProblema" tabindex="-1" aria-labelledby="modalAsociarProblemaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAsociarProblemaLabel">Asociar problema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <form action="itil_incidente_accion.php" method="POST">
+                <div class="modal-body">
+
+                    <input type="hidden" name="accion" value="asociar_problema">
+                    <input type="hidden" name="incidente_id" value="<?= $incidente['id'] ?>">
+
+                    <label class="form-label">Selecciona un problema</label>
+                    <select name="problema_id" class="form-select">
+                        <option value="">Sin problema asociado</option>
+
+                        <?php foreach ($lista_problemas as $p): ?>
+                            <option value="<?= $p['id'] ?>" <?= ($incidente['problema_id'] ?? null) == $p['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($p['titulo']) ?> (<?= $p['estado'] ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
