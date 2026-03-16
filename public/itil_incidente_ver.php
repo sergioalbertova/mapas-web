@@ -374,6 +374,10 @@ body.dark .list-group-item {
     border-color: #33363A !important;
 }
 
+.modal {
+    position: fixed !important;
+}
+
 </style>
 </head>
 <body>
