@@ -804,6 +804,47 @@ body.dark .list-group-item {
   </div>
 </div>
 
+
+<!-- Modal: Asociar problema -->
+<div class="modal fade" id="modalAsociarProblema" tabindex="-1"  aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAsociarProblemaLabel">Asociar problema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <form action="itil_incidente_accion.php" method="POST">
+                <div class="modal-body">
+
+                    <input type="hidden" name="accion" value="asociar_problema">
+                    <input type="hidden" name="incidente_id" value="<?= $incidente['id'] ?>">
+
+                    <label class="form-label">Selecciona un problema</label>
+                    <select name="problema_id" class="form-select">
+                        <option value="">Sin problema asociado</option>
+
+                        <?php foreach ($lista_problemas as $p): ?>
+                            <option value="<?= $p['id'] ?>" <?= ($incidente['problema_id'] ?? null) == $p['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($p['titulo']) ?> (<?= $p['estado'] ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
 <!-- MODAL SOLUCIÓN -->
 <div class="modal fade" id="modalSolucion" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -874,44 +915,7 @@ function toggleDarkMode() {
 })();
 </script>
 
-<!-- Modal: Asociar problema -->
-<div class="modal fade" id="modalAsociarProblema" tabindex="-1" aria-labelledby="modalAsociarProblemaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalAsociarProblemaLabel">Asociar problema</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-
-            <form action="itil_incidente_accion.php" method="POST">
-                <div class="modal-body">
-
-                    <input type="hidden" name="accion" value="asociar_problema">
-                    <input type="hidden" name="incidente_id" value="<?= $incidente['id'] ?>">
-
-                    <label class="form-label">Selecciona un problema</label>
-                    <select name="problema_id" class="form-select">
-                        <option value="">Sin problema asociado</option>
-
-                        <?php foreach ($lista_problemas as $p): ?>
-                            <option value="<?= $p['id'] ?>" <?= ($incidente['problema_id'] ?? null) == $p['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($p['titulo']) ?> (<?= $p['estado'] ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
