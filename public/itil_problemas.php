@@ -24,7 +24,7 @@ $problemas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-/* === COPIADO DE TU ARCHIVO REAL === */
+/* === TODO EL CSS ES EL MISMO QUE TU ARCHIVO REAL === */
 :root {
     --bg: #F4F7FA;
     --sidebar-bg: #FFFFFF;
@@ -57,7 +57,7 @@ body {
     display: flex;
 }
 
-/* SIDEBAR */
+/* === SIDEBAR === */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -103,7 +103,7 @@ body {
 
 .sidebar.collapsed .nav-text { display: none; }
 
-/* TOPBAR ITIL */
+/* === TOPBAR === */
 .itil-topbar {
     position: fixed;
     top: 0;
@@ -125,7 +125,7 @@ body {
     width: calc(100% - 70px);
 }
 
-/* MAIN */
+/* === MAIN === */
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
@@ -138,7 +138,7 @@ body {
     width: calc(100% - 70px);
 }
 
-/* TARJETAS */
+/* === TARJETAS === */
 .card-itil {
     background: var(--card-bg);
     border-radius: 10px;
@@ -146,12 +146,14 @@ body {
     padding: 14px 16px;
     margin-bottom: 14px;
 }
+
+.modal { position: fixed !important; }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR (copiado tal cual de tu archivo) -->
+<!-- === SIDEBAR (idéntico al tuyo) === -->
 <div class="sidebar" id="sidebar">
     <div class="nav-item" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -191,7 +193,7 @@ body {
     </div>
 </div>
 
-<!-- TOPBAR -->
+<!-- === TOPBAR (idéntico al tuyo) === -->
 <div class="itil-topbar">
     <a href="itil_incidentes.php">Incidentes</a>
     <a href="itil_incidente_nuevo.php">Nuevo</a>
@@ -199,11 +201,11 @@ body {
     <a href="itil_cambios.php">Cambios</a>
 </div>
 
-<!-- CONTENIDO -->
+<!-- === MAIN: AQUÍ VA EL LISTADO DE PROBLEMAS === -->
 <div class="main">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Problemas ITIL</h3>
+        <h4 class="mb-0">Problemas ITIL</h4>
         <a href="itil_problema_nuevo.php" class="btn btn-primary">+ Nuevo problema</a>
     </div>
 
@@ -240,13 +242,46 @@ body {
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<!-- === SCRIPTS ORIGINALES === -->
 <script>
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
 }
+
+function setDarkIcon(isDark) {
+    const icon = document.getElementById("darkToggleIcon");
+    const text = document.getElementById("darkToggleText");
+    const tooltip = document.getElementById("darkToggleTooltip");
+    if (!icon) return;
+
+    if (isDark) {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1021 12.79z"/>';
+        text.textContent = "Tema claro";
+        tooltip.textContent = "Tema claro";
+    } else {
+        icon.innerHTML = '<path d="M12 3a1 1 0 011 1v1a1 1 0 01-2 0V4a1 1 0 011-1zm0 12a4 4 0 100-8 4 4 0 000 8zm7-3a1 1 0 010 2h-1a1 1 0 010-2h1zM6 12a1 1 0 01-1 1H4a1 1 0 010-2h1a1 1 0 011 1zm11.66-6.66a1 1 0 010 1.41l-.71.71a1 1 0 11-1.41-1.41l.71-.71a1 1 0 011.41 0zM7.46 16.54a1 1 0 010 1.41l-.71.71a1 1 0 01-1.41-1.41l.71-.71a1 1 0 011.41 0zM7.46 5.46a1 1 0 01-1.41 0l-.71-.71A1 1 0 016.75 3.34l.71.71a1 1 0 010 1.41zm11.19 11.19a1 1 0 01-1.41 0l-.71-.71a1 1 0 011.41-1.41l.71.71a1 1 0 010 1.41zM12 18a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1z"/>';
+        text.textContent = "Tema oscuro";
+        tooltip.textContent = "Tema oscuro";
+    }
+}
+
+function toggleDarkMode() {
+    const isDark = !document.body.classList.contains("dark");
+    document.body.classList.toggle("dark", isDark);
+    localStorage.setItem("tema", isDark ? "dark" : "light");
+    setDarkIcon(isDark);
+}
+
+(function initTheme() {
+    const saved = localStorage.getItem("tema");
+    const isDark = saved === "dark";
+    if (isDark) {
+        document.body.classList.add("dark");
+    }
+    setDarkIcon(isDark);
+})();
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
