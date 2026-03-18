@@ -249,9 +249,11 @@ body {
         Problemas
     </a>
 
-    <a href="itil_cambios.php">
-        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Cambios
+    <a href="itil_catalogo.php">
+        <svg width="16" height="16" viewBox="0 0 24 24">
+            <path d="M4 4h16v4H4zm0 6h16v10H4z" />
+        </svg>
+        Catalogo Incidentes
     </a>
 
     <a href="itil_solicitudes.php">

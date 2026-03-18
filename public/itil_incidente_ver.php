@@ -466,11 +466,11 @@ body.dark .list-group-item {
         </svg>
         Nuevo
     </a>
-    <a href="itil_problemas.php">
+    <a href="itil_catalogo.php">
         <svg width="16" height="16" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M4 4h16v4H4zm0 6h16v10H4z" />
         </svg>
-        Problemas
+        Catalogo Incidentes
     </a>
     <a href="itil_cambios.php">
         <svg width="16" height="16" viewBox="0 0 24 24">
