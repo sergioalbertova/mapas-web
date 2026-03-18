@@ -71,6 +71,11 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
+body.dark .text-muted {
+    color: var(--subtext) !important;
+}
+
+
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
