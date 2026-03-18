@@ -1,5 +1,6 @@
 <?php
 require "session_config.php";
+date_default_timezone_set('America/Mexico_City');
 require "db.php";
 
 if (!isset($_POST['accion'])) {
