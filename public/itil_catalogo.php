@@ -111,41 +111,47 @@ body {
 
 .sidebar.collapsed .nav-text { display: none; }
 
-/* === TOPBAR === */
+/* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
     top: 0;
     left: 240px;
+    right: 0;
     height: 55px;
-    width: calc(100% - 240px);
     background: var(--sidebar-bg);
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    gap: 10px;
-    padding: 0 10px;
+    gap: 25px;
+    padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2100;
-    transition: left 0.25s ease, width 0.25s ease;
 }
-#sidebar.collapsed + .itil-topbar {
+
+.sidebar.collapsed ~ .itil-topbar {
     left: 70px;
-    width: calc(100% - 70px);
 }
 
 .itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-weight: bold;
-    color: var(--text);
-    text-decoration: none;
-    white-space: nowrap;
-    font-size: 14px;
+    gap: 8px;
 }
-.itil-topbar a:hover { background: var(--sidebar-hover); }
+
+.itil-topbar a:hover {
+    background: var(--sidebar-hover);
+}
+
+.itil-topbar svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
 
 /* === MAIN === */
 .main {
@@ -168,6 +174,29 @@ body {
     padding: 14px 16px;
     margin-bottom: 14px;
 }
+
+/* ====== TABLAS EN MODO OSCURO ====== */
+body.dark table {
+    background: var(--card-bg) !important;
+    color: var(--text) !important;
+}
+
+body.dark table thead tr {
+    background: var(--sidebar-hover) !important;
+}
+
+body.dark table tbody tr:hover {
+    background: var(--sidebar-hover) !important;
+}
+
+body.dark table td,
+body.dark table th {
+    background: var(--card-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--sidebar-hover) !important;
+}
+
+
 </style>
 </head>
 
@@ -198,11 +227,44 @@ body {
 
 <!-- === TOPBAR REAL === -->
 <div class="itil-topbar">
-    <a href="itil_incidentes.php"><svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>Incidentes</a>
-    <a href="itil_incidente_nuevo.php"><svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>Nuevo</a>
-    <a href="itil_problemas.php"><svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>Problemas</a>
-    <a href="itil_catalogo.php"><svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>Catálogo</a>
+
+    <a href="itil_incidentes.php">
+        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
+        Incidentes
+    </a>
+
+    <a href="itil_incidente_nuevo.php">
+        <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Nuevo
+    </a>
+
+    <a href="itil_problemas.php">
+        <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Problemas
+    </a>
+
+    <a href="itil_catalogo.php">
+        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
+        Catalogo Incidentes
+    </a>
+
+    <a href="itil_solicitudes.php">
+        <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Solicitudes
+    </a>
+
+    <a href="itil_sla.php">
+        <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        SLA
+    </a>
+
+    <a href="itil_estadisticas.php">
+        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Estadísticas
+    </a>
+
 </div>
+
 
 <!-- === MAIN === -->
 <div class="main">
