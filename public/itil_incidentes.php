@@ -339,30 +339,24 @@ td {
 <!-- ========================= -->
 <!-- TOPBAR ITIL               -->
 <!-- ========================= -->
+<!-- ====== TOPBAR ITIL ====== -->
 <div class="itil-topbar">
-
     <a href="itil_incidentes.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/>
-        </svg>
+        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
         Incidentes
     </a>
 
     <a href="itil_incidente_nuevo.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/>
-        </svg>
-        Nuevo
+        <svg><path d="M12 5v14m7-7H5"/></svg>
+        Nuevo incidente
     </a>
 
     <a href="itil_problemas.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
-        </svg>
+        <svg><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
         Problemas
     </a>
 
-    <a href="itil_catalogo.php">
+      <a href="itil_catalogo.php">
         <svg width="16" height="16" viewBox="0 0 24 24">
             <path d="M4 4h16v4H4zm0 6h16v10H4z" />
         </svg>
@@ -370,26 +364,19 @@ td {
     </a>
 
     <a href="itil_solicitudes.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/>
-        </svg>
+        <svg><path d="M3 6h18v12H3z"/></svg>
         Solicitudes
     </a>
 
     <a href="itil_sla.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/>
-        </svg>
+        <svg><path d="M12 2v20m10-10H2"/></svg>
         SLA
     </a>
 
     <a href="itil_estadisticas.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/>
-        </svg>
+        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8"/></svg>
         Estadísticas
     </a>
-
 </div>
 
 
