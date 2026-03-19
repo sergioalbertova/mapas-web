@@ -1,9 +1,6 @@
 <?php
 date_default_timezone_set('America/Mexico_City');
 
-
-?>
-<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -18,9 +15,12 @@ try {
         $user,
         $pass,
         [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_EMULATE_PREPARES => true,   // 🔥 ESTA LÍNEA SOLUCIONA EL ERROR EN NEON
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]
     );
 } catch (PDOException $e) {
     die("Error de conexión: " . $e->getMessage());
 }
+
