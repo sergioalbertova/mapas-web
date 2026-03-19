@@ -103,47 +103,41 @@ body {
 
 .sidebar.collapsed .nav-text { display: none; }
 
-/* === TOPBAR === */
+/* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
     top: 0;
     left: 240px;
+    right: 0;
     height: 55px;
-    width: calc(100% - 240px);
     background: var(--sidebar-bg);
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    gap: 10px;
-    padding: 0 10px;
+    gap: 25px;
+    padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2100;
-    transition: left 0.25s ease, width 0.25s ease;
 }
-#sidebar.collapsed + .itil-topbar {
-    left: 70px;
-    width: calc(100% - 70px);
-}
+.sidebar.collapsed ~ .itil-topbar { left: 70px; }
 
 .itil-topbar a {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-weight: bold;
-    color: var(--text);
     text-decoration: none;
-    white-space: nowrap;
-    font-size: 14px;
+    color: var(--text);
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
 .itil-topbar svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     fill: currentColor;
 }
+
 
 /* === MAIN === */
 .main {
@@ -265,7 +259,7 @@ body {
 
     <a href="itil_cambios.php">
         <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Cambios
+        Catalogo de Incidentes
     </a>
 
     <a href="itil_solicitudes.php">
