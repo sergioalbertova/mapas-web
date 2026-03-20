@@ -20,7 +20,7 @@
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
             <span class="nav-text">Incidentes ITIL</span>
         </a>
-        <span class="tooltip">Incidentes ITIL</span>
+        <span class="tooltip">Incidentes/Apoyos</span>
     </div>
 
     <div class="nav-item">
