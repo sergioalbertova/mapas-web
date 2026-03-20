@@ -16,7 +16,14 @@ if ($usuario === '' || $clave === '') {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT id, usuario, clave FROM usuarios WHERE usuario = :u LIMIT 1");
+    //$stmt = $pdo->prepare("SELECT id, usuario, clave FROM usuarios WHERE usuario = :u LIMIT 1");
+    $stmt = $pdo->prepare("
+    SELECT id, usuario, clave 
+    FROM usuarios 
+    WHERE LOWER(usuario) = LOWER(:u)
+    LIMIT 1
+");
+
     $stmt->execute(['u' => $usuario]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
