@@ -86,6 +86,14 @@ body {
 }
 .nav-item:hover { background: var(--sidebar-hover); }
 
+.nav-item a {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:inherit;
+    text-decoration:none;
+}
+
 .nav-item svg {
     width: 20px;
     height: 20px;
@@ -104,9 +112,11 @@ body {
     border-radius: 6px;
     box-shadow: 0 2px 8px var(--shadow);
     font-size: 13px;
+    white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: 0.2s;
+    transition: opacity 0.2s ease, left 0.2s ease;
+    z-index: 99999;
 }
 .sidebar.collapsed .nav-item:hover .tooltip {
     opacity: 1;
