@@ -399,14 +399,15 @@ while ($dia <= $diasMes) {
     echo "$dia</div>";
 
     // Cumpleaños (si aplica)
-    if ($cumple) {
-        echo "<div class='cumple-wrapper'>
-                <svg class='icono-cumple' width='18' height='18' viewBox='0 0 24 24'>
-                    <path fill='#ff4081' d='M12 2l3 6h-6l3-6zm-7 18h14l-2-10H7l-2 10z'/>
-                </svg>
-                <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
-              </div>";
-    }
+   if ($cumple) {
+    echo "<div class='cumple-wrapper'>
+            <svg class='icono-cumple' width='18' height='18' viewBox='0 0 24 24'>
+                <path fill='#ff4081' d='M12 2c.6 0 1 .4 1 1v2h-2V3c0-.6.4-1 1-1zm-4 4h8c1.1 0 2 .9 2 2v3H6V8c0-1.1.9-2 2-2zm-3 7h14c1.1 0 2 .9 2 2v5H3v-5c0-1.1.9-2 2-2zm2 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z'/>
+            </svg>
+            <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
+          </div>";
+}
+
 
     // Técnico (si hay)
     if ($tecnico) {
