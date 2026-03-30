@@ -26,7 +26,7 @@ $mesSiguiente = $mes + 1;
 $anioSiguiente = $anio;
 if ($mesSiguiente > 12) { $mesSiguiente = 1; $anioSiguiente++; }
 
-// Obtener guardias del mes (YA CON CUMPLE Y CUMPLEANERO)
+// Obtener guardias del mes (ahora con cumple y cumpleanero)
 $stmt = $pdo->prepare("
     SELECT fecha, tecnico, cumple, cumpleanero
     FROM guardias
@@ -41,9 +41,9 @@ $guardias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $mapa = [];
 foreach ($guardias as $g) {
     $mapa[$g['fecha']] = [
-        'tecnico'      => $g['tecnico'],
-        'cumple'       => $g['cumple'],
-        'cumpleanero'  => $g['cumpleanero']
+        'tecnico'     => $g['tecnico'],
+        'cumple'      => $g['cumple'],
+        'cumpleanero' => $g['cumpleanero']
     ];
 }
 
@@ -57,7 +57,7 @@ $colores = [
 
 // Día actual
 $hoy = date('Y-m-d');
-$tecnicoHoy = $mapa[$hoy]['tecnico'] ?? "Sin guardia";
+$tecnicoHoy = isset($mapa[$hoy]) ? ($mapa[$hoy]['tecnico'] ?? "Sin guardia") : "Sin guardia";
 
 // Mostrar info de hoy solo si estamos en el mes actual
 $mostrarHoy = ($mes == date('n') && $anio == date('Y'));
@@ -140,8 +140,67 @@ body {
 }
 .sidebar.collapsed { width: 70px; }
 
+.sidebar h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+    color: var(--primary);
+    transition: opacity 0.25s ease;
+}
+.sidebar.collapsed h2 { opacity: 0; }
+
+.nav-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+.nav-item:hover { background: var(--sidebar-hover); }
+
+.nav-item a {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:inherit;
+    text-decoration:none;
+}
+
+.nav-item svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.sidebar.collapsed .nav-text { display: none; }
+
+.tooltip {
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--sidebar-bg);
+    padding: 6px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px var(--shadow);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, left 0.2s ease;
+    z-index: 99999;
+}
+.sidebar.collapsed .nav-item:hover .tooltip {
+    opacity: 1;
+    left: 75px;
+}
+
 /* ============================
-   CONTENIDO PRINCIPAL
+   CONTENIDO PRINCIPAL (SIN TOPBAR)
    ============================ */
 .main {
     margin-left: 240px;
@@ -176,6 +235,29 @@ h1 {
     color: var(--primary);
 }
 
+.navegacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.boton {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.boton:hover {
+    background: var(--primary-hover);
+}
+
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
@@ -196,8 +278,38 @@ h1 {
     background: var(--card-bg);
 }
 
+.dia-numero {
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.icono-hoy {
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+}
+
+.hoy {
+    border: 3px solid var(--primary);
+}
+
+/* puedes tener clases festivo, sabado, domingo si las usas en tu CSS original */
+
+.tecnico {
+    margin-top: 4px;
+    padding: 3px;
+    border-radius: 4px;
+    color: white;
+    font-size: 13px;
+    display: inline-block;
+}
+
 /* ============================
-   ESTILO DE CUMPLEAÑOS
+   ESTILO CUMPLEAÑOS
    ============================ */
 .cumple-dia {
     background: #E3F2FD !important;
@@ -220,25 +332,36 @@ h1 {
     color: #ff4081;
     font-size: 13px;
 }
-
-.tecnico {
-    margin-top: 4px;
-    padding: 3px;
-    border-radius: 4px;
-    color: white;
-    font-size: 13px;
-    display: inline-block;
-}
 </style>
 
 </head>
 <body>
 <?php require "sidebar.php"; ?>
+<!-- SIDEBAR -->
 
+<!-- CONTENIDO PRINCIPAL -->
 <div class="main">
+
 <div class="contenedor">
 
 <h1><?= $nombreMes ?></h1>
+
+<div class="navegacion">
+
+    <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
+
+    <?php if ($mostrarHoy): ?>
+    <div class="info-hoy">
+        <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+    </div>
+    <?php endif; ?>
+
+    <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
+
+    <button class="boton" onclick="toggleTheme()">🌙 Tema</button>
+
+    <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
+</div>
 
 <table class="tabla-calendario">
 <tr>
@@ -251,7 +374,6 @@ for ($i = 1; $i < $diaSemana; $i++) echo "<td></td>";
 
 $dia = 1;
 while ($dia <= $diasMes) {
-
     $fecha = sprintf("%04d-%02d-%02d", $anio, $mes, $dia);
     $dow = date('N', strtotime($fecha));
 
@@ -260,16 +382,23 @@ while ($dia <= $diasMes) {
     $cumple = $info['cumple'] ?? false;
     $cumpleanero = $info['cumpleanero'] ?? null;
 
-    // Clase de celda
-    $clase = "";
-    if ($cumple) $clase = "cumple-dia";
+    // Construir clases de la celda
+    $clases = [];
+    if ($fecha == $hoy) $clases[] = "hoy";
+    if ($tecnico === "FESTIVO") $clases[] = "festivo";
+    if ($dow == 6) $clases[] = "sabado";
+    if ($dow == 7) $clases[] = "domingo";
+    if ($cumple) $clases[] = "cumple-dia";
+    $clase = implode(' ', $clases);
 
     echo "<td class='$clase'>";
     echo "<div class='celda'>";
 
-    echo "<div class='dia-numero'>$dia</div>";
+    echo "<div class='dia-numero'>";
+    if ($fecha == $hoy) echo "<span class='icono-hoy'></span>";
+    echo "$dia</div>";
 
-    // Mostrar cumpleaños
+    // Cumpleaños (si aplica)
     if ($cumple) {
         echo "<div class='cumple-wrapper'>
                 <svg class='icono-cumple' width='18' height='18' viewBox='0 0 24 24'>
@@ -279,7 +408,7 @@ while ($dia <= $diasMes) {
               </div>";
     }
 
-    // Mostrar técnico
+    // Técnico (si hay)
     if ($tecnico) {
         $color = $colores[$tecnico] ?? "#333";
         echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
@@ -307,6 +436,11 @@ function toggleTheme() {
 
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
 }
 </script>
 
