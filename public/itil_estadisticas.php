@@ -271,10 +271,13 @@ body {
     display: flex;
     flex-direction: column;
     position: fixed;
+    top: 0;
+    left: 0;
     transition: width 0.25s ease;
     overflow: visible;
-    z-index: 2000;
+    z-index: 3000; /* antes 2000 */
 }
+
 .sidebar.collapsed { width: 70px; }
 
 /* ============================================================
@@ -339,9 +342,10 @@ body {
 .main {
     margin-left: 240px;
     padding: 25px;
-    margin-top: 140px;
+    margin-top: 165px; /* antes 140px */
     transition: margin-left 0.25s ease;
 }
+
 .sidebar.collapsed ~ .main { margin-left: 70px; }
 
 /* ============================================================
@@ -376,6 +380,17 @@ body {
     width: 100%;
     height: 260px;
 }
+
+.sidebar.collapsed ~ .main {
+    margin-left: 70px !important;
+}
+.sidebar.collapsed ~ .itil-topbar {
+    left: 70px !important;
+}
+.sidebar.collapsed ~ .filtro-bar {
+    left: 70px !important;
+}
+
 </style>
 </head>
 <body>
@@ -680,9 +695,24 @@ new ApexCharts(document.querySelector("#chartMensual"), {
     chart: { type: 'line', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartMensualData }],
     xaxis: { categories: chartMensualLabels, labels: { style: { colors: textColor } } },
-    stroke: { curve: 'smooth', width: 4 },
-    colors: ['#00C8FF'],   // azul brillante
-    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1 } },
+    colors: ['#00E5FF'], // cian neón
+stroke: { curve: 'smooth', width: 5 },
+fill: {
+    type: 'gradient',
+    gradient: {
+        shadeIntensity: 0,
+        opacityFrom: 0.9,
+        opacityTo: 0.25,
+        stops: [0, 100]
+    }
+},
+markers: {
+    size: 5,
+    colors: ['#00E5FF'],
+    strokeColors: '#ffffff',
+    strokeWidth: 2
+},
+
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
 
