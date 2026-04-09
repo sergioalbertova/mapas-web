@@ -3,6 +3,30 @@ require "session_config.php";
 require "db.php";
 
 /* ============================================================
+   FILTRO DE FECHAS (GET)
+   ============================================================ */
+$hoy = date("Y-m-d");
+
+$fecha_inicio = $_GET['inicio'] ?? $hoy;
+$fecha_fin    = $_GET['fin']    ?? $hoy;
+
+/* Botones rápidos */
+if (isset($_GET['rango'])) {
+    if ($_GET['rango'] === "hoy") {
+        $fecha_inicio = $hoy;
+        $fecha_fin = $hoy;
+    }
+    if ($_GET['rango'] === "7") {
+        $fecha_inicio = date("Y-m-d", strtotime("-6 days"));
+        $fecha_fin = $hoy;
+    }
+    if ($_GET['rango'] === "mes") {
+        $fecha_inicio = date("Y-m-01");
+        $fecha_fin = $hoy;
+    }
+}
+
+/* ============================================================
    OBTENER TÉCNICO LOGUEADO
    ============================================================ */
 $tecnico_id = intval($_SESSION['user_id']);
@@ -14,41 +38,61 @@ $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 $nombreTecnico = $tecnico ? $tecnico['usuario'] . " - " . $tecnico['nombre'] : "Usuario";
 
 /* ============================================================
-   ESTADÍSTICAS OPTIMIZADAS
+   CONSULTAS SQL FILTRADAS POR FECHA
    ============================================================ */
 
+$params = [
+    ':inicio' => $fecha_inicio . " 00:00:00",
+    ':fin'    => $fecha_fin . " 23:59:59"
+];
+
 /* Total */
-$total = $pdo->query("SELECT COUNT(*) FROM itil_incidentes")->fetchColumn();
+$stmt = $pdo->prepare("
+    SELECT COUNT(*) FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
+");
+$stmt->execute($params);
+$total = $stmt->fetchColumn();
 
 /* Resueltos */
-$totalResueltos = $pdo->query("
-    SELECT COUNT(*) FROM itil_incidentes 
+$stmt = $pdo->prepare("
+    SELECT COUNT(*) FROM itil_incidentes
     WHERE estado ILIKE 'Resuelto'
-")->fetchColumn();
+    AND fecha_reporte BETWEEN :inicio AND :fin
+");
+$stmt->execute($params);
+$totalResueltos = $stmt->fetchColumn();
 
 /* Activos */
-$totalActivos = $pdo->query("
-    SELECT COUNT(*) FROM itil_incidentes 
+$stmt = $pdo->prepare("
+    SELECT COUNT(*) FROM itil_incidentes
     WHERE estado NOT ILIKE 'Resuelto'
-")->fetchColumn();
+    AND fecha_reporte BETWEEN :inicio AND :fin
+");
+$stmt->execute($params);
+$totalActivos = $stmt->fetchColumn();
 
 /* MTTR */
-$mttr = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT ROUND(AVG(EXTRACT(EPOCH FROM (fecha_resolucion - fecha_reporte)) / 3600), 2)
     FROM itil_incidentes
     WHERE fecha_resolucion IS NOT NULL
-")->fetchColumn();
-$mttr = $mttr ?: 0;
+    AND fecha_reporte BETWEEN :inicio AND :fin
+");
+$stmt->execute($params);
+$mttr = $stmt->fetchColumn() ?: 0;
 
-/* SLA <= 24h */
-$slaRow = $pdo->query("
+/* SLA */
+$stmt = $pdo->prepare("
     SELECT 
         COUNT(*) FILTER (WHERE fecha_resolucion IS NOT NULL 
                          AND fecha_resolucion - fecha_reporte <= INTERVAL '24 hours') AS dentro,
         COUNT(*) FILTER (WHERE fecha_resolucion IS NOT NULL) AS total
     FROM itil_incidentes
-")->fetch(PDO::FETCH_ASSOC);
-
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
+");
+$stmt->execute($params);
+$slaRow = $stmt->fetch(PDO::FETCH_ASSOC);
 $slaPorcentaje = ($slaRow['total'] > 0)
     ? round(($slaRow['dentro'] / $slaRow['total']) * 100, 1)
     : 0;
@@ -57,82 +101,96 @@ $slaPorcentaje = ($slaRow['total'] > 0)
 $backlog = $totalActivos;
 
 /* Incidentes por técnico */
-$porTecnico = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT COALESCE(u.nombre, 'Sin técnico') AS tecnico, COUNT(*) AS total
     FROM itil_incidentes i
     LEFT JOIN usuarios u ON u.id = i.tecnico_asignado
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY tecnico
     ORDER BY total DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$porTecnico = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Incidentes por tipo */
-$porTipo = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY titulo
     ORDER BY total DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$porTipo = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Incidentes por estado */
-$porEstado = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT estado, COUNT(*) AS total
     FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY estado
     ORDER BY total DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$porEstado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Tendencia mensual */
-$mensual = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT TO_CHAR(fecha_reporte, 'YYYY-MM') AS mes, COUNT(*) AS total
     FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY mes
     ORDER BY mes
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$mensual = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Heatmap por hora */
-$porHora = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT EXTRACT(HOUR FROM fecha_reporte) AS hora, COUNT(*) AS total
     FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY hora
     ORDER BY hora
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$porHora = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Heatmap por día */
-$porDiaSemana = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT EXTRACT(DOW FROM fecha_reporte) AS dow, COUNT(*) AS total
     FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY dow
     ORDER BY dow
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$porDiaSemana = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Top técnicos */
-$topTecnicos = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT COALESCE(u.nombre, 'Sin técnico') AS tecnico, COUNT(*) AS total
     FROM itil_incidentes i
     LEFT JOIN usuarios u ON u.id = i.tecnico_asignado
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY tecnico
     ORDER BY total DESC
     LIMIT 10
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$topTecnicos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Top categorías */
-$topCategorias = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
     GROUP BY titulo
     ORDER BY total DESC
     LIMIT 10
-")->fetchAll(PDO::FETCH_ASSOC);
-
-/* Top usuarios */
-$topUsuarios = $pdo->query("
-    SELECT COALESCE(au.nomuser, 'Desconocido') AS usuario, COUNT(*) AS total
-    FROM itil_incidentes i
-    LEFT JOIN activeuser au ON au.idu = i.usuario_final_id
-    GROUP BY usuario
-    ORDER BY total DESC
-    LIMIT 10
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$stmt->execute($params);
+$topCategorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Preparar datos JS */
 $chartTecnicoLabels = array_column($porTecnico, 'tecnico');
@@ -159,12 +217,11 @@ $chartDiaSemanaData   = array_column($porDiaSemana, 'total');
 <meta charset="UTF-8">
 <title>Dashboard de estadísticas</title>
 
-<!-- ApexCharts -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <style>
 /* ============================================================
-   VARIABLES DE COLOR (LIGHT / DARK)
+   VARIABLES DE COLOR
    ============================================================ */
 :root {
     --bg: #F4F7FA;
@@ -193,25 +250,90 @@ body.dark {
 }
 
 /* ============================================================
-   ESTILOS GENERALES
+   AJUSTES PARA RESPETAR TU SIDEBAR
    ============================================================ */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
+.main {
+    margin-left: 240px;
+    padding: 25px;
+    transition: margin-left 0.25s ease;
+}
+
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
 }
 
 /* ============================================================
-   DASHBOARD TITLE (CENTRADO, B2 + S3)
+   TOPBAR (FILTRO)
+   ============================================================ */
+.filtro-bar {
+    margin-left: 240px;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    background: var(--card-bg);
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: margin-left 0.25s ease;
+}
+
+.sidebar.collapsed ~ .filtro-bar {
+    margin-left: 70px;
+}
+
+.filtro-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.filtro-row input[type="date"] {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: var(--card-bg);
+    color: var(--text);
+}
+
+.filtro-row button {
+    padding: 8px 14px;
+    cursor: pointer;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.filtro-row button:hover {
+    background: #003f7a;
+}
+
+.filtro-rapidos button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filtro-rapidos button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* ============================================================
+   TÍTULO PRINCIPAL
    ============================================================ */
 .dashboard-title {
     text-align: center;
     margin-bottom: 5px;
     font-size: 26px;
     font-weight: 600;
-    letter-spacing: -0.3px;
 }
 
 .dashboard-subtitle {
@@ -231,7 +353,7 @@ body {
 }
 
 /* ============================================================
-   CARDS (KPIs)
+   CARDS
    ============================================================ */
 .dashboard-grid {
     display: grid;
@@ -240,42 +362,34 @@ body {
     margin-bottom: 25px;
 }
 
-@media (max-width: 1200px) {
-    .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 768px) {
-    .dashboard-grid { grid-template-columns: repeat(1, 1fr); }
-}
-
-.card {
+.card, .chart-card, .table-box {
     background: var(--card-bg);
     border-radius: 12px;
     padding: 22px 24px;
     box-shadow: 0 4px 14px var(--shadow);
     border: 1px solid rgba(0,0,0,0.06);
-    min-height: 130px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
-.card h3 {
+.card h3, .chart-card h3, .table-box h3 {
     margin: 0 0 6px;
     font-size: 15px;
     font-weight: 600;
-    color: var(--text);
     text-align: left;
 }
 
 .kpi-value {
     font-size: 30px;
     font-weight: bold;
-    margin-bottom: 4px;
 }
 
 .kpi-sub {
     font-size: 13px;
     color: var(--subtext);
+}
+
+.chart-container {
+    width: 100%;
+    height: 260px;
 }
 </style>
 </head>
@@ -288,43 +402,39 @@ body {
 <?php include "sidebar.php"; ?>
 
 <!-- ========================= -->
-<!-- TOPBAR                    -->
+<!-- FILTRO F1 (COMPACTO)      -->
 <!-- ========================= -->
-<div class="itil-topbar">
-    <a href="itil_incidentes.php">
-        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
-        Incidentes
-    </a>
+<div class="filtro-bar">
 
-    <a href="itil_incidente_nuevo.php">
-        <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Nuevo
-    </a>
+    <!-- FILA 1: Datepickers + Filtrar -->
+    <form method="GET" class="filtro-row">
 
-    <a href="itil_problemas.php">
-        <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Problemas
-    </a>
+        <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
+        <input type="date" name="fin" value="<?= $fecha_fin ?>">
 
-    <a href="itil_catalogo.php">
-        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Catálogo
-    </a>
+        <button type="submit">Filtrar</button>
+    </form>
 
-    <a href="itil_solicitudes.php">
-        <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Solicitudes
-    </a>
+    <!-- FILA 2: Botones rápidos -->
+    <div class="filtro-rapidos filtro-row">
 
-    <a href="itil_sla.php">
-        <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        SLA
-    </a>
+        <form method="GET">
+            <input type="hidden" name="rango" value="hoy">
+            <button type="submit">Hoy</button>
+        </form>
 
-    <a href="itil_estadisticas.php">
-        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Estadísticas
-    </a>
+        <form method="GET">
+            <input type="hidden" name="rango" value="7">
+            <button type="submit">Últimos 7 días</button>
+        </form>
+
+        <form method="GET">
+            <input type="hidden" name="rango" value="mes">
+            <button type="submit">Mes actual</button>
+        </form>
+
+    </div>
+
 </div>
 
 <!-- ========================= -->
@@ -334,7 +444,9 @@ body {
 
     <!-- TÍTULO PRINCIPAL -->
     <h2 class="dashboard-title">Dashboard de estadísticas</h2>
-    <div class="dashboard-subtitle">Vista general de incidentes, técnicos y comportamiento temporal</div>
+    <div class="dashboard-subtitle">
+        Vista general de incidentes, técnicos y comportamiento temporal
+    </div>
     <div class="dashboard-divider"></div>
 
     <!-- ========================= -->
@@ -345,7 +457,7 @@ body {
         <div class="card">
             <h3>Total de incidentes</h3>
             <div class="kpi-value"><?= $total ?></div>
-            <div class="kpi-sub">Todos los registros</div>
+            <div class="kpi-sub">Registros en el rango</div>
         </div>
 
         <div class="card">
@@ -410,8 +522,7 @@ body {
         </div>
 
     </div>
-
-        <!-- ========================= -->
+    <!-- ========================= -->
     <!-- HEATMAPS                  -->
     <!-- ========================= -->
     <div class="dashboard-grid">
@@ -459,22 +570,6 @@ body {
                 <?php foreach ($topCategorias as $row): ?>
                 <tr>
                     <td><?= htmlspecialchars($row['titulo']) ?></td>
-                    <td><?= $row['total'] ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </table>
-        </div>
-
-        <div class="table-box">
-            <h3>Top usuarios que más reportan</h3>
-            <table>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Incidentes</th>
-                </tr>
-                <?php foreach ($topUsuarios as $row): ?>
-                <tr>
-                    <td><?= htmlspecialchars($row['usuario']) ?></td>
                     <td><?= $row['total'] ?></td>
                 </tr>
                 <?php endforeach; ?>
