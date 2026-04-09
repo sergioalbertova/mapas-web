@@ -260,7 +260,7 @@ body {
 }
 
 /* ============================================================
-   SIDEBAR (TU CSS)
+   SIDEBAR
    ============================================================ */
 .sidebar {
     width: 240px;
@@ -277,67 +277,8 @@ body {
 }
 .sidebar.collapsed { width: 70px; }
 
-.sidebar h2 {
-    margin: 0 0 20px;
-    font-size: 20px;
-    color: var(--primary);
-    transition: opacity 0.25s ease;
-}
-.sidebar.collapsed h2 { opacity: 0; }
-
-.nav-item {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-}
-.nav-item:hover { background: var(--sidebar-hover); }
-
-.nav-item a {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:inherit;
-    text-decoration:none;
-}
-
-.nav-item svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-.sidebar.collapsed .nav-text { display: none; }
-
-.tooltip {
-    position: absolute;
-    left: 80px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--sidebar-bg);
-    padding: 6px 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px var(--shadow);
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, left 0.2s ease;
-    z-index: 99999;
-}
-.sidebar.collapsed .nav-item:hover .tooltip {
-    opacity: 1;
-    left: 75px;
-}
-
 /* ============================================================
-   TOPBAR ITIL (TU CSS EXACTO)
+   TOPBAR CON ÍCONOS
    ============================================================ */
 .itil-topbar {
     position: fixed;
@@ -367,8 +308,14 @@ body {
 }
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
+.itil-topbar svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
 /* ============================================================
-   FILTRO F1-B (FIJO, ALTURA AUTOMÁTICA)
+   FILTRO F1-B (FIJO)
    ============================================================ */
 .filtro-bar {
     position: fixed;
@@ -386,90 +333,19 @@ body {
 }
 .sidebar.collapsed ~ .filtro-bar { left: 70px; }
 
-.filtro-row {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.filtro-row input[type="date"] {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background: var(--card-bg);
-    color: var(--text);
-    min-width: 160px;
-    max-width: 200px;
-    z-index: 2200;
-}
-
-.filtro-row button {
-    padding: 8px 14px;
-    cursor: pointer;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    transition: 0.2s;
-}
-.filtro-row button:hover {
-    background: #003f7a;
-}
-
-.filtro-rapidos button {
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--primary);
-    background: transparent;
-    color: var(--primary);
-    cursor: pointer;
-    transition: 0.2s;
-}
-.filtro-rapidos button:hover {
-    background: var(--primary);
-    color: white;
-}
-
 /* ============================================================
-   MAIN (COMPENSADO POR TOPBAR + FILTRO)
+   MAIN
    ============================================================ */
 .main {
     margin-left: 240px;
     padding: 25px;
-    margin-top: 140px; /* 55px topbar + ~85px filtro */
+    margin-top: 140px;
     transition: margin-left 0.25s ease;
 }
 .sidebar.collapsed ~ .main { margin-left: 70px; }
 
 /* ============================================================
-   TÍTULO PRINCIPAL
-   ============================================================ */
-.dashboard-title {
-    text-align: center;
-    margin-bottom: 5px;
-    font-size: 26px;
-    font-weight: 600;
-}
-
-.dashboard-subtitle {
-    text-align: center;
-    color: var(--subtext);
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.dashboard-divider {
-    width: 180px;
-    height: 1px;
-    background: var(--subtext);
-    opacity: 0.25;
-    margin: 0 auto 25px auto;
-    border-radius: 2px;
-}
-
-/* ============================================================
-   CARDS / GRID
+   GRIDS
    ============================================================ */
 .dashboard-grid {
     display: grid;
@@ -478,22 +354,16 @@ body {
     margin-bottom: 25px;
 }
 
-/* Gráficas full width */
-.dashboard-full {
+.dashboard-2col {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 22px;
     margin-bottom: 25px;
 }
 
-
-@media (max-width: 1200px) {
-    .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 768px) {
-    .dashboard-grid { grid-template-columns: repeat(1, 1fr); }
-}
-
+/* ============================================================
+   CARDS
+   ============================================================ */
 .card, .chart-card, .table-box {
     background: var(--card-bg);
     border-radius: 12px;
@@ -502,49 +372,12 @@ body {
     border: 1px solid rgba(0,0,0,0.06);
 }
 
-.card h3, .chart-card h3, .table-box h3 {
-    margin: 0 0 6px;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: left;
-}
-
-.kpi-value {
-    font-size: 30px;
-    font-weight: bold;
-}
-
-.kpi-sub {
-    font-size: 13px;
-    color: var(--subtext);
-}
-
-/* ============================================================
-   TABLAS
-   ============================================================ */
-.table-box table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-
-.table-box th,
-.table-box td {
-    padding: 6px 8px;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    text-align: left;
-}
-
-/* ============================================================
-   GRÁFICAS
-   ============================================================ */
 .chart-container {
     width: 100%;
     height: 260px;
 }
 </style>
 </head>
-
 <body>
 
 <!-- ========================= -->
@@ -553,7 +386,7 @@ body {
 <?php include "sidebar.php"; ?>
 
 <!-- ========================= -->
-<!-- TOPBAR ITIL (FIJO)        -->
+<!-- TOPBAR ITIL (CON ÍCONOS)  -->
 <!-- ========================= -->
 <div class="itil-topbar">
 
@@ -593,7 +426,6 @@ body {
     </a>
 
 </div>
-
 
 <!-- ========================= -->
 <!-- FILTRO F1-B (FIJO)        -->
@@ -687,42 +519,34 @@ body {
     </div>
 
     <!-- ========================= -->
-    <!-- GRÁFICAS PRINCIPALES      -->
+    <!-- GRÁFICAS 2×2 FULL WIDTH   -->
     <!-- ========================= -->
-    <div class="dashboard-full">
-    <div class="chart-card">
-        <h3>Incidentes por técnico</h3>
-        <div id="chartTecnico" class="chart-container"></div>
+
+    <div class="dashboard-2col">
+        <div class="chart-card">
+            <h3>Incidentes por técnico</h3>
+            <div id="chartTecnico" class="chart-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Incidentes por tipo</h3>
+            <div id="chartTipo" class="chart-container"></div>
+        </div>
     </div>
-</div>
 
-<div class="dashboard-full">
-    <div class="chart-card">
-        <h3>Incidentes por tipo</h3>
-        <div id="chartTipo" class="chart-container"></div>
+    <div class="dashboard-2col">
+        <div class="chart-card">
+            <h3>Incidentes por estado</h3>
+            <div id="chartEstado" class="chart-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Tendencia mensual</h3>
+            <div id="chartMensual" class="chart-container"></div>
+        </div>
     </div>
-</div>
 
-<div class="dashboard-full">
-    <div class="chart-card">
-        <h3>Incidentes por estado</h3>
-        <div id="chartEstado" class="chart-container"></div>
-    </div>
-</div>
-
-<div class="dashboard-full">
-    <div class="chart-card">
-        <h3>Tendencia mensual</h3>
-        <div id="chartMensual" class="chart-container"></div>
-    </div>
-</div>
-
-
-        <!-- ========================= -->
-    <!-- HEATMAPS                  -->
-    <!-- ========================= -->
-    <div class="dashboard-grid">
-
+    <div class="dashboard-2col">
         <div class="chart-card">
             <h3>Incidentes por hora del día</h3>
             <div id="chartHora" class="chart-container"></div>
@@ -732,13 +556,11 @@ body {
             <h3>Incidentes por día de la semana</h3>
             <div id="chartDiaSemana" class="chart-container"></div>
         </div>
-
     </div>
-
     <!-- ========================= -->
-    <!-- TABLAS                    -->
+    <!-- TABLAS (FULL WIDTH 2×2)  -->
     <!-- ========================= -->
-    <div class="dashboard-grid">
+    <div class="dashboard-2col">
 
         <div class="table-box">
             <h3>Top técnicos</h3>
@@ -825,7 +647,7 @@ const textColor = getComputedStyle(document.body).getPropertyValue('--text').tri
 
 /* Incidentes por técnico */
 new ApexCharts(document.querySelector("#chartTecnico"), {
-    chart: { type: 'bar', height: 280, toolbar: { show: false }, animations: { easing: 'easeinout', speed: 600 } },
+    chart: { type: 'bar', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartTecnicoData }],
     xaxis: { categories: chartTecnicoLabels, labels: { style: { colors: textColor } } },
     plotOptions: { bar: { borderRadius: 6 } },
@@ -853,14 +675,14 @@ new ApexCharts(document.querySelector("#chartEstado"), {
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
 
-/* Tendencia mensual */
+/* Tendencia mensual (LÍNEA BRILLANTE) */
 new ApexCharts(document.querySelector("#chartMensual"), {
     chart: { type: 'line', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartMensualData }],
     xaxis: { categories: chartMensualLabels, labels: { style: { colors: textColor } } },
-    stroke: { curve: 'smooth', width: 3 },
-    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.1 } },
-    colors: ['#0054A6'],
+    stroke: { curve: 'smooth', width: 4 },
+    colors: ['#00C8FF'],   // azul brillante
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1 } },
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
 
