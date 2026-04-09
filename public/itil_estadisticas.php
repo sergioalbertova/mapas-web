@@ -259,6 +259,41 @@ body {
     color: var(--text);
 }
 
+/* ====== TOPBAR ITIL ====== */
+.itil-topbar {
+    position: fixed;
+    top: 0;
+    left: 240px;
+    right: 0;
+    height: 55px;
+    background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 0 25px;
+    box-shadow: 0 2px 8px var(--shadow);
+    z-index: 2100;
+}
+.sidebar.collapsed ~ .itil-topbar { left: 70px; }
+
+.itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+.itil-topbar a:hover { background: var(--sidebar-hover); }
+
+.itil-topbar svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
 /* ============================================================
    SIDEBAR (TU ESTILO)
    ============================================================ */
@@ -520,41 +555,10 @@ body {
 }
 
 /* ============================================================
-   GRÁFICAS
+   topbar
    ============================================================ */
 
-.itil-topbar {
-    margin-left: 240px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    background: var(--card-bg);
-    padding: 10px 16px;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px var(--shadow);
-    display: flex;
-    gap: 18px;
-    align-items: center;
-    transition: margin-left 0.25s ease;
-}
 
-.sidebar.collapsed ~ .itil-topbar {
-    margin-left: 70px;
-}
-
-.itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-size: 14px;
-    font-weight: 500;
-    padding: 6px 10px;
-    border-radius: 6px;
-    transition: 0.2s;
-}
-
-.itil-topbar a:hover {
-    background: var(--sidebar-hover);
-    color: var(--primary);
-}
 
 
 </style>
