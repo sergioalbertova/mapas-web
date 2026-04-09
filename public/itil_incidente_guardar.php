@@ -63,9 +63,9 @@ $stmt->execute([
     $prioridad,
     $impacto,
     $urgencia,
-    $tecnico_id,        // usuario_reporta = técnico logueado (CUMPLE FK)
-    $tecnico_id,        // tecnico_asignado = técnico logueado
-    $usuario_final_id,  // usuario afectado (activeuser.idu)
+    $usuario_final_id,   // usuario_reporta = usuario afectado (EXISTE en activeuser.idu)
+    $tecnico_id,         // técnico asignado = técnico logueado
+    $usuario_final_id,   // usuario afectado
     $activo_inventario,
     $ubicacion_detalle
 ]);
