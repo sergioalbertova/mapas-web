@@ -19,8 +19,6 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <style>
 :root {
     --bg: #F4F7FA;
-    --sidebar-bg: #FFFFFF;
-    --sidebar-hover: #E8EEF5;
     --card-bg: #FFFFFF;
     --text: #1F2933;
     --subtext: #6B7280;
@@ -31,8 +29,6 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 
 body.dark {
     --bg: #1A1D21;
-    --sidebar-bg: #24272C;
-    --sidebar-hover: #2F3338;
     --card-bg: #2C2F34;
     --text: #E5E7EB;
     --subtext: #9CA3AF;
@@ -50,85 +46,10 @@ body {
     transition: 0.3s;
 }
 
-/* SIDEBAR */
-.sidebar {
-    width: 240px;
-    background: var(--sidebar-bg);
-    height: 100vh;
-    box-shadow: 4px 0 20px var(--shadow);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    transition: width 0.25s ease;
-    overflow: visible;
-    z-index: 2000;
-}
-.sidebar.collapsed { width: 70px; }
-
-.sidebar h2 {
-    margin: 0 0 20px;
-    font-size: 20px;
-    color: var(--primary);
-    transition: opacity 0.25s ease;
-}
-.sidebar.collapsed h2 { opacity: 0; }
-
-.nav-item {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-}
-.nav-item:hover { background: var(--sidebar-hover); }
-
-.nav-item a {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:inherit;
-    text-decoration:none;
-}
-
-.nav-item svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-.sidebar.collapsed .nav-text { display: none; }
-
-.tooltip {
-    position: absolute;
-    left: 80px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--sidebar-bg);
-    padding: 6px 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px var(--shadow);
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, left 0.2s ease;
-    z-index: 99999;
-}
-.sidebar.collapsed .nav-item:hover .tooltip {
-    opacity: 1;
-    left: 75px;
-}
-
 /* MAIN */
 .main {
     margin-left: 240px;
-    padding: 25px;
+    padding: 40px;
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
@@ -137,49 +58,65 @@ body {
     width: calc(100% - 70px);
 }
 
-/* TITULO CENTRADO */
+/* TITULO */
 .main h2 {
     text-align: center;
-    margin-top: 10px;
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
-/* TARJETAS */
-.cards {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-    margin-top: 25px;
-}
-
-.card {
-    width: 220px;
-    height: 180px;
-    background: var(--card-bg);
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px var(--shadow);
+.subtitle {
     text-align: center;
-    transition: transform 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    color: var(--subtext);
+    margin-bottom: 40px;
+    font-size: 15px;
+}
+
+/* GRID DE TARJETAS */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 28px;
+    padding: 10px;
+}
+
+/* TARJETA */
+.card {
+    background: var(--card-bg);
+    padding: 30px 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px var(--shadow);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px var(--shadow);
 }
+
 .card svg {
-    width: 50px;
-    height: 50px;
+    width: 55px;
+    height: 55px;
     fill: var(--primary);
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.card-sub {
+    font-size: 13px;
+    color: var(--subtext);
+}
+
 .card a {
     text-decoration: none;
-    color: var(--text);
-    font-size: 18px;
-    font-weight: bold;
+    color: inherit;
 }
 </style>
 </head>
@@ -189,28 +126,66 @@ body {
 <?php require "sidebar.php"; ?>
 
 <div class="main">
-    <h2>Bienvenido, <?php echo htmlspecialchars($nombreUsuario); ?></h2>
 
-    <div class="cards">
+    <h2>Bienvenido, <?= htmlspecialchars($nombreUsuario) ?></h2>
+    <div class="subtitle">Panel principal de operaciones TI</div>
 
-        <div class="card">
-            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
-            <a href="calendario.php">Calendario</a>
-        </div>
+    <div class="cards-grid">
 
-        <div class="card">
-            <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
-            <a href="dashboard.php">Mapeo de nodos</a>
-        </div>
+        <!-- INICIO -->
+        <a href="index.php" class="card">
+            <svg><path d="M10 2L2 8h2v8h4V12h4v4h4V8h2z"/></svg>
+            <div class="card-title">Inicio</div>
+            <div class="card-sub">Página principal</div>
+        </a>
 
-        <div class="card">
+        <!-- INCIDENTES / APOYOS -->
+        <a href="itil_incidentes.php" class="card">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <a href="incidentes.php">Incidentes TI</a>
-        </div>
+            <div class="card-title">Incidentes / Apoyos</div>
+            <div class="card-sub">Gestión y seguimiento</div>
+        </a>
 
-        <div class="card">
+        <!-- MAPEO DE NODOS -->
+        <a href="dashboard.php" class="card">
+            <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
+            <div class="card-title">Mapeo de nodos</div>
+            <div class="card-sub">Infraestructura y monitoreo</div>
+        </a>
+
+        <!-- CALENDARIO -->
+        <a href="calendario.php" class="card">
+            <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
+            <div class="card-title">Calendario</div>
+            <div class="card-sub">Agenda y programación</div>
+        </a>
+
+        <!-- INCIDENTES TI -->
+        <a href="incidentes.php" class="card">
+            <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
+            <div class="card-title">Incidentes TI</div>
+            <div class="card-sub">Historial y control</div>
+        </a>
+
+        <!-- CAMBIAR CONTRASEÑA -->
+        <a href="cambiar_password.php" class="card">
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
-            <a href="cambiar_password.php">Cambiar contraseña</a>
+            <div class="card-title">Cambiar contraseña</div>
+            <div class="card-sub">Seguridad de acceso</div>
+        </a>
+
+        <!-- CERRAR SESIÓN -->
+        <a href="logout.php" class="card">
+            <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
+            <div class="card-title">Cerrar sesión</div>
+            <div class="card-sub">Salir del sistema</div>
+        </a>
+
+        <!-- TEMA OSCURO -->
+        <div class="card" onclick="toggleTheme()">
+            <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
+            <div class="card-title">Tema oscuro</div>
+            <div class="card-sub">Cambiar apariencia</div>
         </div>
 
     </div>
