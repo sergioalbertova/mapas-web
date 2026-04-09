@@ -250,7 +250,7 @@ body.dark {
 }
 
 /* ============================================================
-   RESETEO BÁSICO
+   RESETEO
    ============================================================ */
 body {
     margin: 0;
@@ -259,43 +259,8 @@ body {
     color: var(--text);
 }
 
-/* ====== TOPBAR ITIL ====== */
-.itil-topbar {
-    position: fixed;
-    top: 0;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 0 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2100;
-}
-.sidebar.collapsed ~ .itil-topbar { left: 70px; }
-
-.itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-.itil-topbar a:hover { background: var(--sidebar-hover); }
-
-.itil-topbar svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
 /* ============================================================
-   SIDEBAR (TU ESTILO)
+   SIDEBAR (TU CSS)
    ============================================================ */
 .sidebar {
     width: 240px;
@@ -372,38 +337,54 @@ body {
 }
 
 /* ============================================================
-   LAYOUT PRINCIPAL
+   TOPBAR ITIL (TU CSS EXACTO)
    ============================================================ */
-.main {
-    margin-left: 240px;
-    padding: 25px;
-    transition: margin-left 0.25s ease;
+.itil-topbar {
+    position: fixed;
+    top: 0;
+    left: 240px;
+    right: 0;
+    height: 55px;
+    background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 0 25px;
+    box-shadow: 0 2px 8px var(--shadow);
+    z-index: 2100;
 }
+.sidebar.collapsed ~ .itil-topbar { left: 70px; }
 
-.sidebar.collapsed ~ .main {
-    margin-left: 70px;
+.itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
+.itil-topbar a:hover { background: var(--sidebar-hover); }
 
 /* ============================================================
-   FILTRO F1 (COMPACTO)
+   FILTRO F1-B (FIJO, ALTURA AUTOMÁTICA)
    ============================================================ */
 .filtro-bar {
-    margin-left: 240px;
-    margin-top: 15px;
-    margin-bottom: 25px;
+    position: fixed;
+    top: 55px;
+    left: 240px;
+    right: 0;
     background: var(--card-bg);
     padding: 12px 18px;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px var(--shadow);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 8px var(--shadow);
     display: flex;
     flex-direction: column;
     gap: 12px;
-    transition: margin-left 0.25s ease;
+    z-index: 2050;
 }
-
-.sidebar.collapsed ~ .filtro-bar {
-    margin-left: 70px;
-}
+.sidebar.collapsed ~ .filtro-bar { left: 70px; }
 
 .filtro-row {
     display: flex;
@@ -418,22 +399,10 @@ body {
     border: 1px solid #ccc;
     background: var(--card-bg);
     color: var(--text);
-    min-width: 150px;
+    min-width: 160px;
     max-width: 200px;
+    z-index: 2200;
 }
-
-/* En pantallas pequeñas, que ocupen toda la fila */
-@media (max-width: 900px) {
-    .filtro-row {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .filtro-row input[type="date"] {
-        width: 100%;
-        max-width: 100%;
-    }
-}
-
 
 .filtro-row button {
     padding: 8px 14px;
@@ -461,6 +430,17 @@ body {
     background: var(--primary);
     color: white;
 }
+
+/* ============================================================
+   MAIN (COMPENSADO POR TOPBAR + FILTRO)
+   ============================================================ */
+.main {
+    margin-left: 240px;
+    padding: 25px;
+    margin-top: 140px; /* 55px topbar + ~85px filtro */
+    transition: margin-left 0.25s ease;
+}
+.sidebar.collapsed ~ .main { margin-left: 70px; }
 
 /* ============================================================
    TÍTULO PRINCIPAL
@@ -553,25 +533,18 @@ body {
     width: 100%;
     height: 260px;
 }
-
-/* ============================================================
-   topbar
-   ============================================================ */
-
-
-
-
 </style>
 </head>
 
 <body>
 
 <!-- ========================= -->
-<!-- SIDEBAR (INCLUIDO)        -->
+<!-- SIDEBAR                   -->
 <!-- ========================= -->
 <?php include "sidebar.php"; ?>
+
 <!-- ========================= -->
-<!-- TOPBAR ITIL               -->
+<!-- TOPBAR ITIL (FIJO)        -->
 <!-- ========================= -->
 <div class="itil-topbar">
     <a href="itil_incidentes.php">Incidentes</a>
@@ -584,7 +557,7 @@ body {
 </div>
 
 <!-- ========================= -->
-<!-- FILTRO F1 (COMPACTO)      -->
+<!-- FILTRO F1-B (FIJO)        -->
 <!-- ========================= -->
 <div class="filtro-bar">
 
@@ -704,7 +677,8 @@ body {
         </div>
 
     </div>
-    <!-- ========================= -->
+
+        <!-- ========================= -->
     <!-- HEATMAPS                  -->
     <!-- ========================= -->
     <div class="dashboard-grid">
