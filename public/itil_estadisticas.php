@@ -504,6 +504,44 @@ body {
     height: 260px;
 }
 
+/* ============================================================
+   GRÁFICAS
+   ============================================================ */
+
+.itil-topbar {
+    margin-left: 240px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background: var(--card-bg);
+    padding: 10px 16px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px var(--shadow);
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    transition: margin-left 0.25s ease;
+}
+
+.sidebar.collapsed ~ .itil-topbar {
+    margin-left: 70px;
+}
+
+.itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.itil-topbar a:hover {
+    background: var(--sidebar-hover);
+    color: var(--primary);
+}
+
+
 </style>
 </head>
 
@@ -513,6 +551,18 @@ body {
 <!-- SIDEBAR (INCLUIDO)        -->
 <!-- ========================= -->
 <?php include "sidebar.php"; ?>
+<!-- ========================= -->
+<!-- TOPBAR ITIL               -->
+<!-- ========================= -->
+<div class="itil-topbar">
+    <a href="itil_incidentes.php">Incidentes</a>
+    <a href="itil_incidente_nuevo.php">Nuevo</a>
+    <a href="itil_problemas.php">Problemas</a>
+    <a href="itil_catalogo.php">Catálogo</a>
+    <a href="itil_solicitudes.php">Solicitudes</a>
+    <a href="itil_sla.php">SLA</a>
+    <a href="itil_estadisticas.php">Estadísticas</a>
+</div>
 
 <!-- ========================= -->
 <!-- FILTRO F1 (COMPACTO)      -->
