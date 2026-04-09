@@ -23,7 +23,6 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
     --text: #1F2933;
     --subtext: #6B7280;
     --primary: #0054A6;
-    --primary-hover: #003F7D;
     --shadow: rgba(0,0,0,0.08);
 }
 
@@ -33,7 +32,6 @@ body.dark {
     --text: #E5E7EB;
     --subtext: #9CA3AF;
     --primary: #00AEEF;
-    --primary-hover: #0088C0;
     --shadow: rgba(0,0,0,0.45);
 }
 
@@ -127,7 +125,7 @@ body {
     margin-left: 240px;
     padding: 40px;
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease, width 0.25s ease;
+    transition: margin-left 0.25s ease;
 }
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
@@ -138,7 +136,7 @@ body {
 .main h2 {
     text-align: center;
     font-size: 28px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-weight: 600;
 }
 
@@ -149,50 +147,54 @@ body {
     font-size: 15px;
 }
 
-/* GRID DE TARJETAS */
+/* GRID 4×2 */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 28px;
-    padding: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
 }
 
-/* TARJETA */
+/* TARJETA EMPRESARIAL */
 .card {
     background: var(--card-bg);
-    padding: 30px 25px;
+    padding: 22px 20px;
     border-radius: 14px;
     box-shadow: 0 4px 14px var(--shadow);
-    text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    color: inherit;
 }
 .card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
     box-shadow: 0 6px 18px var(--shadow);
 }
 
 .card svg {
-    width: 55px;
-    height: 55px;
+    width: 32px;
+    height: 32px;
     fill: var(--primary);
-    margin-bottom: 15px;
+    flex-shrink: 0;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
 }
 
 .card-title {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
-    margin-bottom: 6px;
+    color: var(--primary);
+    margin-bottom: 4px;
 }
 
 .card-sub {
     font-size: 13px;
     color: var(--subtext);
-}
-
-.card a {
-    text-decoration: none;
-    color: inherit;
 }
 </style>
 </head>
@@ -211,57 +213,73 @@ body {
         <!-- INICIO -->
         <a href="index.php" class="card">
             <svg><path d="M10 2L2 8h2v8h4V12h4v4h4V8h2z"/></svg>
-            <div class="card-title">Inicio</div>
-            <div class="card-sub">Página principal</div>
+            <div class="card-content">
+                <div class="card-title">Inicio</div>
+                <div class="card-sub">Página principal</div>
+            </div>
         </a>
 
         <!-- INCIDENTES / APOYOS -->
         <a href="itil_incidentes.php" class="card">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <div class="card-title">Incidentes / Apoyos</div>
-            <div class="card-sub">Gestión y seguimiento</div>
+            <div class="card-content">
+                <div class="card-title">Incidentes / Apoyos</div>
+                <div class="card-sub">Gestión y seguimiento</div>
+            </div>
         </a>
 
         <!-- MAPEO DE NODOS -->
         <a href="dashboard.php" class="card">
             <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
-            <div class="card-title">Mapeo de nodos</div>
-            <div class="card-sub">Infraestructura y monitoreo</div>
+            <div class="card-content">
+                <div class="card-title">Mapeo de nodos</div>
+                <div class="card-sub">Infraestructura y monitoreo</div>
+            </div>
         </a>
 
         <!-- CALENDARIO -->
         <a href="calendario.php" class="card">
             <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
-            <div class="card-title">Calendario</div>
-            <div class="card-sub">Agenda y programación</div>
+            <div class="card-content">
+                <div class="card-title">Calendario</div>
+                <div class="card-sub">Agenda y programación</div>
+            </div>
         </a>
 
         <!-- INCIDENTES TI -->
         <a href="incidentes.php" class="card">
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
-            <div class="card-title">Incidentes TI</div>
-            <div class="card-sub">Historial y control</div>
+            <div class="card-content">
+                <div class="card-title">Incidentes TI</div>
+                <div class="card-sub">Historial y control</div>
+            </div>
         </a>
 
         <!-- CAMBIAR CONTRASEÑA -->
         <a href="cambiar_password.php" class="card">
             <svg><path d="M12 1a5 5 0 00-5 5v3H5v10h14V9h-2V6a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V6zm1 6h4v6h-4v-6z"/></svg>
-            <div class="card-title">Cambiar contraseña</div>
-            <div class="card-sub">Seguridad de acceso</div>
+            <div class="card-content">
+                <div class="card-title">Cambiar contraseña</div>
+                <div class="card-sub">Seguridad de acceso</div>
+            </div>
         </a>
 
         <!-- CERRAR SESIÓN -->
         <a href="logout.php" class="card">
             <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
-            <div class="card-title">Cerrar sesión</div>
-            <div class="card-sub">Salir del sistema</div>
+            <div class="card-content">
+                <div class="card-title">Cerrar sesión</div>
+                <div class="card-sub">Salir del sistema</div>
+            </div>
         </a>
 
         <!-- TEMA OSCURO -->
         <div class="card" onclick="toggleTheme()">
             <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
-            <div class="card-title">Tema oscuro</div>
-            <div class="card-sub">Cambiar apariencia</div>
+            <div class="card-content">
+                <div class="card-title">Tema oscuro</div>
+                <div class="card-sub">Cambiar apariencia</div>
+            </div>
         </div>
 
     </div>
