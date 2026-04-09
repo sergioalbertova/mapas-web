@@ -478,6 +478,15 @@ body {
     margin-bottom: 25px;
 }
 
+/* Gráficas full width */
+.dashboard-full {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin-bottom: 25px;
+}
+
+
 @media (max-width: 1200px) {
     .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -547,14 +556,44 @@ body {
 <!-- TOPBAR ITIL (FIJO)        -->
 <!-- ========================= -->
 <div class="itil-topbar">
-    <a href="itil_incidentes.php">Incidentes</a>
-    <a href="itil_incidente_nuevo.php">Nuevo</a>
-    <a href="itil_problemas.php">Problemas</a>
-    <a href="itil_catalogo.php">Catálogo</a>
-    <a href="itil_solicitudes.php">Solicitudes</a>
-    <a href="itil_sla.php">SLA</a>
-    <a href="itil_estadisticas.php">Estadísticas</a>
+
+    <a href="itil_incidentes.php">
+        <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h18v2H3z"/></svg>
+        Incidentes
+    </a>
+
+    <a href="itil_incidente_nuevo.php">
+        <svg viewBox="0 0 24 24"><path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/></svg>
+        Nuevo
+    </a>
+
+    <a href="itil_problemas.php">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        Problemas
+    </a>
+
+    <a href="itil_catalogo.php">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+        Catálogo Incidentes
+    </a>
+
+    <a href="itil_solicitudes.php">
+        <svg viewBox="0 0 24 24"><path d="M3 3h18v4H3zm0 6h18v12H3z"/></svg>
+        Solicitudes
+    </a>
+
+    <a href="itil_sla.php">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        SLA
+    </a>
+
+    <a href="itil_estadisticas.php">
+        <svg viewBox="0 0 24 24"><path d="M3 17h2v-7H3zm4 0h2V7H7zm4 0h2v-4h-2zm4 0h2V3h-2zm4 0h2v-9h-2z"/></svg>
+        Estadísticas
+    </a>
+
 </div>
+
 
 <!-- ========================= -->
 <!-- FILTRO F1-B (FIJO)        -->
@@ -650,33 +689,34 @@ body {
     <!-- ========================= -->
     <!-- GRÁFICAS PRINCIPALES      -->
     <!-- ========================= -->
-    <div class="dashboard-grid">
-
-        <div class="chart-card">
-            <h3>Incidentes por técnico</h3>
-            <div id="chartTecnico" class="chart-container"></div>
-        </div>
-
-        <div class="chart-card">
-            <h3>Incidentes por tipo</h3>
-            <div id="chartTipo" class="chart-container"></div>
-        </div>
-
+    <div class="dashboard-full">
+    <div class="chart-card">
+        <h3>Incidentes por técnico</h3>
+        <div id="chartTecnico" class="chart-container"></div>
     </div>
+</div>
 
-    <div class="dashboard-grid">
-
-        <div class="chart-card">
-            <h3>Incidentes por estado</h3>
-            <div id="chartEstado" class="chart-container"></div>
-        </div>
-
-        <div class="chart-card">
-            <h3>Tendencia mensual</h3>
-            <div id="chartMensual" class="chart-container"></div>
-        </div>
-
+<div class="dashboard-full">
+    <div class="chart-card">
+        <h3>Incidentes por tipo</h3>
+        <div id="chartTipo" class="chart-container"></div>
     </div>
+</div>
+
+<div class="dashboard-full">
+    <div class="chart-card">
+        <h3>Incidentes por estado</h3>
+        <div id="chartEstado" class="chart-container"></div>
+    </div>
+</div>
+
+<div class="dashboard-full">
+    <div class="chart-card">
+        <h3>Tendencia mensual</h3>
+        <div id="chartMensual" class="chart-container"></div>
+    </div>
+</div>
+
 
         <!-- ========================= -->
     <!-- HEATMAPS                  -->
