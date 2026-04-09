@@ -383,7 +383,22 @@ body {
     border: 1px solid #ccc;
     background: var(--card-bg);
     color: var(--text);
+    min-width: 150px;
+    max-width: 200px;
 }
+
+/* En pantallas pequeñas, que ocupen toda la fila */
+@media (max-width: 900px) {
+    .filtro-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .filtro-row input[type="date"] {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
 
 .filtro-row button {
     padding: 8px 14px;
