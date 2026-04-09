@@ -466,6 +466,26 @@ body {
     left: 70px !important;
 }
 
+.dashboard-title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 26px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-subtitle {
+    text-align: center;
+    color: var(--subtext);
+    font-size: 14px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+
 </style>
 </head>
 <body>
