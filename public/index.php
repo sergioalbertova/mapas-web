@@ -233,7 +233,7 @@ body {
             <svg><path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"/></svg>
             <div class="card-content">
                 <div class="card-title">Mapeo de nodos</div>
-                <div class="card-sub">Infraestructura y monitoreo</div>
+                <div class="card-sub">Ubicación de nodos</div>
             </div>
         </a>
 
@@ -242,7 +242,7 @@ body {
             <svg><path d="M6 2v2H4v2h12V4h-2V2h-2v2H8V2H6zm12 6H2v10h16V8z"/></svg>
             <div class="card-content">
                 <div class="card-title">Calendario</div>
-                <div class="card-sub">Agenda y programación</div>
+                <div class="card-sub">Monitoreo de Guardias</div>
             </div>
         </a>
 
@@ -251,7 +251,7 @@ body {
             <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10zm4 2v2h8v-2H8z"/></svg>
             <div class="card-content">
                 <div class="card-title">Incidentes TI</div>
-                <div class="card-sub">Historial y control</div>
+                <div class="card-sub">Temas que se pueden registrar</div>
             </div>
         </a>
 
@@ -275,7 +275,9 @@ body {
 
         <!-- TEMA OSCURO -->
         <div class="card" onclick="toggleTheme()">
-            <svg><path d="M12 2a9 9 0 100 18 9 9 0 010-18z"/></svg>
+            <svg viewBox="0 0 24 24">
+    <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79 9 9 0 0121 12.79z"/></svg>
+
             <div class="card-content">
                 <div class="card-title">Tema oscuro</div>
                 <div class="card-sub">Cambiar apariencia</div>
