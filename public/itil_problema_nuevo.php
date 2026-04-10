@@ -95,6 +95,28 @@ body {
     fill: currentColor;
 }
 
+/* TOOLTIP */
+.tooltip {
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--sidebar-bg);
+    padding: 6px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px var(--shadow);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, left 0.2s ease;
+    z-index: 99999;
+}
+.sidebar.collapsed .nav-item:hover .tooltip {
+    opacity: 1;
+    left: 75px;
+}
+
 .sidebar.collapsed .nav-text { display: none; }
 
 /* ====== TOPBAR ITIL ====== */
