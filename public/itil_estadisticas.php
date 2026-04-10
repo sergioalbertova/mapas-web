@@ -66,7 +66,7 @@ $totalResueltos = $stmt->fetchColumn();
 /* Activos (sin incluir En proceso) */
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM itil_incidentes
-    WHERE estado ILIKE ANY (ARRAY['Abierto', 'Pendiente', 'En espera'])
+    WHERE estado ILIKE ANY (ARRAY['Activo', 'Abierto', 'Pendiente', 'En espera'])
     AND fecha_reporte BETWEEN :inicio AND :fin
 ");
 $stmt->execute($params);
@@ -100,7 +100,7 @@ $slaPorcentaje = ($slaRow['total'] > 0)
 /* Backlog = En proceso */
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM itil_incidentes
-    WHERE estado ILIKE 'En proceso'
+    WHERE estado ILIKE 'En progreso'
     AND fecha_reporte BETWEEN :inicio AND :fin
 ");
 $stmt->execute($params);
