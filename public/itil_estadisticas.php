@@ -63,10 +63,10 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $totalResueltos = $stmt->fetchColumn();
 
-/* Activos */
+/* Activos (sin incluir En proceso) */
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM itil_incidentes
-    WHERE estado NOT ILIKE 'Resuelto'
+    WHERE estado ILIKE ANY (ARRAY['Abierto', 'Pendiente', 'En espera'])
     AND fecha_reporte BETWEEN :inicio AND :fin
 ");
 $stmt->execute($params);
@@ -97,8 +97,15 @@ $slaPorcentaje = ($slaRow['total'] > 0)
     ? round(($slaRow['dentro'] / $slaRow['total']) * 100, 1)
     : 0;
 
-/* Backlog */
-$backlog = $totalActivos;
+/* Backlog = En proceso */
+$stmt = $pdo->prepare("
+    SELECT COUNT(*) FROM itil_incidentes
+    WHERE estado ILIKE 'En proceso'
+    AND fecha_reporte BETWEEN :inicio AND :fin
+");
+$stmt->execute($params);
+$backlog = $stmt->fetchColumn();
+
 
 /* Incidentes por técnico */
 $stmt = $pdo->prepare("
@@ -623,7 +630,7 @@ body {
         <div class="card">
             <h3>Backlog</h3>
             <div class="kpi-value"><?= $backlog ?></div>
-            <div class="kpi-sub">Incidentes abiertos</div>
+            <div class="kpi-sub">En proceso</div>
         </div>
 
     </div>
