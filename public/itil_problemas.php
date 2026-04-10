@@ -257,7 +257,7 @@ body {
         Problemas
     </a>
 
-    <a href="itil_cambios.php">
+    <a href="itil_catalogo.php">
         <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
         Catalogo de Incidentes
     </a>
