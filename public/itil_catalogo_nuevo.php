@@ -48,7 +48,9 @@ body {
 }
 
 
-/* SIDEBAR */
+/* ========================= */
+/* SIDEBAR ORIGINAL          */
+/* ========================= */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -102,6 +104,7 @@ body {
 
 .sidebar.collapsed .nav-text { display: none; }
 
+/* TOOLTIP */
 .tooltip {
     position: absolute;
     left: 80px;
@@ -123,45 +126,38 @@ body {
     left: 75px;
 }
 
-/* === TOPBAR === */
+/* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
     top: 0;
     left: 240px;
+    right: 0;
     height: 55px;
-    width: calc(100% - 240px);
     background: var(--sidebar-bg);
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    gap: 10px;
-    padding: 0 10px;
+    gap: 25px;
+    padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2100;
-    transition: left 0.25s ease, width 0.25s ease;
 }
-#sidebar.collapsed + .itil-topbar {
-    left: 70px;
-    width: calc(100% - 70px);
-}
+.sidebar.collapsed ~ .itil-topbar { left: 70px; }
 
 .itil-topbar a {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-weight: bold;
-    color: var(--text);
     text-decoration: none;
-    white-space: nowrap;
-    font-size: 14px;
+    color: var(--text);
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
 .itil-topbar svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     fill: currentColor;
 }
 
@@ -230,18 +226,6 @@ textarea {
     resize: vertical;
 }
 
-/* SWITCH */
-.switch {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.switch input {
-    width: 20px;
-    height: 20px;
-}
-
 /* BOTÓN */
 .btn-guardar {
     margin-top: 30px;
@@ -258,12 +242,26 @@ textarea {
 .btn-guardar:hover {
     background: var(--primary-hover);
 }
+
+/* MODAL */
+#modalCategoria {
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.55);
+    backdrop-filter:blur(3px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
 </style>
 </head>
 
 <body>
 
 <?php require "sidebar.php"; ?>
+
 <!-- === TOPBAR REAL === -->
 <div class="itil-topbar">
 
@@ -283,9 +281,7 @@ textarea {
     </a>
 
     <a href="itil_catalogo.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M4 4h16v4H4zm0 6h16v10H4z" />
-        </svg>
+        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
         Catalogo Incidentes
     </a>
 
@@ -320,37 +316,23 @@ textarea {
             </div>
 
             <div>
-                <label>Categoría</label>
-               <div>
-                 <label>Categoría *</label>
-                    <div style="display:flex; gap:10px;">
-                         <select name="categoria" id="categoria" required style="flex:1;">
-                            <option value="">Seleccione...</option>
-                                 <?php
-                                    $cats = $pdo->query("SELECT idcategoria, nombre FROM categorias WHERE activo = true ORDER BY orden, nombre");
-                                    foreach ($cats as $c) {
-                                     echo "<option value='{$c['nombre']}'>{$c['nombre']}</option>";
-                                         }
-                                 ?>
-                        </select>
+                <label>Categoría *</label>
+                <div style="display:flex; gap:10px;">
+                    <select name="categoria" id="categoria" required style="flex:1;">
+                        <option value="">Seleccione...</option>
+                        <?php
+                        $cats = $pdo->query("SELECT nombre FROM categorias WHERE activo = true ORDER BY orden, nombre");
+                        foreach ($cats as $c) {
+                            echo "<option value='{$c['nombre']}'>{$c['nombre']}</option>";
+                        }
+                        ?>
+                    </select>
 
-        <button type="button" onclick="openCategoriaModal()" 
-            style="padding:10px 14px; border:none; background:var(--primary); color:white; border-radius:8px; cursor:pointer;">
-            +
-        </button>
-    </div>
-</div>
-
-            </div>
-
-            <div>
-                <label>Subcategoría</label>
-                <input type="text" name="subcategoria">
-            </div>
-
-            <div>
-                <label>Tiempo estimado (minutos)</label>
-                <input type="number" name="tiempo_estimado" min="0">
+                    <button type="button" onclick="openCategoriaModal()" 
+                        style="padding:10px 14px; border:none; background:var(--primary); color:white; border-radius:8px; cursor:pointer;">
+                        +
+                    </button>
+                </div>
             </div>
 
             <div>
@@ -380,19 +362,9 @@ textarea {
                 </select>
             </div>
 
-            <div class="switch">
-                <label>Requiere aprobación</label>
-                <input type="checkbox" name="requiere_aprobacion" value="1">
-            </div>
-
-            <div class="switch">
+            <div>
                 <label>Activo</label>
                 <input type="checkbox" name="activo" value="1" checked>
-            </div>
-
-            <div>
-                <label>Orden</label>
-                <input type="number" name="orden" value="0">
             </div>
 
         </div>
@@ -418,29 +390,9 @@ textarea {
 
 </div>
 
-<script>
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
-}
-
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-}
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-}
-</script>
-
-<!-- MODAL -->
-<div id="modalCategoria" 
-     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); 
-            justify-content:center; align-items:center; z-index:9999;">
-
-    <div style="background:var(--card-bg); padding:25px; width:380px; border-radius:12px;
-                box-shadow:0 4px 14px var(--shadow);">
-
+<!-- MODAL PARA NUEVA CATEGORÍA -->
+<div id="modalCategoria">
+    <div style="background:var(--card-bg); padding:25px; width:380px; border-radius:12px; box-shadow:0 4px 14px var(--shadow);">
         <h3 style="margin-top:0; margin-bottom:15px; color:var(--primary);">Nueva categoría</h3>
 
         <label>Nombre *</label>
@@ -481,7 +433,6 @@ function guardarCategoria() {
         return;
     }
 
-    // Enviar por AJAX
     fetch("itil_categoria_guardar.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -490,16 +441,25 @@ function guardarCategoria() {
     .then(r => r.text())
     .then(resp => {
         if (resp === "OK") {
-            // Recargar combo
             location.reload();
         } else {
             alert("Error: " + resp);
         }
     });
 }
+
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+}
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
 </script>
-
-
 
 </body>
 </html>
