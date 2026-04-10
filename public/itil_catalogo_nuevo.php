@@ -321,7 +321,26 @@ textarea {
 
             <div>
                 <label>Categoría</label>
-                <input type="text" name="categoria">
+               <div>
+                 <label>Categoría *</label>
+                    <div style="display:flex; gap:10px;">
+                         <select name="categoria" id="categoria" required style="flex:1;">
+                            <option value="">Seleccione...</option>
+                                 <?php
+                                    $cats = $pdo->query("SELECT idcategoria, nombre FROM categorias WHERE activo = true ORDER BY orden, nombre");
+                                    foreach ($cats as $c) {
+                                     echo "<option value='{$c['nombre']}'>{$c['nombre']}</option>";
+                                         }
+                                 ?>
+                        </select>
+
+        <button type="button" onclick="openCategoriaModal()" 
+            style="padding:10px 14px; border:none; background:var(--primary); color:white; border-radius:8px; cursor:pointer;">
+            +
+        </button>
+    </div>
+</div>
+
             </div>
 
             <div>
@@ -412,6 +431,75 @@ if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 </script>
+
+<!-- MODAL -->
+<div id="modalCategoria" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); 
+            justify-content:center; align-items:center; z-index:9999;">
+
+    <div style="background:var(--card-bg); padding:25px; width:380px; border-radius:12px;
+                box-shadow:0 4px 14px var(--shadow);">
+
+        <h3 style="margin-top:0; margin-bottom:15px; color:var(--primary);">Nueva categoría</h3>
+
+        <label>Nombre *</label>
+        <input type="text" id="catNombre" style="margin-bottom:15px; width:100%;">
+
+        <label>Descripción</label>
+        <textarea id="catDesc" style="margin-bottom:20px; width:100%; height:80px;"></textarea>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button onclick="closeCategoriaModal()" 
+                style="padding:10px 14px; background:#777; color:white; border:none; border-radius:8px;">
+                Cancelar
+            </button>
+
+            <button onclick="guardarCategoria()" 
+                style="padding:10px 14px; background:var(--primary); color:white; border:none; border-radius:8px;">
+                Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openCategoriaModal() {
+    document.getElementById("modalCategoria").style.display = "flex";
+}
+
+function closeCategoriaModal() {
+    document.getElementById("modalCategoria").style.display = "none";
+}
+
+function guardarCategoria() {
+    const nombre = document.getElementById("catNombre").value.trim();
+    const desc = document.getElementById("catDesc").value.trim();
+
+    if (nombre === "") {
+        alert("El nombre es obligatorio");
+        return;
+    }
+
+    // Enviar por AJAX
+    fetch("itil_categoria_guardar.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "nombre=" + encodeURIComponent(nombre) + "&descripcion=" + encodeURIComponent(desc)
+    })
+    .then(r => r.text())
+    .then(resp => {
+        if (resp === "OK") {
+            // Recargar combo
+            location.reload();
+        } else {
+            alert("Error: " + resp);
+        }
+    });
+}
+</script>
+
+
 
 </body>
 </html>
