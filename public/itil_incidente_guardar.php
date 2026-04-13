@@ -2,6 +2,9 @@
 require __DIR__ . "/session_config.php";
 require __DIR__ . "/db.php";
 
+/* Zona horaria correcta */
+date_default_timezone_set('America/Mexico_City');
+
 // Validar sesión
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php?msg=no_session");
@@ -38,6 +41,9 @@ $prioridad          = $_POST['prioridad'];
 $impacto            = $_POST['impacto'];
 $urgencia           = $_POST['urgencia'];
 
+/* Generar fecha local correcta */
+$fecha_reporte = date("Y-m-d H:i:s");
+
 // Insertar incidente
 $sql = "INSERT INTO itil_incidentes 
 (
@@ -53,7 +59,7 @@ $sql = "INSERT INTO itil_incidentes
     ubicacion_detalle,
     fecha_reporte
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $pdo->prepare($sql);
 
@@ -63,11 +69,12 @@ $stmt->execute([
     $prioridad,
     $impacto,
     $urgencia,
-    $usuario_final_id,   // usuario_reporta = usuario afectado (EXISTE en activeuser.idu)
+    $usuario_final_id,   // usuario_reporta = usuario afectado
     $tecnico_id,         // técnico asignado = técnico logueado
     $usuario_final_id,   // usuario afectado
     $activo_inventario,
-    $ubicacion_detalle
+    $ubicacion_detalle,
+    $fecha_reporte       // fecha local correcta
 ]);
 
 // Redirigir con mensaje
