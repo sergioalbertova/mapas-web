@@ -28,7 +28,7 @@ SELECT
 FROM itil_incidentes i
 LEFT JOIN usuarios u ON u.id = i.tecnico_asignado
 LEFT JOIN activeuser au ON au.idu = i.usuario_final_id
-WHERE i.estado IN ('Activo', 'Pendiente', 'En espera', 'En progreso')
+WHERE i.estado IN ('Abierto', 'Activo', 'Pendiente', 'En espera', 'En progreso')
 ORDER BY i.id DESC
 ";
 
