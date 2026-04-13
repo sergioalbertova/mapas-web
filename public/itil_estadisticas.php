@@ -612,7 +612,7 @@ body {
         <div class="card">
             <h3>Incidentes activos</h3>
             <div class="kpi-value"><?= $totalActivos ?></div>
-            <div class="kpi-sub">Pendientes de resolución</div>
+            <div class="kpi-sub">Pendientes de Atención</div>
         </div>
 
         <div class="card">
@@ -774,10 +774,10 @@ new ApexCharts(document.querySelector("#chartTecnico"), {
 
 /* Incidentes por tipo (donut) */
 new ApexCharts(document.querySelector("#chartTipo"), {
-    chart: { type: 'donut', height: 280 },
+    chart: { type: 'pie', height: 280 },
     series: chartTipoData,
     labels: chartTipoLabels,
-    plotOptions: { pie: { donut: { labels: { show: true } } } },
+    /* plotOptions: { pie: { donut: { labels: { show: true } } } },  */
     colors: ['#0054A6', '#FF7A00', '#E91E63', '#00AEEF'],
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
