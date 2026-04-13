@@ -30,12 +30,17 @@ if (!$usuario_actual_id) {
     die("Sesión no válida.");
 }
 
-/* Registrar historial */
+/* Registrar historial con fecha correcta */
 function registrar_historial($pdo, $incidente_id, $usuario_id, $estado_anterior, $estado_nuevo) {
-    $sql = "INSERT INTO itil_incidente_historial (incidente_id, usuario_id, estado_anterior, estado_nuevo)
-            VALUES (?, ?, ?, ?)";
+
+    $fecha = date("Y-m-d H:i:s"); // Hora real de México
+
+    $sql = "INSERT INTO itil_incidente_historial 
+            (incidente_id, usuario_id, estado_anterior, estado_nuevo, fecha)
+            VALUES (?, ?, ?, ?, ?)";
+
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$incidente_id, $usuario_id, $estado_anterior, $estado_nuevo]);
+    $stmt->execute([$incidente_id, $usuario_id, $estado_anterior, $estado_nuevo, $fecha]);
 }
 
 /* Redirigir */
@@ -62,7 +67,6 @@ switch ($accion) {
             volver($incidente_id);
         }
 
-        /* Fechas locales */
         $fecha_actual = date("Y-m-d H:i:s");
 
         $sql = "UPDATE itil_incidentes SET estado = :estado";
@@ -167,10 +171,11 @@ switch ($accion) {
         $nota = trim((string)$nota_raw);
         if ($nota === '') die("Nota vacía.");
 
-        $sql = "INSERT INTO itil_incidente_notas (incidente_id, usuario_id, nota)
-                VALUES (?, ?, ?)";
+        $sql = "INSERT INTO itil_incidente_notas (incidente_id, usuario_id, nota, fecha)
+                VALUES (?, ?, ?, ?)";
+
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$incidente_id, $usuario_actual_id, $nota]);
+        $stmt->execute([$incidente_id, $usuario_actual_id, $nota, date("Y-m-d H:i:s")]);
 
         volver($incidente_id);
         break;
