@@ -59,6 +59,7 @@ body {
 /* ============================
    SIDEBAR
    ============================ */
+/* SIDEBAR */
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -72,10 +73,7 @@ body {
     overflow: visible;
     z-index: 2000;
 }
-
-.sidebar.collapsed {
-    width: 70px;
-}
+.sidebar.collapsed { width: 70px; }
 
 .sidebar h2 {
     margin: 0 0 20px;
@@ -83,14 +81,8 @@ body {
     color: var(--primary);
     transition: opacity 0.25s ease;
 }
+.sidebar.collapsed h2 { opacity: 0; }
 
-.sidebar.collapsed h2 {
-    opacity: 0;
-}
-
-/* ============================
-   ITEMS DEL MENÚ
-   ============================ */
 .nav-item {
     padding: 10px 12px;
     border-radius: 8px;
@@ -102,11 +94,15 @@ body {
     align-items: center;
     gap: 12px;
     position: relative;
-    overflow: visible;
 }
+.nav-item:hover { background: var(--sidebar-hover); }
 
-.nav-item:hover {
-    background: var(--sidebar-hover);
+.nav-item a {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:inherit;
+    text-decoration:none;
 }
 
 .nav-item svg {
@@ -115,13 +111,8 @@ body {
     fill: currentColor;
 }
 
-.sidebar.collapsed .nav-text {
-    display: none;
-}
+.sidebar.collapsed .nav-text { display: none; }
 
-/* ============================
-   TOOLTIP
-   ============================ */
 .tooltip {
     position: absolute;
     left: 80px;
@@ -138,7 +129,6 @@ body {
     transition: opacity 0.2s ease, left 0.2s ease;
     z-index: 99999;
 }
-
 .sidebar.collapsed .nav-item:hover .tooltip {
     opacity: 1;
     left: 75px;
