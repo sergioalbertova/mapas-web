@@ -63,7 +63,7 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $totalResueltos = $stmt->fetchColumn();
 
-/* Activos (sin incluir En proceso) */
+/* Activos */
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM itil_incidentes
     WHERE estado ILIKE ANY (ARRAY['Activo', 'Abierto', 'Pendiente', 'En espera'])
@@ -97,7 +97,7 @@ $slaPorcentaje = ($slaRow['total'] > 0)
     ? round(($slaRow['dentro'] / $slaRow['total']) * 100, 1)
     : 0;
 
-/* Backlog = En proceso */
+/* Backlog */
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM itil_incidentes
     WHERE estado ILIKE 'En progreso'
@@ -105,7 +105,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute($params);
 $backlog = $stmt->fetchColumn();
-
 
 /* Incidentes por técnico */
 $stmt = $pdo->prepare("
@@ -140,21 +139,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute($params);
 $porEstado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-/* Incidentes por ubicación (normalizada) */
-$stmt = $pdo->prepare("
-    SELECT 
-        COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación') AS ubicacion,
-        COUNT(*) AS total
-    FROM itil_incidentes
-    WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY ubicacion
-    ORDER BY total DESC
-");
-$stmt->execute($params);
-$porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
 
 /* Tendencia mensual */
 $stmt = $pdo->prepare("
@@ -214,6 +198,21 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $topCategorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+/* ============================================================
+   UBICACIÓN NORMALIZADA (SIN PISO, SIN ESCRITORIO)
+   ============================================================ */
+$stmt = $pdo->prepare("
+    SELECT 
+        COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación') AS ubicacion,
+        COUNT(*) AS total
+    FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
+    GROUP BY ubicacion
+    ORDER BY total DESC
+");
+$stmt->execute($params);
+$porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 /* Preparar datos JS */
 $chartTecnicoLabels = array_column($porTecnico, 'tecnico');
 $chartTecnicoData   = array_column($porTecnico, 'total');
@@ -232,6 +231,9 @@ $chartHoraData   = array_column($porHora, 'total');
 
 $chartDiaSemanaLabels = array_column($porDiaSemana, 'dow');
 $chartDiaSemanaData   = array_column($porDiaSemana, 'total');
+
+$chartUbicacionLabels = array_column($porUbicacion, 'ubicacion');
+$chartUbicacionData   = array_column($porUbicacion, 'total');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -297,25 +299,9 @@ body {
     left: 0;
     transition: width 0.25s ease;
     overflow: visible;
-    z-index: 3000; /* antes 2000 */
+    z-index: 3000;
 }
 
-.sidebar.collapsed { width: 70px; }
-
-/* SIDEBAR */
-.sidebar {
-    width: 240px;
-    background: var(--sidebar-bg);
-    height: 100vh;
-    box-shadow: 4px 0 20px var(--shadow);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    transition: width 0.25s ease;
-    overflow: visible;
-    z-index: 2000;
-}
 .sidebar.collapsed { width: 70px; }
 
 .sidebar h2 {
@@ -378,7 +364,7 @@ body {
 }
 
 /* ============================================================
-   TOPBAR CON ÍCONOS
+   TOPBAR
    ============================================================ */
 .itil-topbar {
     position: fixed;
@@ -408,14 +394,8 @@ body {
 }
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
-.itil-topbar svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
 /* ============================================================
-   FILTRO F1-B (FIJO)
+   FILTRO
    ============================================================ */
 .filtro-bar {
     position: fixed;
@@ -439,10 +419,9 @@ body {
 .main {
     margin-left: 240px;
     padding: 25px;
-    margin-top: 165px; /* antes 140px */
+    margin-top: 165px;
     transition: margin-left 0.25s ease;
 }
-
 .sidebar.collapsed ~ .main { margin-left: 70px; }
 
 /* ============================================================
@@ -478,24 +457,12 @@ body {
     height: 260px;
 }
 
-.sidebar.collapsed ~ .main {
-    margin-left: 70px !important;
-}
-.sidebar.collapsed ~ .itil-topbar {
-    left: 70px !important;
-}
-.sidebar.collapsed ~ .filtro-bar {
-    left: 70px !important;
-}
-
 .dashboard-title {
     text-align: center;
     margin-top: 0;
     margin-bottom: 5px;
     font-size: 26px;
     font-weight: 600;
-    position: relative;
-    z-index: 1;
 }
 
 .dashboard-subtitle {
@@ -503,109 +470,40 @@ body {
     color: var(--subtext);
     font-size: 14px;
     margin-bottom: 10px;
-    position: relative;
-    z-index: 1;
 }
-
-
 </style>
 </head>
 <body>
-
-<!-- ========================= -->
-<!-- SIDEBAR                   -->
-<!-- ========================= -->
 <?php include "sidebar.php"; ?>
 
-<!-- ========================= -->
-<!-- TOPBAR ITIL (CON ÍCONOS)  -->
-<!-- ========================= -->
 <div class="itil-topbar">
-
-    <a href="itil_incidentes.php">
-        <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h18v2H3z"/></svg>
-        Incidentes
-    </a>
-
-    <a href="itil_incidente_nuevo.php">
-        <svg viewBox="0 0 24 24"><path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/></svg>
-        Nuevo
-    </a>
-
-    <a href="itil_problemas.php">
-        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-        Problemas
-    </a>
-
-    <a href="itil_catalogo.php">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-        Catálogo Incidentes
-    </a>
-
-    <a href="itil_solicitudes.php">
-        <svg viewBox="0 0 24 24"><path d="M3 3h18v4H3zm0 6h18v12H3z"/></svg>
-        Solicitudes
-    </a>
-
-    <a href="itil_sla.php">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-        SLA
-    </a>
-
-    <a href="itil_estadisticas.php">
-        <svg viewBox="0 0 24 24"><path d="M3 17h2v-7H3zm4 0h2V7H7zm4 0h2v-4h-2zm4 0h2V3h-2zm4 0h2v-9h-2z"/></svg>
-        Estadísticas
-    </a>
-
+    <a href="itil_incidentes.php">Incidentes</a>
+    <a href="itil_incidente_nuevo.php">Nuevo</a>
+    <a href="itil_problemas.php">Problemas</a>
+    <a href="itil_catalogo.php">Catálogo</a>
+    <a href="itil_solicitudes.php">Solicitudes</a>
+    <a href="itil_sla.php">SLA</a>
+    <a href="itil_estadisticas.php">Estadísticas</a>
 </div>
 
-<!-- ========================= -->
-<!-- FILTRO F1-B (FIJO)        -->
-<!-- ========================= -->
 <div class="filtro-bar">
-
-    <!-- FILA 1: Datepickers + Filtrar -->
     <form method="GET" class="filtro-row">
-
         <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
         <input type="date" name="fin" value="<?= $fecha_fin ?>">
-
         <button type="submit">Filtrar</button>
     </form>
 
-    <!-- FILA 2: Botones rápidos -->
     <div class="filtro-rapidos filtro-row">
-
-        <form method="GET">
-            <input type="hidden" name="rango" value="hoy">
-            <button type="submit">Hoy</button>
-        </form>
-
-        <form method="GET">
-            <input type="hidden" name="rango" value="7">
-            <button type="submit">Últimos 7 días</button>
-        </form>
-
-        <form method="GET">
-            <input type="hidden" name="rango" value="mes">
-            <button type="submit">Mes actual</button>
-        </form>
-
+        <form method="GET"><input type="hidden" name="rango" value="hoy"><button>Hoy</button></form>
+        <form method="GET"><input type="hidden" name="rango" value="7"><button>Últimos 7 días</button></form>
+        <form method="GET"><input type="hidden" name="rango" value="mes"><button>Mes actual</button></form>
     </div>
-
 </div>
 
-<!-- ========================= -->
-<!-- MAIN                      -->
-<!-- ========================= -->
 <div class="main">
 
-    <!-- TÍTULO PRINCIPAL -->
     <h2 class="dashboard-title">Dashboard de estadísticas</h2>
-    <div class="dashboard-subtitle">
-        Vista general de incidentes, técnicos y comportamiento temporal
-    </div>
-    <div class="dashboard-divider"></div>
+    <div class="dashboard-subtitle">Vista general de incidentes, técnicos y comportamiento temporal</div>
 
     <!-- ========================= -->
     <!-- KPIs (3 × 3)              -->
@@ -651,7 +549,7 @@ body {
     </div>
 
     <!-- ========================= -->
-    <!-- GRÁFICAS 2×2 FULL WIDTH   -->
+    <!-- GRÁFICAS 2×2              -->
     <!-- ========================= -->
 
     <div class="dashboard-2col">
@@ -678,19 +576,6 @@ body {
         </div>
     </div>
 
-
-     <!-- ========================= -->
-    <!-- GRÁFICAS ubicacion   -->
-    <!-- ========================= -->
-    <div class="dashboard-2col">
-        <div class="chart-card">
-            <h3>Incidentes por ubicación</h3>
-        <div id="chartUbicacion" class="chart-container"></div>
-        </div>
-    </div>
-
-
-
     <div class="dashboard-2col">
         <div class="chart-card">
             <h3>Incidentes por hora del día</h3>
@@ -702,8 +587,19 @@ body {
             <div id="chartDiaSemana" class="chart-container"></div>
         </div>
     </div>
+
     <!-- ========================= -->
-    <!-- TABLAS (FULL WIDTH 2×2)  -->
+    <!-- NUEVA GRÁFICA UBICACIÓN   -->
+    <!-- ========================= -->
+    <div class="dashboard-2col">
+        <div class="chart-card">
+            <h3>Incidentes por ubicación</h3>
+            <div id="chartUbicacion" class="chart-container"></div>
+        </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- TABLAS                    -->
     <!-- ========================= -->
     <div class="dashboard-2col">
 
@@ -741,12 +637,7 @@ body {
 
     </div>
 
-    
-
-
-
 </div> <!-- Cierra .main -->
-
 <!-- ========================= -->
 <!-- SCRIPTS APEXCHARTS        -->
 <!-- ========================= -->
@@ -785,7 +676,6 @@ const chartDiaSemanaData   = <?= json_encode($chartDiaSemanaData) ?>;
 const chartUbicacionLabels = <?= json_encode($chartUbicacionLabels) ?>;
 const chartUbicacionData   = <?= json_encode($chartUbicacionData) ?>;
 
-
 /* Mapear DOW a nombres */
 const dowNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 const chartDiaSemanaLabels = chartDiaSemanaLabelsRaw.map(d => dowNames[parseInt(d)]);
@@ -808,12 +698,11 @@ new ApexCharts(document.querySelector("#chartTecnico"), {
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
 
-/* Incidentes por tipo (donut) */
+/* Incidentes por tipo (pie) */
 new ApexCharts(document.querySelector("#chartTipo"), {
     chart: { type: 'pie', height: 280 },
     series: chartTipoData,
     labels: chartTipoLabels,
-    /* plotOptions: { pie: { donut: { labels: { show: true } } } },  */
     colors: ['#0054A6', '#FF7A00', '#E91E63', '#00AEEF'],
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
@@ -828,35 +717,30 @@ new ApexCharts(document.querySelector("#chartEstado"), {
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
 
-/* Tendencia mensual (LÍNEA BRILLANTE) */
+/* Tendencia mensual */
 new ApexCharts(document.querySelector("#chartMensual"), {
     chart: { type: 'line', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartMensualData }],
     xaxis: { categories: chartMensualLabels, labels: { style: { colors: textColor } } },
-    colors: ['#00E5FF'], // cian neón
-stroke: { curve: 'smooth', width: 5 },
-fill: {
-    type: 'gradient',
-    gradient: {
-        shadeIntensity: 0,
-        opacityFrom: 0.9,
-        opacityTo: 0.25,
-        stops: [0, 100]
-    }
-},
-markers: {
-    size: 5,
     colors: ['#00E5FF'],
-    strokeColors: '#ffffff',
-    strokeWidth: 2
-},
-
+    stroke: { curve: 'smooth', width: 5 },
+    fill: {
+        type: 'gradient',
+        gradient: {
+            shadeIntensity: 0,
+            opacityFrom: 0.9,
+            opacityTo: 0.25,
+            stops: [0, 100]
+        }
+    },
+    markers: {
+        size: 5,
+        colors: ['#00E5FF'],
+        strokeColors: '#ffffff',
+        strokeWidth: 2
+    },
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
-
-/* ============================================================
-   HEATMAPS
-   ============================================================ */
 
 /* Por hora */
 new ApexCharts(document.querySelector("#chartHora"), {
@@ -879,19 +763,17 @@ new ApexCharts(document.querySelector("#chartDiaSemana"), {
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
 
-/* Incidentes por ubicación */
+/* ============================================================
+   NUEVA GRÁFICA: UBICACIÓN NORMALIZADA
+   ============================================================ */
 new ApexCharts(document.querySelector("#chartUbicacion"), {
     chart: { type: 'bar', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartUbicacionData }],
-    xaxis: { 
-        categories: chartUbicacionLabels,
-        labels: { style: { colors: textColor } }
-    },
+    xaxis: { categories: chartUbicacionLabels, labels: { style: { colors: textColor } } },
     plotOptions: { bar: { borderRadius: 6 } },
-    colors: ['#00AEEF'], // azul TIHIL
+    colors: ['#00AEEF'],
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
-
 
 </script>
 
