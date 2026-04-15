@@ -30,15 +30,12 @@ if (!$usuario_actual_id) {
     die("Sesión no válida.");
 }
 
-/* Registrar historial con fecha correcta */
+/* Registrar historial */
 function registrar_historial($pdo, $incidente_id, $usuario_id, $estado_anterior, $estado_nuevo) {
-
-    $fecha = date("Y-m-d H:i:s"); // Hora real de México
-
+    $fecha = date("Y-m-d H:i:s");
     $sql = "INSERT INTO itil_incidente_historial 
             (incidente_id, usuario_id, estado_anterior, estado_nuevo, fecha)
             VALUES (?, ?, ?, ?, ?)";
-
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$incidente_id, $usuario_id, $estado_anterior, $estado_nuevo, $fecha]);
 }
@@ -181,7 +178,7 @@ switch ($accion) {
         break;
 
     /* ============================
-       REGISTRAR SOLUCIÓN
+       REGISTRAR SOLUCIÓN (MODIFICADO)
        ============================ */
     case 'registrar_solucion':
         $sol_raw = $_POST['solucion'] ?? '';
@@ -189,18 +186,15 @@ switch ($accion) {
         if ($solucion === '') die("Solución vacía.");
 
         $estado_anterior = $incidente['estado'] ?? 'Abierto';
-        $estado_nuevo = $estado_anterior;
-
-        if ($estado_anterior !== 'Resuelto' && $estado_anterior !== 'Cerrado') {
-            $estado_nuevo = 'Resuelto';
-        }
+        $estado_nuevo = 'Cerrado';  // ← CAMBIO PRINCIPAL
 
         $fecha_actual = date("Y-m-d H:i:s");
 
         $sql = "UPDATE itil_incidentes 
                 SET solucion = :sol,
                     estado = :estado,
-                    fecha_resolucion = COALESCE(fecha_resolucion, :fr)
+                    fecha_resolucion = COALESCE(fecha_resolucion, :fr),
+                    fecha_cierre = COALESCE(fecha_cierre, :fc)
                 WHERE id = :id";
 
         $stmt = $pdo->prepare($sql);
@@ -208,12 +202,11 @@ switch ($accion) {
             ':sol'    => $solucion,
             ':estado' => $estado_nuevo,
             ':fr'     => $fecha_actual,
+            ':fc'     => $fecha_actual,
             ':id'     => $incidente_id
         ]);
 
-        if ($estado_nuevo !== $estado_anterior) {
-            registrar_historial($pdo, $incidente_id, $usuario_actual_id, $estado_anterior, $estado_nuevo);
-        }
+        registrar_historial($pdo, $incidente_id, $usuario_actual_id, $estado_anterior, $estado_nuevo);
 
         volver($incidente_id);
         break;
