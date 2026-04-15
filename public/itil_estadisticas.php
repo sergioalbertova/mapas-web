@@ -141,6 +141,21 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $porEstado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+/* Incidentes por ubicación (normalizada) */
+$stmt = $pdo->prepare("
+    SELECT 
+        COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación') AS ubicacion,
+        COUNT(*) AS total
+    FROM itil_incidentes
+    WHERE fecha_reporte BETWEEN :inicio AND :fin
+    GROUP BY ubicacion
+    ORDER BY total DESC
+");
+$stmt->execute($params);
+$porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
 /* Tendencia mensual */
 $stmt = $pdo->prepare("
     SELECT TO_CHAR(fecha_reporte, 'YYYY-MM') AS mes, COUNT(*) AS total
@@ -663,6 +678,19 @@ body {
         </div>
     </div>
 
+
+     <!-- ========================= -->
+    <!-- GRÁFICAS ubicacion   -->
+    <!-- ========================= -->
+    <div class="dashboard-2col">
+        <div class="chart-card">
+            <h3>Incidentes por ubicación</h3>
+        <div id="chartUbicacion" class="chart-container"></div>
+        </div>
+    </div>
+
+
+
     <div class="dashboard-2col">
         <div class="chart-card">
             <h3>Incidentes por hora del día</h3>
@@ -713,6 +741,10 @@ body {
 
     </div>
 
+    
+
+
+
 </div> <!-- Cierra .main -->
 
 <!-- ========================= -->
@@ -749,6 +781,10 @@ const chartHoraData   = <?= json_encode($chartHoraData) ?>;
 
 const chartDiaSemanaLabelsRaw = <?= json_encode($chartDiaSemanaLabels) ?>;
 const chartDiaSemanaData   = <?= json_encode($chartDiaSemanaData) ?>;
+
+const chartUbicacionLabels = <?= json_encode($chartUbicacionLabels) ?>;
+const chartUbicacionData   = <?= json_encode($chartUbicacionData) ?>;
+
 
 /* Mapear DOW a nombres */
 const dowNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -842,6 +878,21 @@ new ApexCharts(document.querySelector("#chartDiaSemana"), {
     colors: ['#E91E63'],
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
+
+/* Incidentes por ubicación */
+new ApexCharts(document.querySelector("#chartUbicacion"), {
+    chart: { type: 'bar', height: 280, toolbar: { show: false } },
+    series: [{ name: 'Incidentes', data: chartUbicacionData }],
+    xaxis: { 
+        categories: chartUbicacionLabels,
+        labels: { style: { colors: textColor } }
+    },
+    plotOptions: { bar: { borderRadius: 6 } },
+    colors: ['#00AEEF'], // azul TIHIL
+    theme: { mode: isDark ? 'dark' : 'light' }
+}).render();
+
+
 </script>
 
 </body>
