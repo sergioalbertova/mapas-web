@@ -395,6 +395,43 @@ body {
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
 /* ============================================================
+   TOPBAR CON ÍCONOS
+   ============================================================ */
+.itil-topbar {
+    position: fixed;
+    top: 0;
+    left: 240px;
+    right: 0;
+    height: 55px;
+    background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 0 25px;
+    box-shadow: 0 2px 8px var(--shadow);
+    z-index: 2100;
+}
+.sidebar.collapsed ~ .itil-topbar { left: 70px; }
+
+.itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+.itil-topbar a:hover { background: var(--sidebar-hover); }
+
+.itil-topbar svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* ============================================================
    FILTRO
    ============================================================ */
 .filtro-bar {
