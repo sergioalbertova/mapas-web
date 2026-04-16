@@ -2,7 +2,7 @@
 require "session_config.php";
 require "db.php";
 
-$tecnicoFiltro = $_GET['tecnico'] ?? null;
+
 
 
 /* ============================================================
@@ -214,10 +214,27 @@ $stmt = $pdo->prepare("
     ORDER BY total DESC
 ");
 
+$tecnicoFiltro = $_GET['tecnico'] ?? null;
+
+/* EJEMPLO DE CONSULTA */
+$sql = "SELECT tecnico_asignado, COUNT(*) AS total 
+        FROM incidentes 
+        WHERE 1=1";
+
+$params = [];
+
 if ($tecnicoFiltro) {
     $sql .= " AND tecnico_asignado = ?";
     $params[] = $tecnicoFiltro;
 }
+
+$sql .= " GROUP BY tecnico_asignado";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+
+$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 
 $stmt->execute($params);
