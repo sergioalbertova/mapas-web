@@ -51,7 +51,7 @@ $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 $nombreTecnico = $tecnico ? $tecnico['usuario'] . " - " . $tecnico['nombre'] : "Usuario";
 
 /* ============================================================
-   CONSULTAS SQL FILTRADAS POR FECHA Y TÉCNICO
+   CONSULTAS SQL (INICIAL / RESPALDO)
    ============================================================ */
 
 $paramsBase = [
@@ -75,7 +75,7 @@ $total = $stmt->fetchColumn();
 $sql = "
     SELECT COUNT(*) 
     FROM itil_incidentes
-    WHERE estado ILIKE 'Resuelto'
+    WHERE estado ILIKE 'Cerrado'
     AND fecha_reporte BETWEEN :inicio AND :fin
 ";
 $params = $paramsBase;
@@ -268,7 +268,7 @@ $stmt->execute($params);
 $porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* ============================================================
-   PREPARAR DATOS PARA JS
+   PREPARAR DATOS PARA JS (INICIAL)
    ============================================================ */
 $chartTecnicoIDs    = array_column($porTecnico, 'tecnico_id');
 $chartTecnicoLabels = array_column($porTecnico, 'tecnico_nombre');
@@ -291,16 +291,22 @@ $chartDiaSemanaData   = array_column($porDiaSemana, 'total');
 
 $chartUbicacionLabels = array_column($porUbicacion, 'ubicacion');
 $chartUbicacionData   = array_column($porUbicacion, 'total');
+
+/* Para quitar filtro sin perder fechas */
+$paramsURL = $_GET;
+unset($paramsURL['tecnico']);
+$urlSinTecnico = "itil_estadisticas.php";
+if (!empty($paramsURL)) {
+    $urlSinTecnico .= "?" . http_build_query($paramsURL);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Dashboard de estadísticas</title>
-
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <link rel="stylesheet" href="itil_estadisticas.css">
-
 </head>
 <body>
 
@@ -348,15 +354,24 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
 <!-- FILTRO SUPERIOR -->
 <div class="filtro-bar">
     <form method="GET" class="filtro-row">
-        <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
-        <input type="date" name="fin" value="<?= $fecha_fin ?>">
+        <input type="date" name="inicio" value="<?= htmlspecialchars($fecha_inicio) ?>">
+        <input type="date" name="fin" value="<?= htmlspecialchars($fecha_fin) ?>">
         <button type="submit">Filtrar</button>
     </form>
 
     <div class="filtro-rapidos filtro-row">
-        <form method="GET"><input type="hidden" name="rango" value="hoy"><button>Hoy</button></form>
-        <form method="GET"><input type="hidden" name="rango" value="7"><button>Últimos 7 días</button></form>
-        <form method="GET"><input type="hidden" name="rango" value="mes"><button>Mes actual</button></form>
+        <form method="GET">
+            <input type="hidden" name="rango" value="hoy">
+            <button>Hoy</button>
+        </form>
+        <form method="GET">
+            <input type="hidden" name="rango" value="7">
+            <button>Últimos 7 días</button>
+        </form>
+        <form method="GET">
+            <input type="hidden" name="rango" value="mes">
+            <button>Mes actual</button>
+        </form>
     </div>
 </div>
 
@@ -367,50 +382,33 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
     <strong>
         <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?>
     </strong>
-   <?php
-    // Obtener todos los parámetros actuales
-    $params = $_GET;
-
-    // Quitar el filtro de técnico si existe
-    unset($params['tecnico']);
-
-    // Reconstruir la URL sin perder fechas
-    $urlSinTecnico = "itil_estadisticas.php";
-    if (!empty($params)) {
-        $urlSinTecnico .= "?" . http_build_query($params);
-    }
-?>
-<a href="<?= $urlSinTecnico ?>" style="margin-left:15px;">Quitar filtro</a>
-
+    <a href="<?= htmlspecialchars($urlSinTecnico) ?>" style="margin-left:15px;">Quitar filtro</a>
 </div>
-
-
 <?php endif; ?>
+
 <div class="main">
 
     <h2 class="dashboard-title">Dashboard de estadísticas</h2>
     <div class="dashboard-subtitle">Vista general de incidentes, técnicos y comportamiento temporal</div>
 
-    <!-- ========================= -->
-    <!-- KPIs (3 × 3)              -->
-    <!-- ========================= -->
+    <!-- KPIs -->
     <div class="dashboard-grid">
 
         <div class="card">
             <h3>Total de incidentes</h3>
-            <div class="kpi-value"><?= $total ?></div>
+            <div class="kpi-value kpi-total"><?= $total ?></div>
             <div class="kpi-sub">Registros en el rango</div>
         </div>
 
         <div class="card">
-            <h3>Incidentes resueltos</h3>
-            <div class="kpi-value"><?= $totalResueltos ?></div>
-            <div class="kpi-sub">Estado = Resuelto</div>
+            <h3>Incidentes Resueltos/Cerrados</h3>
+            <div class="kpi-value kpi-resueltos"><?= $totalResueltos ?></div>
+            <div class="kpi-sub">Estado = Resuelto - Cerrado</div>
         </div>
 
         <div class="card">
             <h3>Incidentes activos</h3>
-            <div class="kpi-value"><?= $totalActivos ?></div>
+            <div class="kpi-value kpi-activos"><?= $totalActivos ?></div>
             <div class="kpi-sub">Pendientes de Atención</div>
         </div>
 
@@ -434,10 +432,7 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
 
     </div>
 
-    <!-- ========================= -->
-    <!-- GRÁFICAS 2×2              -->
-    <!-- ========================= -->
-
+    <!-- GRÁFICAS -->
     <div class="dashboard-2col">
         <div class="chart-card">
             <h3>Incidentes por técnico</h3>
@@ -474,20 +469,15 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
         </div>
     </div>
 
-    <!-- ========================= -->
-    <!-- NUEVA GRÁFICA UBICACIÓN   -->
-    <!-- ========================= -->
-   <div class="dashboard-full">
-    <div class="chart-card">
-        <h3>Incidentes por ubicación</h3>
-        <div id="chartUbicacion" class="chart-container"></div>
+    <!-- UBICACIÓN A FILA COMPLETA -->
+    <div class="dashboard-full">
+        <div class="chart-card">
+            <h3>Incidentes por ubicación</h3>
+            <div id="chartUbicacion" class="chart-container"></div>
+        </div>
     </div>
-</div>
 
-
-    <!-- ========================= -->
-    <!-- TABLAS                    -->
-    <!-- ========================= -->
+    <!-- TABLAS -->
     <div class="dashboard-2col">
 
         <div class="table-box">
@@ -524,11 +514,8 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
 
     </div>
 
-</div> <!-- Cierra .main -->
+</div> <!-- .main -->
 
-<!-- ========================= -->
-<!-- SCRIPTS APEXCHARTS        -->
-<!-- ========================= -->
 <script>
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
@@ -541,12 +528,11 @@ function toggleTheme() {
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
-/* ============================================================
-   DATOS DESDE PHP HACIA JS
-   ============================================================ */
-const chartTecnicoIDs    = <?= json_encode($chartTecnicoIDs) ?>;
-const chartTecnicoLabels = <?= json_encode($chartTecnicoLabels) ?>;
-const chartTecnicoData   = <?= json_encode($chartTecnicoData) ?>;
+
+/* DATOS INICIALES DESDE PHP */
+let chartTecnicoIDs    = <?= json_encode($chartTecnicoIDs) ?>;
+let chartTecnicoLabels = <?= json_encode($chartTecnicoLabels) ?>;
+let chartTecnicoData   = <?= json_encode($chartTecnicoData) ?>;
 
 const chartTipoLabels = <?= json_encode($chartTipoLabels) ?>;
 const chartTipoData   = <?= json_encode($chartTipoData) ?>;
@@ -566,40 +552,31 @@ const chartDiaSemanaData   = <?= json_encode($chartDiaSemanaData) ?>;
 const chartUbicacionLabels = <?= json_encode($chartUbicacionLabels) ?>;
 const chartUbicacionData   = <?= json_encode($chartUbicacionData) ?>;
 
-/* Mapear DOW a nombres */
 const dowNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 const chartDiaSemanaLabels = chartDiaSemanaLabelsRaw.map(d => dowNames[parseInt(d)]);
 
-/* THEME */
 const isDark = document.body.classList.contains('dark');
 const textColor = getComputedStyle(document.body).getPropertyValue('--text').trim();
 
-/* ============================================================
-   GRÁFICAS PRINCIPALES
-   ============================================================ */
+/* GRÁFICAS */
 
-/* Incidentes por técnico (CON FILTRO POWER BI) */
-new ApexCharts(document.querySelector("#chartTecnico"), {
+/* Incidentes por técnico (con filtro AJAX) */
+let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
     chart: { 
         type: 'bar', 
         height: 280, 
         toolbar: { show: false },
-       events: {
-    dataPointSelection: function(event, chartContext, config) {
+        events: {
+            dataPointSelection: function(event, chartContext, config) {
+                let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
 
-        let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
+                const params = new URLSearchParams(window.location.search);
+                params.set("tecnico", tecnicoID);
 
-        // Obtener parámetros actuales de la URL
-        const params = new URLSearchParams(window.location.search);
-
-        // Reemplazar/agregar el técnico seleccionado
-        params.set("tecnico", tecnicoID);
-
-        // Redirigir con TODOS los parámetros actuales
-        window.location.search = params.toString();
-    }
-}
-
+                history.replaceState(null, "", "?" + params.toString());
+                cargarDashboard();
+            }
+        }
     },
     series: [{ name: 'Incidentes', data: chartTecnicoData }],
     xaxis: { 
@@ -609,29 +586,32 @@ new ApexCharts(document.querySelector("#chartTecnico"), {
     plotOptions: { bar: { borderRadius: 6 } },
     colors: ['#0054A6'],
     theme: { mode: isDark ? 'dark' : 'light' }
-}).render();
+});
+chartTecnico.render();
 
-/* Incidentes por tipo (pie) */
-new ApexCharts(document.querySelector("#chartTipo"), {
+/* Incidentes por tipo */
+let chartTipo = new ApexCharts(document.querySelector("#chartTipo"), {
     chart: { type: 'pie', height: 280 },
     series: chartTipoData,
     labels: chartTipoLabels,
     colors: ['#0054A6', '#FF7A00', '#E91E63', '#00AEEF'],
     theme: { mode: isDark ? 'dark' : 'light' }
-}).render();
+});
+chartTipo.render();
 
 /* Incidentes por estado */
-new ApexCharts(document.querySelector("#chartEstado"), {
+let chartEstado = new ApexCharts(document.querySelector("#chartEstado"), {
     chart: { type: 'bar', height: 280, toolbar: { show: false } },
     plotOptions: { bar: { horizontal: true, borderRadius: 6 } },
     series: [{ name: 'Incidentes', data: chartEstadoData }],
     xaxis: { categories: chartEstadoLabels, labels: { style: { colors: textColor } } },
     colors: ['#FF7A00'],
     theme: { mode: isDark ? 'dark' : 'light' }
-}).render();
+});
+chartEstado.render();
 
 /* Tendencia mensual */
-new ApexCharts(document.querySelector("#chartMensual"), {
+let chartMensual = new ApexCharts(document.querySelector("#chartMensual"), {
     chart: { type: 'line', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartMensualData }],
     xaxis: { categories: chartMensualLabels, labels: { style: { colors: textColor } } },
@@ -653,10 +633,11 @@ new ApexCharts(document.querySelector("#chartMensual"), {
         strokeWidth: 2
     },
     theme: { mode: isDark ? 'dark' : 'light' }
-}).render();
+});
+chartMensual.render();
 
 /* Por hora */
-new ApexCharts(document.querySelector("#chartHora"), {
+let chartHora = new ApexCharts(document.querySelector("#chartHora"), {
     chart: { type: 'heatmap', height: 280 },
     series: [{
         name: 'Incidentes',
@@ -664,48 +645,86 @@ new ApexCharts(document.querySelector("#chartHora"), {
     }],
     colors: ['#00AEEF'],
     theme: { mode: isDark ? 'dark' : 'light' }
-}).render();
+});
+chartHora.render();
 
 /* Por día */
-new ApexCharts(document.querySelector("#chartDiaSemana"), {
+let chartDiaSemana = new ApexCharts(document.querySelector("#chartDiaSemana"), {
     chart: { type: 'bar', height: 280 },
     series: [{ name: 'Incidentes', data: chartDiaSemanaData }],
     xaxis: { categories: chartDiaSemanaLabels, labels: { style: { colors: textColor } } },
     plotOptions: { bar: { borderRadius: 6 } },
     colors: ['#E91E63'],
     theme: { mode: isDark ? 'dark' : 'light' }
-}).render();
+});
+chartDiaSemana.render();
 
 /* Ubicación normalizada */
-new ApexCharts(document.querySelector("#chartUbicacion"), {
-    chart: { 
-        type: 'bar', 
-        height: 350, 
-        toolbar: { show: false } 
-    },
-    series: [{ 
-        name: 'Incidentes', 
-        data: chartUbicacionData 
-    }],
+let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
+    chart: { type: 'bar', height: 350, toolbar: { show: false } },
+    series: [{ name: 'Incidentes', data: chartUbicacionData }],
     xaxis: { 
         categories: chartUbicacionLabels,
         labels: { 
             style: { colors: textColor },
-            rotate: -45,     // ← Inclina etiquetas
-            trim: false      // ← No recorta texto
+            rotate: -45,
+            trim: false
         }
     },
     plotOptions: { 
         bar: { 
             borderRadius: 6,
-            columnWidth: '45%'  // ← Mejor proporción visual
+            columnWidth: '45%'
         } 
     },
     colors: ['#00AEEF'],
     theme: { mode: isDark ? 'dark' : 'light' }
-}).render();
+});
+chartUbicacion.render();
 
+/* ============================================================
+   AJAX: CARGAR DASHBOARD SIN RECARGAR
+   ============================================================ */
+function cargarDashboard() {
 
+    const params = new URLSearchParams(window.location.search);
+
+    fetch("api_estadisticas.php?" + params.toString())
+        .then(r => r.json())
+        .then(data => {
+
+            // KPIs
+            document.querySelector(".kpi-total").textContent     = data.total;
+            document.querySelector(".kpi-resueltos").textContent = data.resueltos;
+            document.querySelector(".kpi-activos").textContent   = data.activos;
+
+            // Técnicos
+            const tecnicosLabels = data.porTecnico.map(x => x.nombre);
+            const tecnicosData   = data.porTecnico.map(x => x.total);
+            chartTecnicoIDs      = data.porTecnico.map(x => x.id);
+
+            chartTecnico.updateSeries([{ data: tecnicosData }]);
+            chartTecnico.updateOptions({
+                xaxis: { categories: tecnicosLabels }
+            });
+
+            // Ubicación
+            const ubicLabels = data.ubicacion.map(x => x.ubicacion);
+            const ubicData   = data.ubicacion.map(x => x.total);
+
+            chartUbicacion.updateSeries([{ data: ubicData }]);
+            chartUbicacion.updateOptions({
+                xaxis: { categories: ubicLabels }
+            });
+
+        })
+        .catch(err => {
+            console.error("Error cargando dashboard:", err);
+        });
+}
+
+// Cargar al inicio
+cargarDashboard();
 </script>
 
 </body>
