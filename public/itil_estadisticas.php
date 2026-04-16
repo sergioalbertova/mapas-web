@@ -496,23 +496,11 @@ body.dark .filtro-estadisticas button {
     color: #1A1D21 !important;
     border-color: #4FC3F7 !important;
 }
-/* Ajuste general del layout */
-.main {
-    margin-left: 240px;
-    margin-top: 70px;
-    padding: 20px;
-    transition: margin-left 0.25s ease;
-}
-
-/* Cuando el sidebar está colapsado */
-#sidebar.collapsed ~ .main {
-    margin-left: 70px;
-}
 
 </style>
 </head>
 <body>
-<?php include "sidebar.php"; ?>
+
 
 <!-- === TOPBAR REAL === -->
 <div class="itil-topbar">
@@ -567,7 +555,7 @@ body.dark .filtro-estadisticas button {
         <form method="GET"><input type="hidden" name="rango" value="mes"><button>Mes actual</button></form>
     </div>
 </div>
-
+<?php include "sidebar.php"; ?>
 <div class="main">
 
     <h2 class="dashboard-title">Dashboard de estadísticas</h2>
