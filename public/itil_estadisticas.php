@@ -548,6 +548,12 @@ body {
     margin-bottom: 10px;
 }
 
+.filtro-bar a,
+.filtro-filtro-activo a {
+    color: #000 !important;
+    font-weight: bold;
+}
+
 </style>
 </head>
 <body>
@@ -609,13 +615,13 @@ body {
 </div>
 
 <?php if ($tecnicoFiltro): ?>
-<div style="max-width:900px;margin:0 auto 20px auto;padding:15px;background:#d9ecff;border-radius:8px;text-align:center;">
+<div class="filtro-filtro-activo" 
+     style="max-width:900px;margin:0 auto 20px auto;padding:15px;background:#d9ecff;border-radius:8px;text-align:center;">
     Filtrando por técnico:
-    <strong>
-        <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?>
-    </strong>
-    <a href="itil_estadisticas.php" style="margin-left:15px;color:#0054A6;font-weight:bold;">Quitar filtro</a>
+    <strong><?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?></strong>
+    <a href="itil_estadisticas.php" style="margin-left:15px;">Quitar filtro</a>
 </div>
+
 <?php endif; ?>
 <div class="main">
 
