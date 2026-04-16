@@ -259,3 +259,17 @@ body {
     grid-template-columns: 1fr;
     margin-bottom: 25px;
 }
+body.dark .filtro-filtro-activo {
+    background: #1E293B !important; /* azul oscuro elegante */
+    color: #F8FAFC !important;      /* texto claro */
+}
+
+body.dark .filtro-filtro-activo a {
+    color: #38BDF8 !important;      /* azul claro */
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+body.dark .filtro-filtro-activo a:hover {
+    color: #7DD3FC !important;
+}

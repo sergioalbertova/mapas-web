@@ -367,7 +367,21 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
     <strong>
         <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?>
     </strong>
-    <a href="itil_estadisticas.php" style="margin-left:15px;">Quitar filtro</a>
+   <?php
+    // Obtener todos los parámetros actuales
+    $params = $_GET;
+
+    // Quitar el filtro de técnico si existe
+    unset($params['tecnico']);
+
+    // Reconstruir la URL sin perder fechas
+    $urlSinTecnico = "itil_estadisticas.php";
+    if (!empty($params)) {
+        $urlSinTecnico .= "?" . http_build_query($params);
+    }
+?>
+<a href="<?= $urlSinTecnico ?>" style="margin-left:15px;">Quitar filtro</a>
+
 </div>
 
 
@@ -570,13 +584,22 @@ new ApexCharts(document.querySelector("#chartTecnico"), {
         type: 'bar', 
         height: 280, 
         toolbar: { show: false },
-        events: {
-            dataPointSelection: function(event, chartContext, config) {
-                let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
-                window.location.href = "?tecnico=" + tecnicoID 
-                    + "&inicio=<?= $fecha_inicio ?>&fin=<?= $fecha_fin ?>";
-            }
-        }
+       events: {
+    dataPointSelection: function(event, chartContext, config) {
+
+        let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
+
+        // Obtener parámetros actuales de la URL
+        const params = new URLSearchParams(window.location.search);
+
+        // Reemplazar/agregar el técnico seleccionado
+        params.set("tecnico", tecnicoID);
+
+        // Redirigir con TODOS los parámetros actuales
+        window.location.search = params.toString();
+    }
+}
+
     },
     series: [{ name: 'Incidentes', data: chartTecnicoData }],
     xaxis: { 
