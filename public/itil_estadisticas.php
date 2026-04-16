@@ -2,6 +2,9 @@
 require "session_config.php";
 require "db.php";
 
+$tecnicoFiltro = $_GET['tecnico'] ?? null;
+
+
 /* ============================================================
    FILTRO DE FECHAS (GET)
    ============================================================ */
@@ -210,6 +213,13 @@ $stmt = $pdo->prepare("
     GROUP BY ubicacion
     ORDER BY total DESC
 ");
+
+if ($tecnicoFiltro) {
+    $sql .= " AND tecnico_asignado = ?";
+    $params[] = $tecnicoFiltro;
+}
+
+
 $stmt->execute($params);
 $porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -770,13 +780,27 @@ const textColor = getComputedStyle(document.body).getPropertyValue('--text').tri
 
 /* Incidentes por técnico */
 new ApexCharts(document.querySelector("#chartTecnico"), {
-    chart: { type: 'bar', height: 280, toolbar: { show: false } },
+    chart: { 
+        type: 'bar', 
+        height: 280, 
+        toolbar: { show: false },
+        events: {
+            dataPointSelection: function(event, chartContext, config) {
+                let tecnicoSeleccionado = chartTecnicoLabels[config.dataPointIndex];
+                window.location.href = "?tecnico=" + encodeURIComponent(tecnicoSeleccionado);
+            }
+        }
+    },
     series: [{ name: 'Incidentes', data: chartTecnicoData }],
-    xaxis: { categories: chartTecnicoLabels, labels: { style: { colors: textColor } } },
+    xaxis: { 
+        categories: chartTecnicoLabels, 
+        labels: { style: { colors: textColor } } 
+    },
     plotOptions: { bar: { borderRadius: 6 } },
     colors: ['#0054A6'],
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
+
 
 /* Incidentes por tipo (pie) */
 new ApexCharts(document.querySelector("#chartTipo"), {
