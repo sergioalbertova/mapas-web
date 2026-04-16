@@ -2,15 +2,11 @@
 require "session_config.php";
 require "db.php";
 
-/* ============================================================
-   FILTRO DE FECHAS (GET)
-   ============================================================ */
 $hoy = date("Y-m-d");
 
 $fecha_inicio = $_GET['inicio'] ?? $hoy;
 $fecha_fin    = $_GET['fin']    ?? $hoy;
 
-/* Botones rápidos */
 if (isset($_GET['rango'])) {
     if ($_GET['rango'] === "hoy") {
         $fecha_inicio = $hoy;
@@ -26,12 +22,8 @@ if (isset($_GET['rango'])) {
     }
 }
 
-/* ============================================================
-   FILTRO POR TÉCNICO (ID)
-   ============================================================ */
 $tecnicoFiltro = isset($_GET['tecnico']) ? intval($_GET['tecnico']) : null;
 
-/* Función para agregar filtro dinámico */
 function filtroTecnicoSQL(&$sql, &$params, $tecnicoFiltro) {
     if ($tecnicoFiltro) {
         $sql .= " AND tecnico_asignado = :tecnico";
@@ -39,27 +31,18 @@ function filtroTecnicoSQL(&$sql, &$params, $tecnicoFiltro) {
     }
 }
 
-/* ============================================================
-   OBTENER TÉCNICO LOGUEADO
-   ============================================================ */
 $tecnico_id = intval($_SESSION['user_id']);
-
 $stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
 $stmt->execute([$tecnico_id]);
 $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
-
 $nombreTecnico = $tecnico ? $tecnico['usuario'] . " - " . $tecnico['nombre'] : "Usuario";
-
-/* ============================================================
-   CONSULTAS SQL (INICIAL / RESPALDO)
-   ============================================================ */
 
 $paramsBase = [
     ':inicio' => $fecha_inicio . " 00:00:00",
     ':fin'    => $fecha_fin . " 23:59:59"
 ];
 
-/* Total */
+/* TOTAL */
 $sql = "
     SELECT COUNT(*) 
     FROM itil_incidentes
@@ -71,7 +54,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $total = $stmt->fetchColumn();
 
-/* Resueltos */
+/* CERRADOS */
 $sql = "
     SELECT COUNT(*) 
     FROM itil_incidentes
@@ -84,7 +67,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $totalResueltos = $stmt->fetchColumn();
 
-/* Activos */
+/* ACTIVOS */
 $sql = "
     SELECT COUNT(*) 
     FROM itil_incidentes
@@ -128,7 +111,7 @@ $slaPorcentaje = ($slaRow['total'] > 0)
     ? round(($slaRow['dentro'] / $slaRow['total']) * 100, 1)
     : 0;
 
-/* Backlog */
+/* BACKLOG */
 $sql = "
     SELECT COUNT(*) 
     FROM itil_incidentes
@@ -141,7 +124,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $backlog = $stmt->fetchColumn();
 
-/* Incidentes por técnico (IDs + nombres) */
+/* POR TÉCNICO */
 $sql = "
     SELECT 
         u.id AS tecnico_id,
@@ -158,7 +141,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porTecnico = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Incidentes por tipo */
+/* POR TIPO */
 $sql = "
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
@@ -171,7 +154,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porTipo = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Incidentes por estado */
+/* POR ESTADO */
 $sql = "
     SELECT estado, COUNT(*) AS total
     FROM itil_incidentes
@@ -184,7 +167,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porEstado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Tendencia mensual */
+/* MENSUAL */
 $sql = "
     SELECT TO_CHAR(fecha_reporte, 'YYYY-MM') AS mes, COUNT(*) AS total
     FROM itil_incidentes
@@ -197,7 +180,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $mensual = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Heatmap por hora */
+/* POR HORA */
 $sql = "
     SELECT EXTRACT(HOUR FROM fecha_reporte) AS hora, COUNT(*) AS total
     FROM itil_incidentes
@@ -210,7 +193,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porHora = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Heatmap por día */
+/* POR DÍA SEMANA */
 $sql = "
     SELECT EXTRACT(DOW FROM fecha_reporte) AS dow, COUNT(*) AS total
     FROM itil_incidentes
@@ -223,7 +206,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porDiaSemana = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Top técnicos */
+/* TOP TÉCNICOS */
 $sql = "
     SELECT 
         COALESCE(u.nombre, 'Sin técnico') AS tecnico,
@@ -239,7 +222,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $topTecnicos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Top categorías */
+/* TOP CATEGORÍAS */
 $sql = "
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
@@ -252,7 +235,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $topCategorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Ubicación normalizada */
+/* UBICACIÓN */
 $sql = "
     SELECT 
         COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación') AS ubicacion,
@@ -267,9 +250,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* ============================================================
-   PREPARAR DATOS PARA JS (INICIAL)
-   ============================================================ */
+/* ARRAYS PARA JS INICIAL */
 $chartTecnicoIDs    = array_column($porTecnico, 'tecnico_id');
 $chartTecnicoLabels = array_column($porTecnico, 'tecnico_nombre');
 $chartTecnicoData   = array_column($porTecnico, 'total');
@@ -292,7 +273,7 @@ $chartDiaSemanaData   = array_column($porDiaSemana, 'total');
 $chartUbicacionLabels = array_column($porUbicacion, 'ubicacion');
 $chartUbicacionData   = array_column($porUbicacion, 'total');
 
-/* Para quitar filtro sin perder fechas */
+/* URL SIN TÉCNICO PARA QUITAR FILTRO */
 $paramsURL = $_GET;
 unset($paramsURL['tecnico']);
 $urlSinTecnico = "itil_estadisticas.php";
@@ -313,76 +294,57 @@ if (!empty($paramsURL)) {
 <?php include "sidebar.php"; ?>
 
 <div class="itil-topbar">
-
-    <a href="itil_incidentes.php">
-        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
-        Incidentes
-    </a>
-
-    <a href="itil_incidente_nuevo.php">
-        <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Nuevo
-    </a>
-
-    <a href="itil_problemas.php">
-        <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Problemas
-    </a>
-
-    <a href="itil_catalogo.php">
-        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Catálogo Incidentes
-    </a>
-
-    <a href="itil_solicitudes.php">
-        <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Solicitudes
-    </a>
-
-    <a href="itil_sla.php">
-        <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        SLA
-    </a>
-
-    <a href="itil_estadisticas.php">
-        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Estadísticas
-    </a>
-
+    <a href="itil_incidentes.php">Incidentes</a>
+    <a href="itil_incidente_nuevo.php">Nuevo</a>
+    <a href="itil_problemas.php">Problemas</a>
+    <a href="itil_catalogo.php">Catálogo Incidentes</a>
+    <a href="itil_solicitudes.php">Solicitudes</a>
+    <a href="itil_sla.php">SLA</a>
+    <a href="itil_estadisticas.php">Estadísticas</a>
 </div>
 
-<!-- FILTRO SUPERIOR -->
 <div class="filtro-bar">
     <form method="GET" class="filtro-row">
         <input type="date" name="inicio" value="<?= htmlspecialchars($fecha_inicio) ?>">
         <input type="date" name="fin" value="<?= htmlspecialchars($fecha_fin) ?>">
+        <?php if ($tecnicoFiltro): ?>
+            <input type="hidden" name="tecnico" value="<?= $tecnicoFiltro ?>">
+        <?php endif; ?>
         <button type="submit">Filtrar</button>
     </form>
 
     <div class="filtro-rapidos filtro-row">
         <form method="GET">
             <input type="hidden" name="rango" value="hoy">
+            <?php if ($tecnicoFiltro): ?>
+                <input type="hidden" name="tecnico" value="<?= $tecnicoFiltro ?>">
+            <?php endif; ?>
             <button>Hoy</button>
         </form>
         <form method="GET">
             <input type="hidden" name="rango" value="7">
+            <?php if ($tecnicoFiltro): ?>
+                <input type="hidden" name="tecnico" value="<?= $tecnicoFiltro ?>">
+            <?php endif; ?>
             <button>Últimos 7 días</button>
         </form>
         <form method="GET">
             <input type="hidden" name="rango" value="mes">
+            <?php if ($tecnicoFiltro): ?>
+                <input type="hidden" name="tecnico" value="<?= $tecnicoFiltro ?>">
+            <?php endif; ?>
             <button>Mes actual</button>
         </form>
     </div>
 </div>
 
 <?php if ($tecnicoFiltro): ?>
-<div class="filtro-filtro-activo" 
-     style="max-width:900px;margin:0 auto 20px auto;padding:15px;background:#d9ecff;border-radius:8px;text-align:center;">
+<div class="filtro-filtro-activo">
     Filtrando por técnico:
     <strong>
         <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?>
     </strong>
-    <a href="<?= htmlspecialchars($urlSinTecnico) ?>" style="margin-left:15px;">Quitar filtro</a>
+    <a href="<?= htmlspecialchars($urlSinTecnico) ?>">Quitar filtro</a>
 </div>
 <?php endif; ?>
 
@@ -391,9 +353,7 @@ if (!empty($paramsURL)) {
     <h2 class="dashboard-title">Dashboard de estadísticas</h2>
     <div class="dashboard-subtitle">Vista general de incidentes, técnicos y comportamiento temporal</div>
 
-    <!-- KPIs -->
     <div class="dashboard-grid">
-
         <div class="card">
             <h3>Total de incidentes</h3>
             <div class="kpi-value kpi-total"><?= $total ?></div>
@@ -401,9 +361,9 @@ if (!empty($paramsURL)) {
         </div>
 
         <div class="card">
-            <h3>Incidentes Resueltos/Cerrados</h3>
+            <h3>Incidentes cerrados</h3>
             <div class="kpi-value kpi-resueltos"><?= $totalResueltos ?></div>
-            <div class="kpi-sub">Estado = Resuelto - Cerrado</div>
+            <div class="kpi-sub">Estado = Cerrado</div>
         </div>
 
         <div class="card">
@@ -414,25 +374,23 @@ if (!empty($paramsURL)) {
 
         <div class="card">
             <h3>MTTR</h3>
-            <div class="kpi-value"><?= $mttr ?> h</div>
+            <div class="kpi-value kpi-mttr"><?= $mttr ?> h</div>
             <div class="kpi-sub">Tiempo promedio de resolución</div>
         </div>
 
         <div class="card">
             <h3>SLA cumplido</h3>
-            <div class="kpi-value"><?= $slaPorcentaje ?>%</div>
+            <div class="kpi-value kpi-sla"><?= $slaPorcentaje ?>%</div>
             <div class="kpi-sub">Resueltos &lt;= 24h</div>
         </div>
 
         <div class="card">
             <h3>Backlog</h3>
-            <div class="kpi-value"><?= $backlog ?></div>
+            <div class="kpi-value kpi-backlog"><?= $backlog ?></div>
             <div class="kpi-sub">En proceso</div>
         </div>
-
     </div>
 
-    <!-- GRÁFICAS -->
     <div class="dashboard-2col">
         <div class="chart-card">
             <h3>Incidentes por técnico</h3>
@@ -469,7 +427,6 @@ if (!empty($paramsURL)) {
         </div>
     </div>
 
-    <!-- UBICACIÓN A FILA COMPLETA -->
     <div class="dashboard-full">
         <div class="chart-card">
             <h3>Incidentes por ubicación</h3>
@@ -477,16 +434,11 @@ if (!empty($paramsURL)) {
         </div>
     </div>
 
-    <!-- TABLAS -->
     <div class="dashboard-2col">
-
         <div class="table-box">
             <h3>Top técnicos</h3>
-            <table>
-                <tr>
-                    <th>Técnico</th>
-                    <th>Incidentes</th>
-                </tr>
+            <table class="tabla-top-tecnicos">
+                <tr><th>Técnico</th><th>Incidentes</th></tr>
                 <?php foreach ($topTecnicos as $row): ?>
                 <tr>
                     <td><?= htmlspecialchars($row['tecnico']) ?></td>
@@ -498,11 +450,8 @@ if (!empty($paramsURL)) {
 
         <div class="table-box">
             <h3>Top categorías</h3>
-            <table>
-                <tr>
-                    <th>Categoría</th>
-                    <th>Incidentes</th>
-                </tr>
+            <table class="tabla-top-categorias">
+                <tr><th>Categoría</th><th>Incidentes</th></tr>
                 <?php foreach ($topCategorias as $row): ?>
                 <tr>
                     <td><?= htmlspecialchars($row['titulo']) ?></td>
@@ -511,56 +460,44 @@ if (!empty($paramsURL)) {
                 <?php endforeach; ?>
             </table>
         </div>
-
     </div>
 
-</div> <!-- .main -->
+</div>
 
 <script>
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
-}
-
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-}
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 
-/* DATOS INICIALES DESDE PHP */
 let chartTecnicoIDs    = <?= json_encode($chartTecnicoIDs) ?>;
 let chartTecnicoLabels = <?= json_encode($chartTecnicoLabels) ?>;
 let chartTecnicoData   = <?= json_encode($chartTecnicoData) ?>;
 
-const chartTipoLabels = <?= json_encode($chartTipoLabels) ?>;
-const chartTipoData   = <?= json_encode($chartTipoData) ?>;
+let chartTipoLabels = <?= json_encode($chartTipoLabels) ?>;
+let chartTipoData   = <?= json_encode($chartTipoData) ?>;
 
-const chartEstadoLabels = <?= json_encode($chartEstadoLabels) ?>;
-const chartEstadoData   = <?= json_encode($chartEstadoData) ?>;
+let chartEstadoLabels = <?= json_encode($chartEstadoLabels) ?>;
+let chartEstadoData   = <?= json_encode($chartEstadoData) ?>;
 
-const chartMensualLabels = <?= json_encode($chartMensualLabels) ?>;
-const chartMensualData   = <?= json_encode($chartMensualData) ?>;
+let chartMensualLabels = <?= json_encode($chartMensualLabels) ?>;
+let chartMensualData   = <?= json_encode($chartMensualData) ?>;
 
-const chartHoraLabels = <?= json_encode($chartHoraLabels) ?>;
-const chartHoraData   = <?= json_encode($chartHoraData) ?>;
+let chartHoraLabels = <?= json_encode($chartHoraLabels) ?>;
+let chartHoraData   = <?= json_encode($chartHoraData) ?>;
 
-const chartDiaSemanaLabelsRaw = <?= json_encode($chartDiaSemanaLabels) ?>;
-const chartDiaSemanaData   = <?= json_encode($chartDiaSemanaData) ?>;
+let chartDiaSemanaLabelsRaw = <?= json_encode($chartDiaSemanaLabels) ?>;
+let chartDiaSemanaData      = <?= json_encode($chartDiaSemanaData) ?>;
 
-const chartUbicacionLabels = <?= json_encode($chartUbicacionLabels) ?>;
-const chartUbicacionData   = <?= json_encode($chartUbicacionData) ?>;
+let chartUbicacionLabels = <?= json_encode($chartUbicacionLabels) ?>;
+let chartUbicacionData   = <?= json_encode($chartUbicacionData) ?>;
 
 const dowNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-const chartDiaSemanaLabels = chartDiaSemanaLabelsRaw.map(d => dowNames[parseInt(d)]);
+let chartDiaSemanaLabels = chartDiaSemanaLabelsRaw.map(d => dowNames[parseInt(d)]);
 
 const isDark = document.body.classList.contains('dark');
 const textColor = getComputedStyle(document.body).getPropertyValue('--text').trim();
 
-/* GRÁFICAS */
-
-/* Incidentes por técnico (con filtro AJAX) */
+/* TÉCNICO */
 let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
     chart: { 
         type: 'bar', 
@@ -569,10 +506,8 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
         events: {
             dataPointSelection: function(event, chartContext, config) {
                 let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
-
                 const params = new URLSearchParams(window.location.search);
                 params.set("tecnico", tecnicoID);
-
                 history.replaceState(null, "", "?" + params.toString());
                 cargarDashboard();
             }
@@ -589,7 +524,7 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
 });
 chartTecnico.render();
 
-/* Incidentes por tipo */
+/* TIPO */
 let chartTipo = new ApexCharts(document.querySelector("#chartTipo"), {
     chart: { type: 'pie', height: 280 },
     series: chartTipoData,
@@ -599,7 +534,7 @@ let chartTipo = new ApexCharts(document.querySelector("#chartTipo"), {
 });
 chartTipo.render();
 
-/* Incidentes por estado */
+/* ESTADO */
 let chartEstado = new ApexCharts(document.querySelector("#chartEstado"), {
     chart: { type: 'bar', height: 280, toolbar: { show: false } },
     plotOptions: { bar: { horizontal: true, borderRadius: 6 } },
@@ -610,7 +545,7 @@ let chartEstado = new ApexCharts(document.querySelector("#chartEstado"), {
 });
 chartEstado.render();
 
-/* Tendencia mensual */
+/* MENSUAL */
 let chartMensual = new ApexCharts(document.querySelector("#chartMensual"), {
     chart: { type: 'line', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartMensualData }],
@@ -636,7 +571,7 @@ let chartMensual = new ApexCharts(document.querySelector("#chartMensual"), {
 });
 chartMensual.render();
 
-/* Por hora */
+/* HORA */
 let chartHora = new ApexCharts(document.querySelector("#chartHora"), {
     chart: { type: 'heatmap', height: 280 },
     series: [{
@@ -648,7 +583,7 @@ let chartHora = new ApexCharts(document.querySelector("#chartHora"), {
 });
 chartHora.render();
 
-/* Por día */
+/* DÍA SEMANA */
 let chartDiaSemana = new ApexCharts(document.querySelector("#chartDiaSemana"), {
     chart: { type: 'bar', height: 280 },
     series: [{ name: 'Incidentes', data: chartDiaSemanaData }],
@@ -659,7 +594,7 @@ let chartDiaSemana = new ApexCharts(document.querySelector("#chartDiaSemana"), {
 });
 chartDiaSemana.render();
 
-/* Ubicación normalizada */
+/* UBICACIÓN */
 let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
     chart: { type: 'bar', height: 350, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartUbicacionData }],
@@ -682,48 +617,85 @@ let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
 });
 chartUbicacion.render();
 
-/* ============================================================
-   AJAX: CARGAR DASHBOARD SIN RECARGAR
-   ============================================================ */
+/* AJAX: RECARGAR TODO SIN REFRESH */
 function cargarDashboard() {
-
     const params = new URLSearchParams(window.location.search);
 
     fetch("api_estadisticas.php?" + params.toString())
         .then(r => r.json())
         .then(data => {
 
-            // KPIs
-            document.querySelector(".kpi-total").textContent     = data.total;
-            document.querySelector(".kpi-resueltos").textContent = data.resueltos;
-            document.querySelector(".kpi-activos").textContent   = data.activos;
+            document.querySelector(".kpi-total").textContent      = data.total;
+            document.querySelector(".kpi-resueltos").textContent  = data.resueltos;
+            document.querySelector(".kpi-activos").textContent    = data.activos;
+            document.querySelector(".kpi-mttr").textContent       = data.mttr + " h";
+            document.querySelector(".kpi-sla").textContent        = data.sla + "%";
+            document.querySelector(".kpi-backlog").textContent    = data.backlog;
 
-            // Técnicos
             const tecnicosLabels = data.porTecnico.map(x => x.nombre);
             const tecnicosData   = data.porTecnico.map(x => x.total);
             chartTecnicoIDs      = data.porTecnico.map(x => x.id);
 
             chartTecnico.updateSeries([{ data: tecnicosData }]);
-            chartTecnico.updateOptions({
-                xaxis: { categories: tecnicosLabels }
-            });
+            chartTecnico.updateOptions({ xaxis: { categories: tecnicosLabels } });
 
-            // Ubicación
+            const tipoLabels = data.porTipo.map(x => x.titulo);
+            const tipoData   = data.porTipo.map(x => x.total);
+            chartTipo.updateSeries(tipoData);
+            chartTipo.updateOptions({ labels: tipoLabels });
+
+            const estadoLabels = data.porEstado.map(x => x.estado);
+            const estadoData   = data.porEstado.map(x => x.total);
+            chartEstado.updateSeries([{ data: estadoData }]);
+            chartEstado.updateOptions({ xaxis: { categories: estadoLabels } });
+
+            const mensualLabels = data.mensual.map(x => x.mes);
+            const mensualData   = data.mensual.map(x => x.total);
+            chartMensual.updateSeries([{ data: mensualData }]);
+            chartMensual.updateOptions({ xaxis: { categories: mensualLabels } });
+
+            const horaLabels = data.porHora.map(x => x.hora);
+            const horaData   = data.porHora.map(x => x.total);
+            chartHora.updateSeries([{
+                name: 'Incidentes',
+                data: horaLabels.map((h, i) => ({ x: h + ':00', y: horaData[i] }))
+            }]);
+
+            const dowNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+            const dowLabels = data.porDiaSemana.map(x => dowNames[parseInt(x.dow)]);
+            const dowData   = data.porDiaSemana.map(x => x.total);
+            chartDiaSemana.updateSeries([{ data: dowData }]);
+            chartDiaSemana.updateOptions({ xaxis: { categories: dowLabels } });
+
             const ubicLabels = data.ubicacion.map(x => x.ubicacion);
             const ubicData   = data.ubicacion.map(x => x.total);
-
             chartUbicacion.updateSeries([{ data: ubicData }]);
-            chartUbicacion.updateOptions({
-                xaxis: { categories: ubicLabels }
-            });
+            chartUbicacion.updateOptions({ xaxis: { categories: ubicLabels } });
+
+            const tablaTec = document.querySelector(".tabla-top-tecnicos");
+            if (tablaTec) {
+                tablaTec.innerHTML = "<tr><th>Técnico</th><th>Incidentes</th></tr>";
+                data.topTecnicos.forEach(r => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${r.tecnico}</td><td>${r.total}</td>`;
+                    tablaTec.appendChild(tr);
+                });
+            }
+
+            const tablaCat = document.querySelector(".tabla-top-categorias");
+            if (tablaCat) {
+                tablaCat.innerHTML = "<tr><th>Categoría</th><th>Incidentes</th></tr>";
+                data.topCategorias.forEach(r => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${r.titulo}</td><td>${r.total}</td>`;
+                    tablaCat.appendChild(tr);
+                });
+            }
 
         })
-        .catch(err => {
-            console.error("Error cargando dashboard:", err);
-        });
+        .catch(err => console.error("Error cargando dashboard:", err));
 }
 
-// Cargar al inicio
 cargarDashboard();
 </script>
 
