@@ -315,6 +315,16 @@ body {
 .card-itil small {
     color: var(--subtext);
 }
+
+/* Historial en modo oscuro: texto claro */
+body.dark .card-itil h5,
+body.dark .card-itil small,
+body.dark .card-itil span,
+body.dark .list-group-item small,
+body.dark .list-group-item span {
+    color: #E5E7EB !important;
+}
+
 </style>
 </head>
 
