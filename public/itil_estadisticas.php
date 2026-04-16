@@ -424,11 +424,17 @@ body {
    ============================================================ */
 .main {
     margin-left: 240px;
-    padding: 25px;
-    margin-top: 165px;
-    transition: margin-left 0.25s ease;
+    margin-top: 75px;
+    padding: 20px;
+    width: calc(100% - 240px);
+    transition: margin-left 0.25s ease, width 0.25s ease;
 }
-.sidebar.collapsed ~ .main { margin-left: 70px; }
+
+#sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
 
 /* ============================================================
    GRIDS
@@ -495,6 +501,15 @@ body.dark .filtro-estadisticas button {
     background-color: #4FC3F7 !important;
     color: #1A1D21 !important;
     border-color: #4FC3F7 !important;
+}
+
+.filtro-bar {
+    max-width: 900px;
+    margin: 0 auto 25px auto;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px var(--shadow);
 }
 
 </style>
