@@ -363,40 +363,7 @@ body {
     left: 75px;
 }
 
-/* ============================================================
-   TOPBAR
-   ============================================================ */
-.itil-topbar {
-    position: fixed;
-    top: 0;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 0 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2100;
-}
-.sidebar.collapsed ~ .itil-topbar { left: 70px; }
-
-.itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-.itil-topbar a:hover { background: var(--sidebar-hover); }
-
-/* ============================================================
-   TOPBAR CON ÍCONOS
-   ============================================================ */
+/* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
     top: 0;
@@ -430,6 +397,8 @@ body {
     height: 18px;
     fill: currentColor;
 }
+
+
 
 /* ============================================================
    FILTRO
@@ -513,43 +482,41 @@ body {
 <body>
 <?php include "sidebar.php"; ?>
 
-<!-- ========================= -->
-<!-- TOPBAR ITIL (CON ÍCONOS)  -->
-<!-- ========================= -->
+<!-- === TOPBAR REAL === -->
 <div class="itil-topbar">
 
     <a href="itil_incidentes.php">
-        <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h18v2H3z"/></svg>
+        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
         Incidentes
     </a>
 
     <a href="itil_incidente_nuevo.php">
-        <svg viewBox="0 0 24 24"><path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/></svg>
+        <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Nuevo
     </a>
 
     <a href="itil_problemas.php">
-        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Problemas
     </a>
 
     <a href="itil_catalogo.php">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-        Catálogo Incidentes
+        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
+        Catalogo Incidentes
     </a>
 
     <a href="itil_solicitudes.php">
-        <svg viewBox="0 0 24 24"><path d="M3 3h18v4H3zm0 6h18v12H3z"/></svg>
+        <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Solicitudes
     </a>
 
     <a href="itil_sla.php">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         SLA
     </a>
 
     <a href="itil_estadisticas.php">
-        <svg viewBox="0 0 24 24"><path d="M3 17h2v-7H3zm4 0h2V7H7zm4 0h2v-4h-2zm4 0h2V3h-2zm4 0h2v-9h-2z"/></svg>
+        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Estadísticas
     </a>
 
