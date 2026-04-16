@@ -106,7 +106,7 @@ $sql = "
 ";
 $params = $paramsBase;
 filtroTecnicoSQL($sql, $params, $tecnico);
-$sql .= " GROUP BY id, nombre ORDER BY total DESC";
+$sql .= " GROUP BY u.id, u.nombre ORDER BY total DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['porTecnico'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -221,5 +221,5 @@ $stmt->execute($params);
 $data['ubicacion'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* =============== SALIDA =============== */
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 echo json_encode($data);
