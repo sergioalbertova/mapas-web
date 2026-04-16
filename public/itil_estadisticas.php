@@ -2,9 +2,6 @@
 require "session_config.php";
 require "db.php";
 
-
-
-
 /* ============================================================
    FILTRO DE FECHAS (GET)
    ============================================================ */
@@ -30,6 +27,19 @@ if (isset($_GET['rango'])) {
 }
 
 /* ============================================================
+   FILTRO POR TÉCNICO (ID)
+   ============================================================ */
+$tecnicoFiltro = isset($_GET['tecnico']) ? intval($_GET['tecnico']) : null;
+
+/* Función para agregar filtro dinámico */
+function filtroTecnicoSQL(&$sql, &$params, $tecnicoFiltro) {
+    if ($tecnicoFiltro) {
+        $sql .= " AND tecnico_asignado = :tecnico";
+        $params[':tecnico'] = $tecnicoFiltro;
+    }
+}
+
+/* ============================================================
    OBTENER TÉCNICO LOGUEADO
    ============================================================ */
 $tecnico_id = intval($_SESSION['user_id']);
@@ -41,59 +51,77 @@ $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 $nombreTecnico = $tecnico ? $tecnico['usuario'] . " - " . $tecnico['nombre'] : "Usuario";
 
 /* ============================================================
-   CONSULTAS SQL FILTRADAS POR FECHA
+   CONSULTAS SQL FILTRADAS POR FECHA Y TÉCNICO
    ============================================================ */
 
-$params = [
+$paramsBase = [
     ':inicio' => $fecha_inicio . " 00:00:00",
     ':fin'    => $fecha_fin . " 23:59:59"
 ];
 
 /* Total */
-$stmt = $pdo->prepare("
-    SELECT COUNT(*) FROM itil_incidentes
+$sql = "
+    SELECT COUNT(*) 
+    FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $total = $stmt->fetchColumn();
 
 /* Resueltos */
-$stmt = $pdo->prepare("
-    SELECT COUNT(*) FROM itil_incidentes
+$sql = "
+    SELECT COUNT(*) 
+    FROM itil_incidentes
     WHERE estado ILIKE 'Resuelto'
     AND fecha_reporte BETWEEN :inicio AND :fin
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $totalResueltos = $stmt->fetchColumn();
 
 /* Activos */
-$stmt = $pdo->prepare("
-    SELECT COUNT(*) FROM itil_incidentes
-    WHERE estado ILIKE ANY (ARRAY['Activo', 'Abierto', 'Pendiente', 'En espera'])
+$sql = "
+    SELECT COUNT(*) 
+    FROM itil_incidentes
+    WHERE estado ILIKE ANY (ARRAY['Activo','Abierto','Pendiente','En espera'])
     AND fecha_reporte BETWEEN :inicio AND :fin
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $totalActivos = $stmt->fetchColumn();
 
 /* MTTR */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT ROUND(AVG(EXTRACT(EPOCH FROM (fecha_resolucion - fecha_reporte)) / 3600), 2)
     FROM itil_incidentes
     WHERE fecha_resolucion IS NOT NULL
     AND fecha_reporte BETWEEN :inicio AND :fin
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $mttr = $stmt->fetchColumn() ?: 0;
 
 /* SLA */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT 
         COUNT(*) FILTER (WHERE fecha_resolucion IS NOT NULL 
                          AND fecha_resolucion - fecha_reporte <= INTERVAL '24 hours') AS dentro,
         COUNT(*) FILTER (WHERE fecha_resolucion IS NOT NULL) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $slaRow = $stmt->fetch(PDO::FETCH_ASSOC);
 $slaPorcentaje = ($slaRow['total'] > 0)
@@ -101,147 +129,149 @@ $slaPorcentaje = ($slaRow['total'] > 0)
     : 0;
 
 /* Backlog */
-$stmt = $pdo->prepare("
-    SELECT COUNT(*) FROM itil_incidentes
+$sql = "
+    SELECT COUNT(*) 
+    FROM itil_incidentes
     WHERE estado ILIKE 'En progreso'
     AND fecha_reporte BETWEEN :inicio AND :fin
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $backlog = $stmt->fetchColumn();
 
-/* Incidentes por técnico */
-$stmt = $pdo->prepare("
-    SELECT COALESCE(u.nombre, 'Sin técnico') AS tecnico, COUNT(*) AS total
+/* Incidentes por técnico (IDs + nombres) */
+$sql = "
+    SELECT 
+        u.id AS tecnico_id,
+        COALESCE(u.nombre, 'Sin técnico') AS tecnico_nombre,
+        COUNT(*) AS total
     FROM itil_incidentes i
     LEFT JOIN usuarios u ON u.id = i.tecnico_asignado
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY tecnico
-    ORDER BY total DESC
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY tecnico_id, tecnico_nombre ORDER BY total DESC";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porTecnico = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Incidentes por tipo */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY titulo
-    ORDER BY total DESC
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY titulo ORDER BY total DESC";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porTipo = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Incidentes por estado */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT estado, COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY estado
-    ORDER BY total DESC
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY estado ORDER BY total DESC";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porEstado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Tendencia mensual */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT TO_CHAR(fecha_reporte, 'YYYY-MM') AS mes, COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY mes
-    ORDER BY mes
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY mes ORDER BY mes";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $mensual = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Heatmap por hora */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT EXTRACT(HOUR FROM fecha_reporte) AS hora, COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY hora
-    ORDER BY hora
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY hora ORDER BY hora";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porHora = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Heatmap por día */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT EXTRACT(DOW FROM fecha_reporte) AS dow, COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY dow
-    ORDER BY dow
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY dow ORDER BY dow";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porDiaSemana = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Top técnicos */
-$stmt = $pdo->prepare("
-    SELECT COALESCE(u.nombre, 'Sin técnico') AS tecnico, COUNT(*) AS total
+$sql = "
+    SELECT 
+        COALESCE(u.nombre, 'Sin técnico') AS tecnico,
+        COUNT(*) AS total
     FROM itil_incidentes i
     LEFT JOIN usuarios u ON u.id = i.tecnico_asignado
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY tecnico
-    ORDER BY total DESC
-    LIMIT 10
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY tecnico ORDER BY total DESC LIMIT 10";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $topTecnicos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Top categorías */
-$stmt = $pdo->prepare("
+$sql = "
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY titulo
-    ORDER BY total DESC
-    LIMIT 10
-");
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY titulo ORDER BY total DESC LIMIT 10";
+$stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $topCategorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* ============================================================
-   UBICACIÓN NORMALIZADA (SIN PISO, SIN ESCRITORIO)
-   ============================================================ */
-$stmt = $pdo->prepare("
+/* Ubicación normalizada */
+$sql = "
     SELECT 
         COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación') AS ubicacion,
         COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY ubicacion
-    ORDER BY total DESC
-");
-
-$tecnicoFiltro = $_GET['tecnico'] ?? null;
-
-/* EJEMPLO DE CONSULTA */
-$sql = "SELECT tecnico_asignado, COUNT(*) AS total 
-        FROM incidentes 
-        WHERE 1=1";
-
-$params = [];
-
-if ($tecnicoFiltro) {
-    $sql .= " AND tecnico_asignado = ?";
-    $params[] = $tecnicoFiltro;
-}
-
-$sql .= " GROUP BY tecnico_asignado";
-
+";
+$params = $paramsBase;
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
+$sql .= " GROUP BY ubicacion ORDER BY total DESC";
 $stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-
-$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-
 $stmt->execute($params);
 $porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Preparar datos JS */
-$chartTecnicoLabels = array_column($porTecnico, 'tecnico');
+/* ============================================================
+   PREPARAR DATOS PARA JS
+   ============================================================ */
+$chartTecnicoIDs    = array_column($porTecnico, 'tecnico_id');
+$chartTecnicoLabels = array_column($porTecnico, 'tecnico_nombre');
 $chartTecnicoData   = array_column($porTecnico, 'total');
 
 $chartTipoLabels = array_column($porTipo, 'titulo');
@@ -271,6 +301,7 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <style>
+
 /* ============================================================
    VARIABLES DE COLOR
    ============================================================ */
@@ -425,43 +456,49 @@ body {
     fill: currentColor;
 }
 
-
-
 /* ============================================================
-   FILTRO
+   FILTRO SUPERIOR
    ============================================================ */
 .filtro-bar {
-    position: fixed;
-    top: 55px;
-    left: 240px;
-    right: 0;
+    max-width: 900px;
+    margin: 80px auto 25px auto;
     background: var(--card-bg);
-    padding: 12px 18px;
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 2px 8px var(--shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 2050;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px var(--shadow);
 }
-.sidebar.collapsed ~ .filtro-bar { left: 70px; }
+
+.filtro-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.filtro-rapidos {
+    display: flex;
+    gap: 10px;
+}
+
+.filtro-rapidos form {
+    display: inline-block;
+}
 
 /* ============================================================
    MAIN
    ============================================================ */
 .main {
     margin-left: 240px;
-    margin-top: 75px;
+    margin-top: 40px;
     padding: 20px;
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
 
-#sidebar.collapsed ~ .main {
+.sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
-
 
 /* ============================================================
    GRIDS
@@ -511,49 +548,12 @@ body {
     margin-bottom: 10px;
 }
 
-/* Filtro de estadísticas en modo oscuro */
-body.dark .filtro-estadisticas,
-body.dark .filtro-estadisticas input,
-body.dark .filtro-estadisticas select {
-    background-color: #2C2F34 !important;
-    color: #E5E7EB !important;
-    border: 1px solid #4B5563 !important;
-}
-
-body.dark .filtro-estadisticas input::placeholder {
-    color: #9CA3AF !important;
-}
-
-body.dark .filtro-estadisticas button {
-    background-color: #4FC3F7 !important;
-    color: #1A1D21 !important;
-    border-color: #4FC3F7 !important;
-}
-
-.filtro-bar {
-    max-width: 900px;
-    margin: 0 auto 25px auto;
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px var(--shadow);
-}
-
-.filtro-rapidos {
-    display: flex;
-    gap: 10px;
-}
-
-.filtro-rapidos form {
-    display: inline-block;
-}
-
 </style>
 </head>
 <body>
 
+<?php include "sidebar.php"; ?>
 
-<!-- === TOPBAR REAL === -->
 <div class="itil-topbar">
 
     <a href="itil_incidentes.php">
@@ -573,7 +573,7 @@ body.dark .filtro-estadisticas button {
 
     <a href="itil_catalogo.php">
         <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Catalogo Incidentes
+        Catálogo Incidentes
     </a>
 
     <a href="itil_solicitudes.php">
@@ -593,6 +593,7 @@ body.dark .filtro-estadisticas button {
 
 </div>
 
+<!-- FILTRO SUPERIOR -->
 <div class="filtro-bar">
     <form method="GET" class="filtro-row">
         <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
@@ -606,7 +607,16 @@ body.dark .filtro-estadisticas button {
         <form method="GET"><input type="hidden" name="rango" value="mes"><button>Mes actual</button></form>
     </div>
 </div>
-<?php include "sidebar.php"; ?>
+
+<?php if ($tecnicoFiltro): ?>
+<div style="max-width:900px;margin:0 auto 20px auto;padding:15px;background:#d9ecff;border-radius:8px;text-align:center;">
+    Filtrando por técnico:
+    <strong>
+        <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?>
+    </strong>
+    <a href="itil_estadisticas.php" style="margin-left:15px;color:#0054A6;font-weight:bold;">Quitar filtro</a>
+</div>
+<?php endif; ?>
 <div class="main">
 
     <h2 class="dashboard-title">Dashboard de estadísticas</h2>
@@ -745,6 +755,7 @@ body.dark .filtro-estadisticas button {
     </div>
 
 </div> <!-- Cierra .main -->
+
 <!-- ========================= -->
 <!-- SCRIPTS APEXCHARTS        -->
 <!-- ========================= -->
@@ -760,8 +771,10 @@ function toggleTheme() {
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
-
-/* Datos desde PHP */
+/* ============================================================
+   DATOS DESDE PHP HACIA JS
+   ============================================================ */
+const chartTecnicoIDs    = <?= json_encode($chartTecnicoIDs) ?>;
 const chartTecnicoLabels = <?= json_encode($chartTecnicoLabels) ?>;
 const chartTecnicoData   = <?= json_encode($chartTecnicoData) ?>;
 
@@ -795,7 +808,7 @@ const textColor = getComputedStyle(document.body).getPropertyValue('--text').tri
    GRÁFICAS PRINCIPALES
    ============================================================ */
 
-/* Incidentes por técnico */
+/* Incidentes por técnico (CON FILTRO POWER BI) */
 new ApexCharts(document.querySelector("#chartTecnico"), {
     chart: { 
         type: 'bar', 
@@ -803,8 +816,9 @@ new ApexCharts(document.querySelector("#chartTecnico"), {
         toolbar: { show: false },
         events: {
             dataPointSelection: function(event, chartContext, config) {
-                let tecnicoSeleccionado = chartTecnicoLabels[config.dataPointIndex];
-                window.location.href = "?tecnico=" + encodeURIComponent(tecnicoSeleccionado);
+                let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
+                window.location.href = "?tecnico=" + tecnicoID 
+                    + "&inicio=<?= $fecha_inicio ?>&fin=<?= $fecha_fin ?>";
             }
         }
     },
@@ -817,7 +831,6 @@ new ApexCharts(document.querySelector("#chartTecnico"), {
     colors: ['#0054A6'],
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
-
 
 /* Incidentes por tipo (pie) */
 new ApexCharts(document.querySelector("#chartTipo"), {
@@ -884,9 +897,7 @@ new ApexCharts(document.querySelector("#chartDiaSemana"), {
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
 
-/* ============================================================
-   NUEVA GRÁFICA: UBICACIÓN NORMALIZADA
-   ============================================================ */
+/* Ubicación normalizada */
 new ApexCharts(document.querySelector("#chartUbicacion"), {
     chart: { type: 'bar', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartUbicacionData }],
