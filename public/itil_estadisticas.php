@@ -512,6 +512,15 @@ body.dark .filtro-estadisticas button {
     box-shadow: 0 2px 6px var(--shadow);
 }
 
+.filtro-rapidos {
+    display: flex;
+    gap: 10px;
+}
+
+.filtro-rapidos form {
+    display: inline-block;
+}
+
 </style>
 </head>
 <body>
