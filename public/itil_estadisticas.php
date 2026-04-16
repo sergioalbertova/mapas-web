@@ -548,11 +548,22 @@ body {
     margin-bottom: 10px;
 }
 
-.filtro-bar a,
 .filtro-filtro-activo a {
-    color: #000 !important;
+    color: #003366 !important;
     font-weight: bold;
+    text-decoration: underline;
 }
+
+.filtro-filtro-activo a:hover {
+    color: #001a33 !important;
+}
+
+.dashboard-full {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-bottom: 25px;
+}
+
 
 </style>
 </head>
@@ -616,11 +627,14 @@ body {
 
 <?php if ($tecnicoFiltro): ?>
 <div class="filtro-filtro-activo" 
-     style="max-width:900px;margin:0 auto 20px auto;padding:15px;border-radius:8px;text-align:center;">
+     style="max-width:900px;margin:0 auto 20px auto;padding:15px;background:#d9ecff;border-radius:8px;text-align:center;">
     Filtrando por técnico:
-    <strong><?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?></strong>
+    <strong>
+        <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id = $tecnicoFiltro")->fetchColumn()) ?>
+    </strong>
     <a href="itil_estadisticas.php" style="margin-left:15px;">Quitar filtro</a>
 </div>
+
 
 <?php endif; ?>
 <div class="main">
@@ -714,12 +728,13 @@ body {
     <!-- ========================= -->
     <!-- NUEVA GRÁFICA UBICACIÓN   -->
     <!-- ========================= -->
-    <div class="dashboard-2col">
-        <div class="chart-card">
-            <h3>Incidentes por ubicación</h3>
-            <div id="chartUbicacion" class="chart-container"></div>
-        </div>
+   <div class="dashboard-full">
+    <div class="chart-card">
+        <h3>Incidentes por ubicación</h3>
+        <div id="chartUbicacion" class="chart-container"></div>
     </div>
+</div>
+
 
     <!-- ========================= -->
     <!-- TABLAS                    -->
@@ -905,13 +920,33 @@ new ApexCharts(document.querySelector("#chartDiaSemana"), {
 
 /* Ubicación normalizada */
 new ApexCharts(document.querySelector("#chartUbicacion"), {
-    chart: { type: 'bar', height: 280, toolbar: { show: false } },
-    series: [{ name: 'Incidentes', data: chartUbicacionData }],
-    xaxis: { categories: chartUbicacionLabels, labels: { style: { colors: textColor } } },
-    plotOptions: { bar: { borderRadius: 6 } },
+    chart: { 
+        type: 'bar', 
+        height: 350, 
+        toolbar: { show: false } 
+    },
+    series: [{ 
+        name: 'Incidentes', 
+        data: chartUbicacionData 
+    }],
+    xaxis: { 
+        categories: chartUbicacionLabels,
+        labels: { 
+            style: { colors: textColor },
+            rotate: -45,     // ← Inclina etiquetas
+            trim: false      // ← No recorta texto
+        }
+    },
+    plotOptions: { 
+        bar: { 
+            borderRadius: 6,
+            columnWidth: '45%'  // ← Mejor proporción visual
+        } 
+    },
     colors: ['#00AEEF'],
     theme: { mode: isDark ? 'dark' : 'light' }
 }).render();
+
 
 </script>
 
