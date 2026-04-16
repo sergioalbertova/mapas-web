@@ -250,7 +250,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porUbicacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* ARRAYS PARA JS INICIAL */
+/* ARRAYS PARA JS */
 $chartTecnicoIDs    = array_column($porTecnico, 'tecnico_id');
 $chartTecnicoLabels = array_column($porTecnico, 'tecnico_nombre');
 $chartTecnicoData   = array_column($porTecnico, 'total');
@@ -273,7 +273,7 @@ $chartDiaSemanaData   = array_column($porDiaSemana, 'total');
 $chartUbicacionLabels = array_column($porUbicacion, 'ubicacion');
 $chartUbicacionData   = array_column($porUbicacion, 'total');
 
-/* URL SIN TÉCNICO PARA QUITAR FILTRO */
+/* URL SIN TÉCNICO */
 $paramsURL = $_GET;
 unset($paramsURL['tecnico']);
 $urlSinTecnico = "itil_estadisticas.php";
@@ -303,17 +303,24 @@ if (!empty($paramsURL)) {
     <a href="itil_estadisticas.php">Estadísticas</a>
 </div>
 
+<!-- FILTROS SUPERIORES -->
 <div class="filtro-bar">
+
+    <!-- FILTRO POR FECHAS -->
     <form method="GET" class="filtro-row">
         <input type="date" name="inicio" value="<?= htmlspecialchars($fecha_inicio) ?>">
         <input type="date" name="fin" value="<?= htmlspecialchars($fecha_fin) ?>">
+
         <?php if ($tecnicoFiltro): ?>
             <input type="hidden" name="tecnico" value="<?= $tecnicoFiltro ?>">
         <?php endif; ?>
+
         <button type="submit">Filtrar</button>
     </form>
 
+    <!-- BOTONES RÁPIDOS -->
     <div class="filtro-rapidos filtro-row">
+
         <form method="GET">
             <input type="hidden" name="rango" value="hoy">
             <?php if ($tecnicoFiltro): ?>
@@ -321,6 +328,7 @@ if (!empty($paramsURL)) {
             <?php endif; ?>
             <button>Hoy</button>
         </form>
+
         <form method="GET">
             <input type="hidden" name="rango" value="7">
             <?php if ($tecnicoFiltro): ?>
@@ -328,6 +336,7 @@ if (!empty($paramsURL)) {
             <?php endif; ?>
             <button>Últimos 7 días</button>
         </form>
+
         <form method="GET">
             <input type="hidden" name="rango" value="mes">
             <?php if ($tecnicoFiltro): ?>
@@ -335,9 +344,11 @@ if (!empty($paramsURL)) {
             <?php endif; ?>
             <button>Mes actual</button>
         </form>
+
     </div>
 </div>
 
+<!-- BANNER DE FILTRO POR TÉCNICO -->
 <?php if ($tecnicoFiltro): ?>
 <div class="filtro-filtro-activo">
     Filtrando por técnico:
@@ -353,7 +364,9 @@ if (!empty($paramsURL)) {
     <h2 class="dashboard-title">Dashboard de estadísticas</h2>
     <div class="dashboard-subtitle">Vista general de incidentes, técnicos y comportamiento temporal</div>
 
+    <!-- KPIs -->
     <div class="dashboard-grid">
+
         <div class="card">
             <h3>Total de incidentes</h3>
             <div class="kpi-value kpi-total"><?= $total ?></div>
@@ -389,9 +402,12 @@ if (!empty($paramsURL)) {
             <div class="kpi-value kpi-backlog"><?= $backlog ?></div>
             <div class="kpi-sub">En proceso</div>
         </div>
+
     </div>
 
+    <!-- GRÁFICAS PRINCIPALES -->
     <div class="dashboard-2col">
+
         <div class="chart-card">
             <h3>Incidentes por técnico</h3>
             <div id="chartTecnico" class="chart-container"></div>
@@ -401,9 +417,11 @@ if (!empty($paramsURL)) {
             <h3>Incidentes por tipo</h3>
             <div id="chartTipo" class="chart-container"></div>
         </div>
+
     </div>
 
     <div class="dashboard-2col">
+
         <div class="chart-card">
             <h3>Incidentes por estado</h3>
             <div id="chartEstado" class="chart-container"></div>
@@ -413,9 +431,11 @@ if (!empty($paramsURL)) {
             <h3>Tendencia mensual</h3>
             <div id="chartMensual" class="chart-container"></div>
         </div>
+
     </div>
 
     <div class="dashboard-2col">
+
         <div class="chart-card">
             <h3>Incidentes por hora del día</h3>
             <div id="chartHora" class="chart-container"></div>
@@ -425,8 +445,10 @@ if (!empty($paramsURL)) {
             <h3>Incidentes por día de la semana</h3>
             <div id="chartDiaSemana" class="chart-container"></div>
         </div>
+
     </div>
 
+    <!-- UBICACIÓN A FILA COMPLETA -->
     <div class="dashboard-full">
         <div class="chart-card">
             <h3>Incidentes por ubicación</h3>
@@ -434,7 +456,9 @@ if (!empty($paramsURL)) {
         </div>
     </div>
 
+    <!-- TABLAS -->
     <div class="dashboard-2col">
+
         <div class="table-box">
             <h3>Top técnicos</h3>
             <table class="tabla-top-tecnicos">
@@ -460,15 +484,21 @@ if (!empty($paramsURL)) {
                 <?php endforeach; ?>
             </table>
         </div>
+
     </div>
 
-</div>
-
+</div> <!-- FIN MAIN -->
 <script>
+/* ===========================
+   MODO OSCURO
+=========================== */
 if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 
+/* ===========================
+   VARIABLES DESDE PHP
+=========================== */
 let chartTecnicoIDs    = <?= json_encode($chartTecnicoIDs) ?>;
 let chartTecnicoLabels = <?= json_encode($chartTecnicoLabels) ?>;
 let chartTecnicoData   = <?= json_encode($chartTecnicoData) ?>;
@@ -497,7 +527,9 @@ let chartDiaSemanaLabels = chartDiaSemanaLabelsRaw.map(d => dowNames[parseInt(d)
 const isDark = document.body.classList.contains('dark');
 const textColor = getComputedStyle(document.body).getPropertyValue('--text').trim();
 
-/* TÉCNICO */
+/* ===========================
+   GRÁFICA: INCIDENTES POR TÉCNICO
+=========================== */
 let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
     chart: { 
         type: 'bar', 
@@ -524,7 +556,9 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
 });
 chartTecnico.render();
 
-/* TIPO */
+/* ===========================
+   GRÁFICA: INCIDENTES POR TIPO
+=========================== */
 let chartTipo = new ApexCharts(document.querySelector("#chartTipo"), {
     chart: { type: 'pie', height: 280 },
     series: chartTipoData,
@@ -534,7 +568,9 @@ let chartTipo = new ApexCharts(document.querySelector("#chartTipo"), {
 });
 chartTipo.render();
 
-/* ESTADO */
+/* ===========================
+   GRÁFICA: INCIDENTES POR ESTADO
+=========================== */
 let chartEstado = new ApexCharts(document.querySelector("#chartEstado"), {
     chart: { type: 'bar', height: 280, toolbar: { show: false } },
     plotOptions: { bar: { horizontal: true, borderRadius: 6 } },
@@ -545,7 +581,9 @@ let chartEstado = new ApexCharts(document.querySelector("#chartEstado"), {
 });
 chartEstado.render();
 
-/* MENSUAL */
+/* ===========================
+   GRÁFICA: TENDENCIA MENSUAL
+=========================== */
 let chartMensual = new ApexCharts(document.querySelector("#chartMensual"), {
     chart: { type: 'line', height: 280, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartMensualData }],
@@ -571,7 +609,9 @@ let chartMensual = new ApexCharts(document.querySelector("#chartMensual"), {
 });
 chartMensual.render();
 
-/* HORA */
+/* ===========================
+   GRÁFICA: POR HORA
+=========================== */
 let chartHora = new ApexCharts(document.querySelector("#chartHora"), {
     chart: { type: 'heatmap', height: 280 },
     series: [{
@@ -583,7 +623,9 @@ let chartHora = new ApexCharts(document.querySelector("#chartHora"), {
 });
 chartHora.render();
 
-/* DÍA SEMANA */
+/* ===========================
+   GRÁFICA: POR DÍA DE LA SEMANA
+=========================== */
 let chartDiaSemana = new ApexCharts(document.querySelector("#chartDiaSemana"), {
     chart: { type: 'bar', height: 280 },
     series: [{ name: 'Incidentes', data: chartDiaSemanaData }],
@@ -594,7 +636,9 @@ let chartDiaSemana = new ApexCharts(document.querySelector("#chartDiaSemana"), {
 });
 chartDiaSemana.render();
 
-/* UBICACIÓN */
+/* ===========================
+   GRÁFICA: UBICACIÓN (FILA COMPLETA)
+=========================== */
 let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
     chart: { type: 'bar', height: 350, toolbar: { show: false } },
     series: [{ name: 'Incidentes', data: chartUbicacionData }],
@@ -616,8 +660,9 @@ let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
     theme: { mode: isDark ? 'dark' : 'light' }
 });
 chartUbicacion.render();
-
-/* AJAX: RECARGAR TODO SIN REFRESH */
+/* ===========================================================
+   AJAX: RECARGAR TODO SIN REFRESH
+=========================================================== */
 function cargarDashboard() {
     const params = new URLSearchParams(window.location.search);
 
@@ -625,6 +670,9 @@ function cargarDashboard() {
         .then(r => r.json())
         .then(data => {
 
+            /* ===========================
+               ACTUALIZAR KPIs
+            ============================ */
             document.querySelector(".kpi-total").textContent      = data.total;
             document.querySelector(".kpi-resueltos").textContent  = data.resueltos;
             document.querySelector(".kpi-activos").textContent    = data.activos;
@@ -632,6 +680,9 @@ function cargarDashboard() {
             document.querySelector(".kpi-sla").textContent        = data.sla + "%";
             document.querySelector(".kpi-backlog").textContent    = data.backlog;
 
+            /* ===========================
+               ACTUALIZAR GRÁFICA: TÉCNICOS
+            ============================ */
             const tecnicosLabels = data.porTecnico.map(x => x.nombre);
             const tecnicosData   = data.porTecnico.map(x => x.total);
             chartTecnicoIDs      = data.porTecnico.map(x => x.id);
@@ -640,36 +691,47 @@ function cargarDashboard() {
             chartTecnico.updateOptions({ xaxis: { categories: tecnicosLabels } });
 
             // Reasignar evento de clic después de actualizar datos
-chartTecnico.updateOptions({
-    chart: {
-        events: {
-            dataPointSelection: function(event, chartContext, config) {
-                let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
-                const params = new URLSearchParams(window.location.search);
-                params.set("tecnico", tecnicoID);
-                history.replaceState(null, "", "?" + params.toString());
-                cargarDashboard();
-            }
-        }
-    }
-});
+            chartTecnico.updateOptions({
+                chart: {
+                    events: {
+                        dataPointSelection: function(event, chartContext, config) {
+                            let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
+                            const params = new URLSearchParams(window.location.search);
+                            params.set("tecnico", tecnicoID);
+                            history.replaceState(null, "", "?" + params.toString());
+                            cargarDashboard();
+                        }
+                    }
+                }
+            });
 
-
+            /* ===========================
+               ACTUALIZAR GRÁFICA: TIPO
+            ============================ */
             const tipoLabels = data.porTipo.map(x => x.titulo);
             const tipoData   = data.porTipo.map(x => x.total);
             chartTipo.updateSeries(tipoData);
             chartTipo.updateOptions({ labels: tipoLabels });
 
+            /* ===========================
+               ACTUALIZAR GRÁFICA: ESTADO
+            ============================ */
             const estadoLabels = data.porEstado.map(x => x.estado);
             const estadoData   = data.porEstado.map(x => x.total);
             chartEstado.updateSeries([{ data: estadoData }]);
             chartEstado.updateOptions({ xaxis: { categories: estadoLabels } });
 
+            /* ===========================
+               ACTUALIZAR GRÁFICA: MENSUAL
+            ============================ */
             const mensualLabels = data.mensual.map(x => x.mes);
             const mensualData   = data.mensual.map(x => x.total);
             chartMensual.updateSeries([{ data: mensualData }]);
             chartMensual.updateOptions({ xaxis: { categories: mensualLabels } });
 
+            /* ===========================
+               ACTUALIZAR GRÁFICA: HORA
+            ============================ */
             const horaLabels = data.porHora.map(x => x.hora);
             const horaData   = data.porHora.map(x => x.total);
             chartHora.updateSeries([{
@@ -677,17 +739,26 @@ chartTecnico.updateOptions({
                 data: horaLabels.map((h, i) => ({ x: h + ':00', y: horaData[i] }))
             }]);
 
+            /* ===========================
+               ACTUALIZAR GRÁFICA: DÍA SEMANA
+            ============================ */
             const dowNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
             const dowLabels = data.porDiaSemana.map(x => dowNames[parseInt(x.dow)]);
             const dowData   = data.porDiaSemana.map(x => x.total);
             chartDiaSemana.updateSeries([{ data: dowData }]);
             chartDiaSemana.updateOptions({ xaxis: { categories: dowLabels } });
 
+            /* ===========================
+               ACTUALIZAR GRÁFICA: UBICACIÓN
+            ============================ */
             const ubicLabels = data.ubicacion.map(x => x.ubicacion);
             const ubicData   = data.ubicacion.map(x => x.total);
             chartUbicacion.updateSeries([{ data: ubicData }]);
             chartUbicacion.updateOptions({ xaxis: { categories: ubicLabels } });
 
+            /* ===========================
+               ACTUALIZAR TABLA: TOP TÉCNICOS
+            ============================ */
             const tablaTec = document.querySelector(".tabla-top-tecnicos");
             if (tablaTec) {
                 tablaTec.innerHTML = "<tr><th>Técnico</th><th>Incidentes</th></tr>";
@@ -698,6 +769,9 @@ chartTecnico.updateOptions({
                 });
             }
 
+            /* ===========================
+               ACTUALIZAR TABLA: TOP CATEGORÍAS
+            ============================ */
             const tablaCat = document.querySelector(".tabla-top-categorias");
             if (tablaCat) {
                 tablaCat.innerHTML = "<tr><th>Categoría</th><th>Incidentes</th></tr>";
@@ -712,6 +786,7 @@ chartTecnico.updateOptions({
         .catch(err => console.error("Error cargando dashboard:", err));
 }
 
+/* Ejecutar al cargar */
 cargarDashboard();
 </script>
 
