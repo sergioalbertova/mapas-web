@@ -477,6 +477,38 @@ body {
     font-size: 14px;
     margin-bottom: 10px;
 }
+
+/* Filtro de estadísticas en modo oscuro */
+body.dark .filtro-estadisticas,
+body.dark .filtro-estadisticas input,
+body.dark .filtro-estadisticas select {
+    background-color: #2C2F34 !important;
+    color: #E5E7EB !important;
+    border: 1px solid #4B5563 !important;
+}
+
+body.dark .filtro-estadisticas input::placeholder {
+    color: #9CA3AF !important;
+}
+
+body.dark .filtro-estadisticas button {
+    background-color: #4FC3F7 !important;
+    color: #1A1D21 !important;
+    border-color: #4FC3F7 !important;
+}
+/* Ajuste general del layout */
+.main {
+    margin-left: 240px;
+    margin-top: 70px;
+    padding: 20px;
+    transition: margin-left 0.25s ease;
+}
+
+/* Cuando el sidebar está colapsado */
+#sidebar.collapsed ~ .main {
+    margin-left: 70px;
+}
+
 </style>
 </head>
 <body>
