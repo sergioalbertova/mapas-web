@@ -639,20 +639,25 @@ body {
                     <small class="text-muted">No hay historial registrado.</small>
                 <?php else: ?>
                     <div class="list-group list-group-flush">
-                        <?php foreach ($historial as $h): ?>
-                            <div class="list-group-item px-0 py-1" style="background:transparent; border:none;">
-                                <small class="text-muted">
-                                    <?= fmt_fecha($h['fecha']) ?> · <?= htmlspecialchars($h['usuario_nombre']) ?>
-                                </small><br>
-                                <span>
-                                    Estado:
-                                    <?= htmlspecialchars($h['estado_anterior']) ?>
-                                    →
-                                    <?= htmlspecialchars($h['estado_nuevo']) ?>
-                                </span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
+    <?php foreach ($historial as $h): ?>
+        <div class="list-group-item px-0 py-1" style="background:transparent; border:none;">
+            
+            <!-- Solo fecha y hora -->
+            <small class="text-muted">
+                <?= fmt_fecha($h['fecha'] ?? '') ?>
+            </small><br>
+
+            <span>
+                Estado:
+                <?= htmlspecialchars($h['estado_anterior'] ?? '') ?>
+                →
+                <?= htmlspecialchars($h['estado_nuevo'] ?? '') ?>
+            </span>
+
+        </div>
+    <?php endforeach; ?>
+</div>
+
                 <?php endif; ?>
 
             </div>
