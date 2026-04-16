@@ -639,6 +639,22 @@ function cargarDashboard() {
             chartTecnico.updateSeries([{ data: tecnicosData }]);
             chartTecnico.updateOptions({ xaxis: { categories: tecnicosLabels } });
 
+            // Reasignar evento de clic después de actualizar datos
+chartTecnico.updateOptions({
+    chart: {
+        events: {
+            dataPointSelection: function(event, chartContext, config) {
+                let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
+                const params = new URLSearchParams(window.location.search);
+                params.set("tecnico", tecnicoID);
+                history.replaceState(null, "", "?" + params.toString());
+                cargarDashboard();
+            }
+        }
+    }
+});
+
+
             const tipoLabels = data.porTipo.map(x => x.titulo);
             const tipoData   = data.porTipo.map(x => x.total);
             chartTipo.updateSeries(tipoData);
