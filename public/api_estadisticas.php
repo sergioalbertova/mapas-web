@@ -262,11 +262,19 @@ $data['topCategorias'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 =========================== */
 $sql = "
     SELECT 
-        COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación') AS ubicacion,
+        TRIM(
+            REGEXP_REPLACE(
+                COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación'),
+                'piso.*$',
+                '',
+                'i'
+            )
+        ) AS ubicacion,
         COUNT(*) AS total
     FROM itil_incidentes
     WHERE fecha_reporte BETWEEN :inicio AND :fin
 ";
+
 $params = $paramsBase;
 filtroTecnicoSQL($sql, $params, $tecnico);
 $sql .= " GROUP BY ubicacion ORDER BY total DESC";

@@ -273,3 +273,24 @@ body.dark .filtro-filtro-activo a {
 body.dark .filtro-filtro-activo a:hover {
     color: #7DD3FC !important;
 }
+.filtro-filtro-activo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    background: #d9ecff;
+    color: #003366;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin: 15px auto;
+    width: fit-content;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.filtro-filtro-activo a {
+    color: #0054A6;
+    font-weight: bold;
+    text-decoration: underline;
+}
