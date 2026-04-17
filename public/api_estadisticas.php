@@ -1,18 +1,42 @@
 <?php
 require "db.php";
 
-/* ================= PARÁMETROS ================= */
+/* ===========================
+   PARÁMETROS DE FECHA
+=========================== */
 $hoy = date("Y-m-d");
 
 $inicio  = $_GET['inicio'] ?? $hoy;
 $fin     = $_GET['fin']    ?? $hoy;
 $tecnico = isset($_GET['tecnico']) ? intval($_GET['tecnico']) : null;
 
+/* === LÓGICA DE RANGOS (MISMA QUE EN itil_estadisticas.php) === */
+if (isset($_GET['rango'])) {
+
+    if ($_GET['rango'] === "hoy") {
+        $inicio = $hoy;
+        $fin    = $hoy;
+    }
+
+    if ($_GET['rango'] === "7") {
+        $inicio = date("Y-m-d", strtotime("-6 days"));
+        $fin    = $hoy;
+    }
+
+    if ($_GET['rango'] === "mes") {
+        $inicio = date("Y-m-01");
+        $fin    = $hoy;
+    }
+}
+
 $paramsBase = [
     ':inicio' => $inicio . " 00:00:00",
     ':fin'    => $fin . " 23:59:59"
 ];
 
+/* ===========================
+   FUNCIÓN PARA FILTRAR POR TÉCNICO
+=========================== */
 function filtroTecnicoSQL(&$sql, &$params, $tecnico) {
     if ($tecnico) {
         $sql .= " AND tecnico_asignado = :tecnico";
@@ -22,7 +46,9 @@ function filtroTecnicoSQL(&$sql, &$params, $tecnico) {
 
 $data = [];
 
-/* =============== KPI: TOTAL =============== */
+/* ===========================
+   KPI: TOTAL
+=========================== */
 $sql = "SELECT COUNT(*) FROM itil_incidentes WHERE fecha_reporte BETWEEN :inicio AND :fin";
 $params = $paramsBase;
 filtroTecnicoSQL($sql, $params, $tecnico);
@@ -30,9 +56,11 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['total'] = (int)$stmt->fetchColumn();
 
-/* =============== KPI: CERRADOS =============== */
+/* ===========================
+   KPI: CERRADOS
+=========================== */
 $sql = "SELECT COUNT(*) FROM itil_incidentes 
-        WHERE estado ILIKE 'Cerrado' 
+        WHERE estado ILIKE 'Cerrado'
         AND fecha_reporte BETWEEN :inicio AND :fin";
 $params = $paramsBase;
 filtroTecnicoSQL($sql, $params, $tecnico);
@@ -40,7 +68,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['resueltos'] = (int)$stmt->fetchColumn();
 
-/* =============== KPI: ACTIVOS =============== */
+/* ===========================
+   KPI: ACTIVOS
+=========================== */
 $sql = "SELECT COUNT(*) FROM itil_incidentes 
         WHERE estado ILIKE ANY (ARRAY['Activo','Abierto','Pendiente','En espera'])
         AND fecha_reporte BETWEEN :inicio AND :fin";
@@ -50,7 +80,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['activos'] = (int)$stmt->fetchColumn();
 
-/* =============== KPI: MTTR =============== */
+/* ===========================
+   KPI: MTTR
+=========================== */
 $sql = "
     SELECT ROUND(AVG(EXTRACT(EPOCH FROM (fecha_resolucion - fecha_reporte)) / 3600), 2)
     FROM itil_incidentes
@@ -63,7 +95,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['mttr'] = (float)($stmt->fetchColumn() ?: 0);
 
-/* =============== KPI: SLA =============== */
+/* ===========================
+   KPI: SLA
+=========================== */
 $sql = "
     SELECT 
         COUNT(*) FILTER (WHERE fecha_resolucion IS NOT NULL 
@@ -76,12 +110,14 @@ $params = $paramsBase;
 filtroTecnicoSQL($sql, $params, $tecnico);
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
-$slaRow = $stmt->fetch(PDO::FETCH_ASSOC);
-$data['sla'] = ($slaRow['total'] > 0)
-    ? round(($slaRow['dentro'] / $slaRow['total']) * 100, 1)
+$sla = $stmt->fetch(PDO::FETCH_ASSOC);
+$data['sla'] = ($sla['total'] > 0)
+    ? round(($sla['dentro'] / $sla['total']) * 100, 1)
     : 0;
 
-/* =============== KPI: BACKLOG =============== */
+/* ===========================
+   KPI: BACKLOG
+=========================== */
 $sql = "
     SELECT COUNT(*) 
     FROM itil_incidentes
@@ -94,7 +130,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['backlog'] = (int)$stmt->fetchColumn();
 
-/* =============== POR TÉCNICO =============== */
+/* ===========================
+   POR TÉCNICO
+=========================== */
 $sql = "
     SELECT 
         u.id AS id,
@@ -111,7 +149,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['porTecnico'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== POR TIPO =============== */
+/* ===========================
+   POR TIPO
+=========================== */
 $sql = "
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
@@ -124,7 +164,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['porTipo'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== POR ESTADO =============== */
+/* ===========================
+   POR ESTADO
+=========================== */
 $sql = "
     SELECT estado, COUNT(*) AS total
     FROM itil_incidentes
@@ -137,7 +179,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['porEstado'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== TENDENCIA MENSUAL =============== */
+/* ===========================
+   TENDENCIA MENSUAL
+=========================== */
 $sql = "
     SELECT TO_CHAR(fecha_reporte, 'YYYY-MM') AS mes, COUNT(*) AS total
     FROM itil_incidentes
@@ -150,7 +194,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['mensual'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== POR HORA =============== */
+/* ===========================
+   POR HORA
+=========================== */
 $sql = "
     SELECT EXTRACT(HOUR FROM fecha_reporte) AS hora, COUNT(*) AS total
     FROM itil_incidentes
@@ -163,7 +209,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['porHora'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== POR DÍA SEMANA =============== */
+/* ===========================
+   POR DÍA DE LA SEMANA
+=========================== */
 $sql = "
     SELECT EXTRACT(DOW FROM fecha_reporte) AS dow, COUNT(*) AS total
     FROM itil_incidentes
@@ -176,7 +224,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['porDiaSemana'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== TOP TÉCNICOS =============== */
+/* ===========================
+   TOP TÉCNICOS
+=========================== */
 $sql = "
     SELECT 
         COALESCE(u.nombre, 'Sin técnico') AS tecnico,
@@ -192,7 +242,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['topTecnicos'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== TOP CATEGORÍAS =============== */
+/* ===========================
+   TOP CATEGORÍAS
+=========================== */
 $sql = "
     SELECT titulo, COUNT(*) AS total
     FROM itil_incidentes
@@ -205,7 +257,9 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['topCategorias'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== POR UBICACIÓN =============== */
+/* ===========================
+   POR UBICACIÓN
+=========================== */
 $sql = "
     SELECT 
         COALESCE(TRIM(SPLIT_PART(ubicacion_detalle, '/', 1)), 'Sin ubicación') AS ubicacion,
@@ -220,6 +274,8 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $data['ubicacion'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =============== SALIDA =============== */
+/* ===========================
+   SALIDA JSON
+=========================== */
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode($data);

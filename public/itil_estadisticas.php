@@ -136,7 +136,7 @@ $sql = "
 ";
 $params = $paramsBase;
 filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
-$sql .= " GROUP BY tecnico_id, tecnico_nombre ORDER BY total DESC";
+$sql .= " GROUP BY u.id, u.nombre ORDER BY total DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $porTecnico = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -540,8 +540,7 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
                 let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
                 const params = new URLSearchParams(window.location.search);
                 params.set("tecnico", tecnicoID);
-                history.replaceState(null, "", "?" + params.toString());
-                cargarDashboard();
+                window.location.href = "itil_estadisticas.php?" + params.toString();
             }
         }
     },
@@ -689,21 +688,6 @@ function cargarDashboard() {
 
             chartTecnico.updateSeries([{ data: tecnicosData }]);
             chartTecnico.updateOptions({ xaxis: { categories: tecnicosLabels } });
-
-            // Reasignar evento de clic después de actualizar datos
-            chartTecnico.updateOptions({
-                chart: {
-                    events: {
-                        dataPointSelection: function(event, chartContext, config) {
-                            let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
-                            const params = new URLSearchParams(window.location.search);
-                            params.set("tecnico", tecnicoID);
-                            history.replaceState(null, "", "?" + params.toString());
-                            cargarDashboard();
-                        }
-                    }
-                }
-            });
 
             /* ===========================
                ACTUALIZAR GRÁFICA: TIPO
