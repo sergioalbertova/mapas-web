@@ -547,10 +547,12 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
     series: [{ name: 'Incidentes', data: chartTecnicoData }],
     xaxis: { 
         categories: chartTecnicoLabels, 
-        labels: { style: { colors: textColor } } 
+        labels: { style: { colors: textColor,
+             fontSize: '9px'   // 👈 MÁS PEQUEÑO
+         } } 
     },
     plotOptions: { bar: { borderRadius: 6 } },
-    colors: ['#0054A6'],
+    colors: ['#559ee7'],
     theme: { mode: isDark ? 'dark' : 'light' }
 });
 chartTecnico.render();
