@@ -534,7 +534,7 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
     chart: { 
         type: 'bar', 
         height: 280, 
-        toolbar: { show: false },
+        toolbar: { show: true },
         events: {
             dataPointSelection: function(event, chartContext, config) {
                 let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
