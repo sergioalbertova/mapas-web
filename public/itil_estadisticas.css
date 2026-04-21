@@ -294,3 +294,23 @@ body.dark .filtro-filtro-activo a:hover {
     font-weight: bold;
     text-decoration: underline;
 }
+/* Sidebar normal */
+.sidebar {
+    width: 240px;
+    transition: width 0.25s ease;
+}
+
+/* Sidebar colapsado */
+.sidebar.collapsed {
+    width: 70px;
+}
+
+/* Ocultar textos cuando está colapsado */
+.sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+/* Ajustar contenido cuando sidebar está colapsado */
+#sidebar.collapsed ~ .main {
+    margin-left: 70px !important;
+}
