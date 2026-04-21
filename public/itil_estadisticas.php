@@ -551,7 +551,9 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
              fontSize: '9px'   // 👈 MÁS PEQUEÑO
          } } 
     },
-    plotOptions: { bar: { borderRadius: 6 } },
+    plotOptions: { bar: { borderRadius: 6, 
+                    distributed: true   // 👈 ESTO HACE QUE CADA BARRA TENGA SU PROPIO COLOR
+    } },
     colors: undefined,   // 👈 COLORES INDEPENDIENTES
     theme: { mode: isDark ? 'dark' : 'light' }
 });
