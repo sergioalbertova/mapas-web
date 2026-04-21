@@ -644,7 +644,11 @@ let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
     xaxis: { 
         categories: chartUbicacionLabels,
         labels: { 
-            style: { colors: textColor },
+            style: { colors: textColor, 
+                    fontSize: '9px'   // 👈 MÁS PEQUEÑO
+
+            },
+            
             rotate: -45,
             trim: false
         }
