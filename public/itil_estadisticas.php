@@ -552,7 +552,7 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
          } } 
     },
     plotOptions: { bar: { borderRadius: 6 } },
-    colors: ['#559ee7'],
+    colors: ['#10467c', '#285be9', '#5193d1', '#a9dbee'],
     theme: { mode: isDark ? 'dark' : 'light' }
 });
 chartTecnico.render();
