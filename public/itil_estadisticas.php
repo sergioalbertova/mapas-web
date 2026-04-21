@@ -660,10 +660,11 @@ let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
     plotOptions: { 
         bar: { 
             borderRadius: 6,
-            columnWidth: '45%'
+            columnWidth: '45%',
+            distributed: true   // 👈 ESTO HACE QUE CADA BARRA TENGA SU PROPIO COLOR
         } 
     },
-    colors: ['#00AEEF'],
+    colors: undefined, 
     theme: { mode: isDark ? 'dark' : 'light' }
 });
 chartUbicacion.render();
