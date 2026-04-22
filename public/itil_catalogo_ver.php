@@ -17,7 +17,7 @@ if (!$apoyo) {
 }
 
 /* Obtener categorías generales */
-$categorias = $pdo->query("SELECT id, nombre FROM itil_categorias ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
+$categorias = $pdo->query("SELECT idcategoria, nombre FROM categorias ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -25,7 +25,7 @@ $categorias = $pdo->query("SELECT id, nombre FROM itil_categorias ORDER BY nombr
 <head>
 <meta charset="UTF-8">
 <title>Editar apoyo</title>
-<link rel="stylesheet" href="itil_estadisticas.css">
+
 <style>
 /* ========================= */
 /* VARIABLES                 */
