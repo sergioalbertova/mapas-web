@@ -33,7 +33,86 @@ $categorias = $pdo->query("
 <meta charset="UTF-8">
 <title>Editar apoyo</title>
 
-<link rel="stylesheet" href="itil_estadisticas.css">
+<style>
+<?= file_get_contents("itil_estadisticas.css"); ?>
+
+/* ========================= */
+/* FORMULARIO                */
+/* ========================= */
+.form-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px var(--shadow);
+    max-width: 700px;
+}
+
+.form-card label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: var(--text);
+}
+
+.form-card input,
+.form-card select,
+.form-card textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--sidebar-hover);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 15px;
+}
+
+.form-card textarea {
+    resize: vertical;
+}
+
+.btn-guardar {
+    margin-top: 25px;
+    background: var(--primary);
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+.btn-guardar:hover {
+    background: var(--primary-hover);
+}
+
+.btn-cancelar {
+    margin-left: 10px;
+    padding: 12px 18px;
+    background: #999;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.btn-cancelar:hover {
+    background: #777;
+}
+
+/* Títulos */
+.dashboard-title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.dashboard-subtitle {
+    font-size: 15px;
+    color: var(--subtext);
+    margin-bottom: 20px;
+}
+</style>
+
 </head>
 <body>
 
@@ -86,7 +165,6 @@ $categorias = $pdo->query("
 
     <form action="itil_catalogo_accion.php" method="POST" class="form-card">
 
-        <!-- ID REAL -->
         <input type="hidden" name="idapoyo" value="<?= $apoyo['idapoyo'] ?>">
 
         <label>Título del incidente</label>
