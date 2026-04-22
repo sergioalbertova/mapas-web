@@ -16,7 +16,7 @@ if (!$apoyo) {
     die("Apoyo no encontrado");
 }
 
-/* Obtener categorías */
+/* Obtener categorías generales */
 $categorias = $pdo->query("SELECT id, nombre FROM itil_categorias ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
