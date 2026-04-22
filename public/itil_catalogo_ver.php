@@ -8,7 +8,7 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 
-$stmt = $pdo->prepare("SELECT * FROM itil_catalogo WHERE id = ?");
+$stmt = $pdo->prepare("SELECT * FROM catapoyo WHERE id = ?");
 $stmt->execute([$id]);
 $apoyo = $stmt->fetch(PDO::FETCH_ASSOC);
 
