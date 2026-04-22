@@ -631,7 +631,7 @@ body.dark .list-group-item span {
                         <?php foreach ($notas as $n): ?>
                             <div class="list-group-item px-0 py-1" style="background:transparent; border:none;">
                                 <small class="text-muted">
-                                    <?= fmt_fecha($n['fecha']) ?> · <?= htmlspecialchars($n['usuario_nombre']) ?>
+                                    <?= fmt_fecha($n['fecha']) ?>
                                 </small><br>
                                 <span><?= nl2br(htmlspecialchars($n['nota'])) ?></span>
                             </div>
