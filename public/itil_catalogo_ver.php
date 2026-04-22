@@ -17,7 +17,8 @@ if (!$apoyo) {
 }
 
 /* Obtener categorías generales */
-$categorias = $pdo->query("SELECT idcategoria, nombre FROM categorias ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
+$categorias = $pdo->query("SELECT idcategoria AS id, nombre FROM categorias WHERE activo = true ORDER BY orden, nombre")->fetchAll(PDO::FETCH_ASSOC);
+
 
 ?>
 <!DOCTYPE html>
