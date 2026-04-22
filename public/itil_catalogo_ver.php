@@ -16,9 +16,15 @@ if (!$apoyo) {
     die("Apoyo no encontrado");
 }
 
-/* Obtener categorías generales */
-$categorias = $pdo->query("SELECT idcategoria AS id, nombre FROM categorias WHERE activo = true ORDER BY orden, nombre")->fetchAll(PDO::FETCH_ASSOC);
-
+/* Obtener categorías reales */
+$categorias = $pdo->query("
+    SELECT 
+        idcategoria AS id,
+        nombre
+    FROM categorias
+    WHERE activo = true
+    ORDER BY orden, nombre
+")->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -27,211 +33,7 @@ $categorias = $pdo->query("SELECT idcategoria AS id, nombre FROM categorias WHER
 <meta charset="UTF-8">
 <title>Editar apoyo</title>
 
-<style>
-/* ========================= */
-/* VARIABLES                 */
-/* ========================= */
-:root {
-    --bg: #F4F7FA;
-    --sidebar-bg: #FFFFFF;
-    --sidebar-hover: #E8EEF5;
-    --card-bg: #FFFFFF;
-    --text: #1F2933;
-    --subtext: #6B7280;
-    --primary: #0054A6;
-    --primary-hover: #003F7D;
-    --shadow: rgba(0,0,0,0.08);
-}
-
-body.dark {
-    --bg: #1A1D21;
-    --sidebar-bg: #24272C;
-    --sidebar-hover: #2F3338;
-    --card-bg: #2C2F34;
-    --text: #E5E7EB;
-    --subtext: #9CA3AF;
-    --primary: #00AEEF;
-    --primary-hover: #0088C0;
-    --shadow: rgba(0,0,0,0.45);
-}
-
-/* ========================= */
-/* GENERAL                   */
-/* ========================= */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-}
-
-/* ========================= */
-/* SIDEBAR ORIGINAL          */
-/* ========================= */
-.sidebar {
-    width: 240px;
-    background: var(--sidebar-bg);
-    height: 100vh;
-    box-shadow: 4px 0 20px var(--shadow);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    transition: width 0.25s ease;
-    overflow: visible;
-    z-index: 2000;
-}
-.sidebar.collapsed { width: 70px; }
-
-.sidebar h2 {
-    margin: 0 0 20px;
-    font-size: 20px;
-    color: var(--primary);
-    transition: opacity 0.25s ease;
-}
-.sidebar.collapsed h2 { opacity: 0; }
-
-.nav-item {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-}
-.nav-item:hover { background: var(--sidebar-hover); }
-
-.nav-item a {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:inherit;
-    text-decoration:none;
-}
-
-.nav-item svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-.sidebar.collapsed .nav-text { display: none; }
-
-/* TOOLTIP */
-.tooltip {
-    position: absolute;
-    left: 80px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--sidebar-bg);
-    padding: 6px 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px var(--shadow);
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, left 0.2s ease;
-    z-index: 99999;
-}
-.sidebar.collapsed .nav-item:hover .tooltip {
-    opacity: 1;
-    left: 75px;
-}
-
-/* ====== TOPBAR ITIL ====== */
-.itil-topbar {
-    position: fixed;
-    top: 0;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 0 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2100;
-}
-.sidebar.collapsed ~ .itil-topbar { left: 70px; }
-
-.itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-.itil-topbar a:hover { background: var(--sidebar-hover); }
-
-.itil-topbar svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
-
-/* ========================= */
-/* MAIN                      */
-/* ========================= */
-.main {
-    margin-left: 240px;
-    width: calc(100% - 240px);
-    margin-top: 95px;
-    padding: 25px;
-    transition: margin-left 0.25s ease, width 0.25s ease;
-}
-#sidebar.collapsed + .itil-topbar + .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
-}
-
-/* ========================= */
-/* TABLA                     */
-/* ========================= */
-.table-box {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px var(--shadow);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-th {
-    background: var(--primary);
-    color: white;
-    padding: 10px;
-    text-align: left;
-}
-
-td {
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--sidebar-hover);
-}
-
-.estado {
-    font-weight: bold;
-    padding: 4px 8px;
-    border-radius: 6px;
-}
-.estado_Abierto { background: #ffebee; color: #c62828; }
-.estado_En_progreso { background: #fff3cd; color: #b8860b; }
-.estado_Cerrado { background: #e8f5e9; color: #2e7d32; }
-</style>
+<link rel="stylesheet" href="itil_estadisticas.css">
 </head>
 <body>
 
@@ -284,10 +86,14 @@ td {
 
     <form action="itil_catalogo_accion.php" method="POST" class="form-card">
 
-        <input type="hidden" name="id" value="<?= $apoyo['id'] ?>">
+        <!-- ID REAL -->
+        <input type="hidden" name="idapoyo" value="<?= $apoyo['idapoyo'] ?>">
 
-        <label>Nombre del apoyo</label>
-        <input type="text" name="apoyo" value="<?= htmlspecialchars($apoyo['apoyo']) ?>" required>
+        <label>Título del incidente</label>
+        <input type="text" name="tituloincidente" value="<?= htmlspecialchars($apoyo['tituloincidente'] ?? '') ?>" required>
+
+        <label>Descripción</label>
+        <textarea name="descripcion" rows="4"><?= htmlspecialchars($apoyo['descripcion'] ?? '') ?></textarea>
 
         <label>Categoría</label>
         <select name="categoria">
@@ -300,12 +106,44 @@ td {
             <?php endforeach; ?>
         </select>
 
+        <label>Subcategoría</label>
+        <input type="text" name="subcategoria" value="<?= htmlspecialchars($apoyo['subcategoria'] ?? '') ?>">
+
         <label>Prioridad</label>
-        <select name="prioridad" required>
-            <option value="Alta"   <?= $apoyo['prioridad'] === 'Alta' ? 'selected' : '' ?>>Alta</option>
-            <option value="Media"  <?= $apoyo['prioridad'] === 'Media' ? 'selected' : '' ?>>Media</option>
-            <option value="Baja"   <?= $apoyo['prioridad'] === 'Baja' ? 'selected' : '' ?>>Baja</option>
+        <select name="prioridad">
+            <option value="Alta"  <?= $apoyo['prioridad'] === 'Alta' ? 'selected' : '' ?>>Alta</option>
+            <option value="Media" <?= $apoyo['prioridad'] === 'Media' ? 'selected' : '' ?>>Media</option>
+            <option value="Baja"  <?= $apoyo['prioridad'] === 'Baja' ? 'selected' : '' ?>>Baja</option>
         </select>
+
+        <label>Impacto</label>
+        <select name="impacto">
+            <option value="Alto"   <?= $apoyo['impacto'] === 'Alto' ? 'selected' : '' ?>>Alto</option>
+            <option value="Medio"  <?= $apoyo['impacto'] === 'Medio' ? 'selected' : '' ?>>Medio</option>
+            <option value="Bajo"   <?= $apoyo['impacto'] === 'Bajo' ? 'selected' : '' ?>>Bajo</option>
+        </select>
+
+        <label>Urgencia</label>
+        <select name="urgencia">
+            <option value="Alta"  <?= $apoyo['urgencia'] === 'Alta' ? 'selected' : '' ?>>Alta</option>
+            <option value="Media" <?= $apoyo['urgencia'] === 'Media' ? 'selected' : '' ?>>Media</option>
+            <option value="Baja"  <?= $apoyo['urgencia'] === 'Baja' ? 'selected' : '' ?>>Baja</option>
+        </select>
+
+        <label>Tiempo estimado (minutos)</label>
+        <input type="number" name="tiempo_estimado" value="<?= htmlspecialchars($apoyo['tiempo_estimado'] ?? '') ?>">
+
+        <label>Requiere aprobación</label>
+        <select name="requiere_aprobacion">
+            <option value="0" <?= $apoyo['requiere_aprobacion'] == 0 ? 'selected' : '' ?>>No</option>
+            <option value="1" <?= $apoyo['requiere_aprobacion'] == 1 ? 'selected' : '' ?>>Sí</option>
+        </select>
+
+        <label>Notas internas</label>
+        <textarea name="notas_internas" rows="3"><?= htmlspecialchars($apoyo['notas_internas'] ?? '') ?></textarea>
+
+        <label>Solución propuesta</label>
+        <textarea name="solucion_propuesta" rows="3"><?= htmlspecialchars($apoyo['solucion_propuesta'] ?? '') ?></textarea>
 
         <label>Activo</label>
         <select name="activo">
