@@ -2,23 +2,21 @@
 /* VARIABLES                 */
 /* ========================= */
 :root {
-    --bg: #eef2f7;
-    --card-bg: #ffffff;
-    --text: #1F2933;
-    --subtext: #6B7280;
-    --primary: #0054A6;
-    --primary-hover: #003F7D;
-    --shadow: rgba(0,0,0,0.12);
+    --text: #ffffff;
+    --subtext: #d1d5db;
+    --primary: #00AEEF;
+    --primary-hover: #0088C0;
+    --glass-bg: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.25);
 }
 
 body.dark {
-    --bg: #1A1D21;
-    --card-bg: #24272C;
     --text: #E5E7EB;
     --subtext: #9CA3AF;
+    --glass-bg: rgba(0, 0, 0, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.15);
     --primary: #00AEEF;
     --primary-hover: #0088C0;
-    --shadow: rgba(0,0,0,0.45);
 }
 
 /* ========================= */
@@ -27,25 +25,40 @@ body.dark {
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow: hidden;
+    color: var(--text);
+}
+
+/* CANVAS DE PARTÍCULAS */
+#particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(circle at top, #0a0f24, #000);
 }
 
 /* ========================= */
-/* WRAPPER                   */
+/* WRAPPER GLASS             */
 /* ========================= */
 .login-wrapper {
     width: 900px;
     height: 520px;
-    background: var(--card-bg);
-    border-radius: 18px;
-    box-shadow: 0 8px 25px var(--shadow);
     display: flex;
+    border-radius: 20px;
+
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border: 1px solid var(--glass-border);
+
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
     overflow: hidden;
+    margin: auto;
+    margin-top: 60px;
 }
 
 /* ========================= */
@@ -53,16 +66,15 @@ body {
 /* ========================= */
 .login-illustration {
     width: 50%;
-    background: linear-gradient(135deg, #0054A6, #0077D9);
-    color: white;
-    padding: 50px;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    color: var(--text);
 }
 
 .login-illustration h2 {
-    font-size: 38px;
+    font-size: 36px;
     margin-bottom: 10px;
 }
 
@@ -86,10 +98,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.login-box {
-    width: 100%;
 }
 
 .login-box h3 {
@@ -120,11 +128,12 @@ body {
 }
 
 .input-with-icon input {
-    width: 80%;
+    width: 100%;
     padding: 12px 45px 12px 15px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
     color: var(--text);
     font-size: 15px;
 }
@@ -146,16 +155,18 @@ body {
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 16px;
     cursor: pointer;
     margin-top: 10px;
     font-weight: bold;
-    transition: 0.2s;
+    transition: 0.25s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
 }
 
 .btn:hover {
     background: var(--primary-hover);
+    transform: translateY(-2px);
 }
 
 /* ========================= */
@@ -166,6 +177,7 @@ body {
         width: 95%;
         height: auto;
         flex-direction: column;
+        margin-top: 20px;
     }
 
     .login-illustration {
@@ -179,4 +191,3 @@ body {
         padding: 30px;
     }
 }
-
