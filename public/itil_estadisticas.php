@@ -544,6 +544,10 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
             }
         }
     },
+                     legend: {
+                                show: false
+                            },
+
     series: [{ name: 'Incidentes', data: chartTecnicoData }],
     xaxis: { 
         categories: chartTecnicoLabels, 
@@ -554,6 +558,8 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
     plotOptions: { bar: { borderRadius: 6, 
                     distributed: true   // 👈 ESTO HACE QUE CADA BARRA TENGA SU PROPIO COLOR
     } },
+
+
     colors: undefined,   // 👈 COLORES INDEPENDIENTES
     theme: { mode: isDark ? 'dark' : 'light' }
 });
