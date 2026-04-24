@@ -191,3 +191,7 @@ body {
         padding: 30px;
     }
 }
+.illu-img {
+    border-radius: 18px;
+    box-shadow: 0 0 18px rgba(0, 174, 239, 0.45);
+}
