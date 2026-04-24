@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
             <h2>Bienvenido</h2>
             <p>Accede a tu panel para gestionar tus sistemas.</p>
             <div class="illu-placeholder">
-                <img src="imagenlogin.png" alt="Ilustración" class="illu-img" style="width: 120%; height: auto;">
+                <img src="img2.png" alt="Ilustración" class="illu-img" style="width: 120%; height: auto;">
                 
             </div>
         </div>
@@ -28,7 +28,7 @@ if (isset($_SESSION['user_id'])) {
 
     <div class="login-panel">
         <div class="login-box">
-            <h3>Hola!</h3>
+            <h3></h3>
             <p class="subtitle">Inicia sesión para comenzar</p>
 
             <form id="loginForm">
