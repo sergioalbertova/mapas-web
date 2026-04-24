@@ -670,6 +670,11 @@ let chartUbicacion = new ApexCharts(document.querySelector("#chartUbicacion"), {
             distributed: true   // 👈 ESTO HACE QUE CADA BARRA TENGA SU PROPIO COLOR
         } 
     },
+
+     legend: {
+                                show: false
+                            },
+                            
     colors: undefined, 
     theme: { mode: isDark ? 'dark' : 'light' }
 });
