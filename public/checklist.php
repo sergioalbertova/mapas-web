@@ -71,10 +71,12 @@ input, select, textarea {
 <div class="container">
     <h2>Checklist de revisión</h2>
 
+    <!-- BUSCADOR -->
     <label>Usuario</label>
     <input type="text" id="buscar" placeholder="Buscar usuario...">
     <div id="resultados"></div>
 
+    <!-- PISO -->
     <label style="margin-top:15px;">Piso</label>
     <select id="piso">
         <option value="">Selecciona un piso</option>
@@ -86,6 +88,7 @@ input, select, textarea {
         <option value="11">Piso 11</option>
     </select>
 
+    <!-- CHECKLIST -->
     <div id="checklist" style="display:none; margin-top:20px;">
         <h3>Revisión del equipo</h3>
 
@@ -104,8 +107,10 @@ input, select, textarea {
 <script>
 let usuarioSeleccionado = null;
 
+// BUSCADOR
 document.getElementById("buscar").addEventListener("keyup", function() {
     let q = this.value.trim();
+
     if (q.length < 2) {
         document.getElementById("resultados").innerHTML = "";
         return;
@@ -131,6 +136,7 @@ function seleccionar(idu, usuario_nombre) {
     document.getElementById("checklist").style.display = "block";
 }
 
+// GUARDAR
 document.getElementById("btnCompleto").addEventListener("click", function() {
     if (!usuarioSeleccionado) {
         alert("Selecciona un usuario.");
