@@ -92,10 +92,10 @@ input, select, textarea {
     <div id="checklist" style="display:none; margin-top:20px;">
         <h3>Revisión del equipo</h3>
 
-        <label><input type="checkbox" id="c1"> Antivirus actualizado</label>
-        <label><input type="checkbox" id="c2"> Sistema operativo actualizado</label>
-        <label><input type="checkbox" id="c3"> Espacio en disco suficiente</label>
-        <label><input type="checkbox" id="c4"> Conexión a red estable</label>
+        <label><input type="checkbox" id="c1"> Fondo de pantalla</label>
+        <label><input type="checkbox" id="c2"> Correo</label>
+        <label><input type="checkbox" id="c3"> Teams</label>
+       
 
         <label style="margin-top:15px;">Notas</label>
         <textarea id="notas" rows="3"></textarea>
