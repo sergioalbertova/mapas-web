@@ -1,5 +1,5 @@
 <?php
-require "db.php"; // aquí tienes tu $pdo
+require "db.php"; // conexión PDO
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,9 +25,9 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.45);
 }
 h2 { margin-top: 0; }
-.search-box input,
-#piso,
-#notas {
+
+/* INPUTS Y SELECT */
+input, select, textarea {
     width: 100%;
     padding: 12px;
     border-radius: 10px;
@@ -35,7 +35,10 @@ h2 { margin-top: 0; }
     background: #0d1117;
     color: #e5e7eb;
     font-size: 15px;
+    margin-top: 5px;
 }
+
+/* BUSCADOR */
 #resultados {
     background: #1f2937;
     margin-top: 5px;
@@ -50,6 +53,8 @@ h2 { margin-top: 0; }
 .result-item:hover {
     background: #374151;
 }
+
+/* CHECKLIST */
 .checklist {
     margin-top: 20px;
 }
@@ -58,6 +63,8 @@ h2 { margin-top: 0; }
     margin-bottom: 10px;
     font-size: 15px;
 }
+
+/* BOTÓN */
 .btn {
     width: 100%;
     padding: 14px;
@@ -73,29 +80,36 @@ h2 { margin-top: 0; }
 .btn:hover {
     background: #0088C0;
 }
+
+/* RESPONSIVE */
 @media (max-width: 600px) {
     .container { padding: 18px; }
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
     <h2>Checklist de revisión</h2>
-    <p>Busca al usuario, indica el piso y marca como completado.</p>
+    <p>Busca al usuario, selecciona el piso y marca como completado.</p>
 
     <!-- BUSCADOR -->
-    <div class="search-box">
-        <label>Usuario</label>
-        <input type="text" id="buscar" placeholder="Buscar usuario...">
-        <div id="resultados"></div>
-    </div>
+    <label>Usuario</label>
+    <input type="text" id="buscar" placeholder="Buscar usuario...">
+    <div id="resultados"></div>
 
     <!-- PISO -->
-    <div style="margin-top:15px;">
-        <label>Piso</label>
-        <input type="text" id="piso" placeholder="Ej. Piso 3, 4B, etc.">
-    </div>
+    <label style="margin-top:15px;">Piso</label>
+    <select id="piso">
+        <option value="">Selecciona un piso</option>
+        <option value="1">Piso 1</option>
+        <option value="2">Piso 2</option>
+        <option value="3">Piso 3</option>
+        <option value="4">Piso 4</option>
+        <option value="5">Piso 5</option>
+        <option value="11">Piso 11</option>
+    </select>
 
     <!-- CHECKLIST -->
     <div class="checklist" id="checklist" style="display:none;">
@@ -130,30 +144,32 @@ document.getElementById("buscar").addEventListener("keyup", function() {
         .then(data => {
             let html = "";
             data.forEach(u => {
-                html += `<div class='result-item' onclick='seleccionar(${u.idu}, "${u.nomuser.replace(/"/g, '&quot;')}")'>
-                            ${u.nomuser}
+                html += `<div class='result-item' onclick='seleccionar(${u.idu}, "${u.usuario_nombre.replace(/"/g, '&quot;')}")'>
+                            ${u.usuario_nombre}
                          </div>`;
             });
             document.getElementById("resultados").innerHTML = html;
         });
 });
 
-function seleccionar(idu, nomuser) {
-    usuarioSeleccionado = { idu, nomuser };
-    document.getElementById("buscar").value = nomuser;
+// SELECCIONAR USUARIO
+function seleccionar(idu, usuario_nombre) {
+    usuarioSeleccionado = { idu, usuario_nombre };
+    document.getElementById("buscar").value = usuario_nombre;
     document.getElementById("resultados").innerHTML = "";
     document.getElementById("checklist").style.display = "block";
 }
 
+// GUARDAR REGISTRO
 document.getElementById("btnCompleto").addEventListener("click", function() {
     if (!usuarioSeleccionado) {
         alert("Selecciona un usuario primero.");
         return;
     }
 
-    const piso = document.getElementById("piso").value.trim();
+    const piso = document.getElementById("piso").value;
     if (!piso) {
-        alert("Captura el piso.");
+        alert("Selecciona un piso.");
         return;
     }
 
@@ -164,7 +180,7 @@ document.getElementById("btnCompleto").addEventListener("click", function() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             idu: usuarioSeleccionado.idu,
-            nomuser: usuarioSeleccionado.nomuser,
+            usuario_nombre: usuarioSeleccionado.usuario_nombre,
             piso: piso,
             notas: notas
         })
