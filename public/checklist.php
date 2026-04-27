@@ -92,10 +92,9 @@ input, select, textarea {
     <div id="checklist" style="display:none; margin-top:20px;">
         <h3>Revisión del equipo</h3>
 
-        <label><input type="checkbox" id="c1"> Fondo de pantalla</label>
-        <label><input type="checkbox" id="c2"> Correo</label>
-        <label><input type="checkbox" id="c3"> Teams</label>
-       
+        <label><input type="checkbox" id="fondo"> Fondo de pantalla</label>
+        <label><input type="checkbox" id="correo"> Correo</label>
+        <label><input type="checkbox" id="teams"> Teams</label>
 
         <label style="margin-top:15px;">Notas</label>
         <textarea id="notas" rows="3"></textarea>
@@ -158,7 +157,10 @@ document.getElementById("btnCompleto").addEventListener("click", function() {
             idu: usuarioSeleccionado.idu,
             usuario_nombre: usuarioSeleccionado.usuario_nombre,
             piso: piso,
-            notas: notas
+            notas: notas,
+            fondo: document.getElementById("fondo").checked,
+            correo: document.getElementById("correo").checked,
+            teams: document.getElementById("teams").checked
         })
     })
     .then(res => res.text())
