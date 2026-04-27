@@ -95,7 +95,7 @@ input, select, textarea {
         <label><input type="checkbox" id="fondo"> Fondo de pantalla</label>
         <label><input type="checkbox" id="correo"> Correo</label>
         <label><input type="checkbox" id="teams"> Teams</label>
-
+        <BR/>
         <label style="margin-top:15px;">Notas</label>
         <textarea id="notas" rows="3"></textarea>
 

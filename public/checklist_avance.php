@@ -1,8 +1,10 @@
 <?php
 require "db.php";
 
+// TOTAL
 $total = $pdo->query("SELECT COUNT(*) FROM checklist_revision")->fetchColumn();
 
+// AGRUPADO POR PISO
 $pisoData = $pdo->query("
     SELECT piso, COUNT(*) AS total
     FROM checklist_revision
@@ -10,6 +12,7 @@ $pisoData = $pdo->query("
     ORDER BY piso
 ")->fetchAll(PDO::FETCH_ASSOC);
 
+// ÚLTIMOS REGISTROS
 $rows = $pdo->query("
     SELECT id, usuario_nombre, piso, fecha, notas, fondo, correo, teams
     FROM checklist_revision
@@ -23,6 +26,8 @@ $rows = $pdo->query("
 <meta charset="UTF-8">
 <title>Avance por Piso</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -64,11 +69,19 @@ th, td {
 <body>
 <div class="container">
 
+    <!-- TOTAL -->
     <div class="card">
         <h2>Avance del Checklist por Piso</h2>
         <p>Total de revisiones: <span class="badge"><?= $total ?></span></p>
     </div>
 
+    <!-- GRÁFICA -->
+    <div class="card">
+        <h3>Gráfica de revisiones por piso</h3>
+        <canvas id="graficaPisos" height="120"></canvas>
+    </div>
+
+    <!-- TABLA POR PISO -->
     <div class="card">
         <h3>Revisiones por piso</h3>
         <table>
@@ -82,6 +95,7 @@ th, td {
         </table>
     </div>
 
+    <!-- ÚLTIMOS REGISTROS -->
     <div class="card">
         <h3>Últimas revisiones</h3>
         <table>
@@ -109,5 +123,40 @@ th, td {
     </div>
 
 </div>
+
+<script>
+// DATOS PARA LA GRÁFICA
+const labels = <?= json_encode(array_column($pisoData, 'piso')) ?>;
+const valores = <?= json_encode(array_column($pisoData, 'total')) ?>;
+
+// SI NO HAY DATOS, EVITAMOS ERROR
+if (labels.length === 0) {
+    document.getElementById("graficaPisos").outerHTML =
+        "<p style='color:#aaa;'>No hay datos suficientes para mostrar la gráfica.</p>";
+} else {
+    new Chart(document.getElementById('graficaPisos'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Revisiones por piso',
+                data: valores,
+                backgroundColor: '#00AEEF',
+                borderColor: '#0088C0',
+                borderWidth: 2,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            plugins: { legend: { labels: { color: '#e5e7eb' } } },
+            scales: {
+                x: { ticks: { color: '#e5e7eb' } },
+                y: { ticks: { color: '#e5e7eb' } }
+            }
+        }
+    });
+}
+</script>
+
 </body>
 </html>
