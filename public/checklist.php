@@ -1,34 +1,11 @@
 <?php
-require "db.php";
-
-// TOTAL DE REGISTROS
-$total = $pdo->query("
-    SELECT COUNT(*) 
-    FROM checklist_revision
-")->fetchColumn();
-
-// TOP USUARIOS (los más revisados)
-$top = $pdo->query("
-    SELECT usuario_nombre, COUNT(*) AS total
-    FROM checklist_revision
-    GROUP BY usuario_nombre
-    ORDER BY total DESC, usuario_nombre
-    LIMIT 10
-")->fetchAll(PDO::FETCH_ASSOC);
-
-// ÚLTIMOS REGISTROS
-$rows = $pdo->query("
-    SELECT id, usuario_nombre, piso, fecha, notas
-    FROM checklist_revision
-    ORDER BY fecha DESC
-    LIMIT 50
-")->fetchAll(PDO::FETCH_ASSOC);
+require "db.php"; // aquí tienes tu $pdo
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Avance del Checklist</title>
+<title>Checklist de revisión</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -40,90 +17,166 @@ body {
     padding: 20px;
 }
 .container {
-    max-width: 900px;
+    max-width: 600px;
     margin: auto;
-}
-.card {
     background: #161b22;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.45);
 }
-h2, h3 { margin-top: 0; }
-table {
+h2 { margin-top: 0; }
+.search-box input,
+#piso,
+#notas {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #30363d;
+    background: #0d1117;
+    color: #e5e7eb;
+    font-size: 15px;
 }
-th, td {
-    padding: 8px;
+#resultados {
+    background: #1f2937;
+    margin-top: 5px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.result-item {
+    padding: 10px;
     border-bottom: 1px solid #30363d;
+    cursor: pointer;
 }
-th {
-    text-align: left;
-    color: #9ca3af;
+.result-item:hover {
+    background: #374151;
 }
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
+.checklist {
+    margin-top: 20px;
+}
+.checklist label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+.btn {
+    width: 100%;
+    padding: 14px;
     background: #00AEEF;
     color: white;
-    font-size: 13px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+}
+.btn:hover {
+    background: #0088C0;
+}
+@media (max-width: 600px) {
+    .container { padding: 18px; }
 }
 </style>
 </head>
-
 <body>
+
 <div class="container">
+    <h2>Checklist de revisión</h2>
+    <p>Busca al usuario, indica el piso y marca como completado.</p>
 
-    <!-- TARJETA PRINCIPAL -->
-    <div class="card">
-        <h2>Avance del Checklist</h2>
-        <p>Total de revisiones registradas: 
-            <span class="badge"><?= (int)$total ?></span>
-        </p>
+    <!-- BUSCADOR -->
+    <div class="search-box">
+        <label>Usuario</label>
+        <input type="text" id="buscar" placeholder="Buscar usuario...">
+        <div id="resultados"></div>
     </div>
 
-    <!-- TOP USUARIOS -->
-    <div class="card">
-        <h3>Usuarios más revisados</h3>
-        <table>
-            <tr>
-                <th>Usuario</th>
-                <th>Total</th>
-            </tr>
-            <?php foreach ($top as $t): ?>
-            <tr>
-                <td><?= htmlspecialchars($t['usuario_nombre']) ?></td>
-                <td><?= (int)$t['total'] ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
+    <!-- PISO -->
+    <div style="margin-top:15px;">
+        <label>Piso</label>
+        <input type="text" id="piso" placeholder="Ej. Piso 3, 4B, etc.">
     </div>
 
-    <!-- ÚLTIMOS REGISTROS -->
-    <div class="card">
-        <h3>Últimas revisiones</h3>
-        <table>
-            <tr>
-                <th>Fecha</th>
-                <th>Usuario</th>
-                <th>Piso</th>
-                <th>Notas</th>
-            </tr>
-            <?php foreach ($rows as $r): ?>
-            <tr>
-                <td><?= htmlspecialchars($r['fecha']) ?></td>
-                <td><?= htmlspecialchars($r['usuario_nombre']) ?></td>
-                <td><?= htmlspecialchars($r['piso']) ?></td>
-                <td><?= nl2br(htmlspecialchars($r['notas'] ?? '')) ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
+    <!-- CHECKLIST -->
+    <div class="checklist" id="checklist" style="display:none;">
+        <h3>Revisión del equipo</h3>
 
+        <label><input type="checkbox" id="c1"> Antivirus actualizado</label>
+        <label><input type="checkbox" id="c2"> Sistema operativo actualizado</label>
+        <label><input type="checkbox" id="c3"> Espacio en disco suficiente</label>
+        <label><input type="checkbox" id="c4"> Conexión a red estable</label>
+
+        <label style="margin-top:15px;">Notas adicionales</label>
+        <textarea id="notas" rows="3" placeholder="Observaciones, hallazgos, etc."></textarea>
+
+        <button class="btn" id="btnCompleto">Completo</button>
+    </div>
 </div>
+
+<script>
+let usuarioSeleccionado = null;
+
+// BUSCADOR AJAX
+document.getElementById("buscar").addEventListener("keyup", function() {
+    let q = this.value.trim();
+
+    if (q.length < 2) {
+        document.getElementById("resultados").innerHTML = "";
+        return;
+    }
+
+    fetch("buscar_usuario.php?q=" + encodeURIComponent(q))
+        .then(res => res.json())
+        .then(data => {
+            let html = "";
+            data.forEach(u => {
+                html += `<div class='result-item' onclick='seleccionar(${u.idu}, "${u.nomuser.replace(/"/g, '&quot;')}")'>
+                            ${u.nomuser}
+                         </div>`;
+            });
+            document.getElementById("resultados").innerHTML = html;
+        });
+});
+
+function seleccionar(idu, nomuser) {
+    usuarioSeleccionado = { idu, nomuser };
+    document.getElementById("buscar").value = nomuser;
+    document.getElementById("resultados").innerHTML = "";
+    document.getElementById("checklist").style.display = "block";
+}
+
+document.getElementById("btnCompleto").addEventListener("click", function() {
+    if (!usuarioSeleccionado) {
+        alert("Selecciona un usuario primero.");
+        return;
+    }
+
+    const piso = document.getElementById("piso").value.trim();
+    if (!piso) {
+        alert("Captura el piso.");
+        return;
+    }
+
+    const notas = document.getElementById("notas").value.trim();
+
+    fetch("guardar_checklist.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            idu: usuarioSeleccionado.idu,
+            nomuser: usuarioSeleccionado.nomuser,
+            piso: piso,
+            notas: notas
+        })
+    })
+    .then(res => res.text())
+    .then(msg => {
+        alert("Revisión registrada correctamente.");
+        location.reload();
+    })
+    .catch(() => alert("Error al guardar."));
+});
+</script>
+
 </body>
 </html>
