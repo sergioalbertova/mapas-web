@@ -101,10 +101,9 @@ h2 { margin-top: 0; }
     <div class="checklist" id="checklist" style="display:none;">
         <h3>Revisión del equipo</h3>
 
-        <label><input type="checkbox" id="c1"> Antivirus actualizado</label>
-        <label><input type="checkbox" id="c2"> Sistema operativo actualizado</label>
-        <label><input type="checkbox" id="c3"> Espacio en disco suficiente</label>
-        <label><input type="checkbox" id="c4"> Conexión a red estable</label>
+        <label><input type="checkbox" id="c1"> Correo</label>
+        <label><input type="checkbox" id="c2"> Fondo de pantalla</label>
+        
 
         <label style="margin-top:15px;">Notas adicionales</label>
         <textarea id="notas" rows="3" placeholder="Observaciones, hallazgos, etc."></textarea>
