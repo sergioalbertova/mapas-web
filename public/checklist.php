@@ -1,5 +1,5 @@
 <?php
-require "db.php"; // conexión PDO
+require "db.php";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -24,9 +24,6 @@ body {
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.45);
 }
-h2 { margin-top: 0; }
-
-/* INPUTS Y SELECT */
 input, select, textarea {
     width: 100%;
     padding: 12px;
@@ -37,8 +34,6 @@ input, select, textarea {
     font-size: 15px;
     margin-top: 5px;
 }
-
-/* BUSCADOR */
 #resultados {
     background: #1f2937;
     margin-top: 5px;
@@ -53,18 +48,6 @@ input, select, textarea {
 .result-item:hover {
     background: #374151;
 }
-
-/* CHECKLIST */
-.checklist {
-    margin-top: 20px;
-}
-.checklist label {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 15px;
-}
-
-/* BOTÓN */
 .btn {
     width: 100%;
     padding: 14px;
@@ -80,11 +63,6 @@ input, select, textarea {
 .btn:hover {
     background: #0088C0;
 }
-
-/* RESPONSIVE */
-@media (max-width: 600px) {
-    .container { padding: 18px; }
-}
 </style>
 </head>
 
@@ -92,14 +70,11 @@ input, select, textarea {
 
 <div class="container">
     <h2>Checklist de revisión</h2>
-    <p>Busca al usuario, selecciona el piso y marca como completado.</p>
 
-    <!-- BUSCADOR -->
     <label>Usuario</label>
     <input type="text" id="buscar" placeholder="Buscar usuario...">
     <div id="resultados"></div>
 
-    <!-- PISO -->
     <label style="margin-top:15px;">Piso</label>
     <select id="piso">
         <option value="">Selecciona un piso</option>
@@ -111,8 +86,7 @@ input, select, textarea {
         <option value="11">Piso 11</option>
     </select>
 
-    <!-- CHECKLIST -->
-    <div class="checklist" id="checklist" style="display:none;">
+    <div id="checklist" style="display:none; margin-top:20px;">
         <h3>Revisión del equipo</h3>
 
         <label><input type="checkbox" id="c1"> Antivirus actualizado</label>
@@ -120,8 +94,8 @@ input, select, textarea {
         <label><input type="checkbox" id="c3"> Espacio en disco suficiente</label>
         <label><input type="checkbox" id="c4"> Conexión a red estable</label>
 
-        <label style="margin-top:15px;">Notas adicionales</label>
-        <textarea id="notas" rows="3" placeholder="Observaciones, hallazgos, etc."></textarea>
+        <label style="margin-top:15px;">Notas</label>
+        <textarea id="notas" rows="3"></textarea>
 
         <button class="btn" id="btnCompleto">Completo</button>
     </div>
@@ -130,10 +104,8 @@ input, select, textarea {
 <script>
 let usuarioSeleccionado = null;
 
-// BUSCADOR AJAX
 document.getElementById("buscar").addEventListener("keyup", function() {
     let q = this.value.trim();
-
     if (q.length < 2) {
         document.getElementById("resultados").innerHTML = "";
         return;
@@ -152,7 +124,6 @@ document.getElementById("buscar").addEventListener("keyup", function() {
         });
 });
 
-// SELECCIONAR USUARIO
 function seleccionar(idu, usuario_nombre) {
     usuarioSeleccionado = { idu, usuario_nombre };
     document.getElementById("buscar").value = usuario_nombre;
@@ -160,10 +131,9 @@ function seleccionar(idu, usuario_nombre) {
     document.getElementById("checklist").style.display = "block";
 }
 
-// GUARDAR REGISTRO
 document.getElementById("btnCompleto").addEventListener("click", function() {
     if (!usuarioSeleccionado) {
-        alert("Selecciona un usuario primero.");
+        alert("Selecciona un usuario.");
         return;
     }
 
@@ -187,10 +157,9 @@ document.getElementById("btnCompleto").addEventListener("click", function() {
     })
     .then(res => res.text())
     .then(msg => {
-        alert("Revisión registrada correctamente.");
+        alert("Revisión registrada.");
         location.reload();
-    })
-    .catch(() => alert("Error al guardar."));
+    });
 });
 </script>
 
