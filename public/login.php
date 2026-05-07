@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
             <h2>Bienvenido</h2>
             <p>Accede a tu panel para gestionar tus sistemas.</p>
             <div class="illu-placeholder">
-                <img src="imagenlogin.png" alt="Ilustración" class="illu-img" style="width: 120%; height: auto;">
+                <img src="imagenlogin.png" alt="Ilustración" class="illu-img" style="width: 80%; height: auto;">
                 
             </div>
         </div>
