@@ -47,6 +47,20 @@ foreach ($guardias as $g) {
     ];
 }
 
+// ✅ CONTADOR DE GUARDIAS
+$conteo = [];
+foreach ($colores as $nombre => $c) {
+    $conteo[$nombre] = 0;
+}
+
+foreach ($guardias as $g) {
+    $tec = $g['tecnico'];
+    if ($tec && isset($conteo[$tec])) {
+        $conteo[$tec]++;
+    }
+}
+
+
 // Colores
 $colores = [
     "JUAN CARLOS" => "#1976D2",
@@ -364,6 +378,24 @@ h1 {
     box-shadow: inset 0 0 0 2px #1565C0;
 }
 
+/* ===== RESUMEN DE GUARDIAS ===== */
+.resumen {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.item-resumen {
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
 </style>
 
 </head>
@@ -399,6 +431,15 @@ h1 {
     <div class="item-leyenda">
         <span class="color" style="background: <?= $color ?>"></span>
         <?= htmlspecialchars($nombre) ?>
+    </div>
+<?php endforeach; ?>
+</div>
+
+<div class="resumen">
+<?php foreach ($conteo as $nombre => $total): ?>
+    <div class="item-resumen">
+        <span class="color" style="background: <?= $colores[$nombre] ?>"></span>
+        <?= htmlspecialchars($nombre) ?>: <strong><?= $total ?></strong>
     </div>
 <?php endforeach; ?>
 </div>
