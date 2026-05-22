@@ -395,16 +395,17 @@ h1 {
     gap: 5px;
 }
 
-/* ===== FINES DE SEMANA ===== */
+/* ===== FINES DE SEMANA (FORZADO) ===== */
 
-/* SÁBADO */
-.sabado {
-    background: rgba(0,0,0,0.04);
+.tabla-calendario td.sabado {
+    background: #11579c !important;
 }
 
-.domingo {
-    background: rgba(0,0,0,0.08);
+.tabla-calendario td.domingo {
+    background: #eeb4b4 !important;
 }
+
+
 
 
 </style>
