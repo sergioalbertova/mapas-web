@@ -65,13 +65,50 @@ $nombreMes = $meses[$mes] . " " . $anio;
 <title>Calendario</title>
 
 <style>
+/* ============================
+   PALETA CORPORATIVA
+   ============================ */
 :root {
     --bg: #F4F7FA;
-    --card-bg: #FFF;
+    --sidebar-bg: #FFFFFF;
+    --sidebar-hover: #E8EEF5;
+    --card-bg: #FFFFFF;
+    --text: #1F2933;
+    --subtext: #6B7280;
     --primary: #0054A6;
     --primary-hover: #003F7D;
-    --subtext: #6B7280;
+    --accent-cyan: #00AEEF;
+    --accent-red: #EF3E42;
+    --shadow: rgba(0,0,0,0.08);
 }
+
+/* ============================
+   TEMA OSCURO
+   ============================ */
+body.dark {
+    --bg: #1A1D21;
+    --sidebar-bg: #24272C;
+    --sidebar-hover: #2F3338;
+    --card-bg: #2C2F34;
+    --text: #E5E7EB;
+    --subtext: #9CA3AF;
+    --primary: #00AEEF;
+    --primary-hover: #0088C0;
+    --shadow: rgba(0,0,0,0.45);
+}
+
+/* ============================
+   ESTILOS GENERALES
+   ============================ */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s;
+    display: flex;
+}
+
 /* ============================
    SIDEBAR
    ============================ */
@@ -148,81 +185,139 @@ $nombreMes = $meses[$mes] . " " . $anio;
     opacity: 1;
     left: 75px;
 }
-/* Layout principal con sidebar */
-body {
-    margin:0;
-    display:flex;
-    font-family: Segoe UI;
-    background: var(--bg);
-}
 
+/* ============================
+   CONTENIDO PRINCIPAL (SIN TOPBAR)
+   ============================ */
 .main {
     margin-left: 240px;
     padding: 30px;
     width: calc(100% - 240px);
+    transition: margin-left 0.25s ease, width 0.25s ease;
+    display: flex;
+    justify-content: center;
 }
 
-/* contenedor */
+.sidebar.collapsed + .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+/* ============================
+   CALENDARIO
+   ============================ */
 .contenedor {
     max-width: 900px;
-    margin:auto;
+    width: 100%;
     background: var(--card-bg);
-    padding:20px;
-    border-radius:12px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px var(--shadow);
 }
 
-/* navegación */
+h1 {
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 28px;
+    color: var(--primary);
+}
+
 .navegacion {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
 .boton {
     background: var(--primary);
-    color:white;
-    padding:8px 14px;
-    border-radius:6px;
-    text-decoration:none;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
 }
 
 .boton:hover {
     background: var(--primary-hover);
 }
 
-/* leyenda */
-.leyenda {
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    margin-bottom:15px;
-}
-
-.item-leyenda {
-    display:flex;
-    align-items:center;
-    gap:6px;
-    font-size:13px;
-    color:var(--subtext);
-}
-
-.color {
-    width:14px;
-    height:14px;
-    border-radius:3px;
-}
-
-/* tabla */
 .tabla-calendario {
-    width:100%;
-    border-collapse:collapse;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tabla-calendario th {
+    background: var(--primary);
+    color: white;
+    padding: 10px;
 }
 
 .tabla-calendario td {
-    height:90px;
-    border:1px solid #ddd;
-    padding:5px;
+    height: 90px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    background: var(--card-bg);
+}
+
+.dia-numero {
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.icono-hoy {
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+}
+
+.hoy {
+    border: 3px solid var(--primary);
+}
+
+/* puedes tener clases festivo, sabado, domingo si las usas en tu CSS original */
+
+.tecnico {
+    margin-top: 4px;
+    padding: 3px;
+    border-radius: 4px;
+    color: white;
+    font-size: 13px;
+    display: inline-block;
+}
+
+/* ============================
+   ESTILO CUMPLEAÑOS
+   ============================ */
+.cumple-dia {
+    background: #E3F2FD !important;
+}
+
+.cumple-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.icono-cumple {
+    width: 18px;
+    height: 18px;
+}
+
+.cumpleanero {
+    font-weight: bold;
+    color: #ff4081;
+    font-size: 13px;
 }
 
 /* ✅ HOY MEJORADO */
