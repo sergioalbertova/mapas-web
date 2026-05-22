@@ -35,7 +35,7 @@ $stmt = $pdo->prepare("
     ORDER BY fecha ASC
 ");
 $stmt->execute(['mes' => $mes, 'anio' => $anio]);
-$guardias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$guardias = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 // Convertir a mapa
 $mapa = [];
@@ -47,18 +47,19 @@ foreach ($guardias as $g) {
     ];
 }
 
-// ✅ CONTADOR DE GUARDIAS
+// ✅ CONTADOR DE GUARDIAS (SEGURO)
 $conteo = [];
 foreach ($colores as $nombre => $c) {
     $conteo[$nombre] = 0;
 }
 
 foreach ($guardias as $g) {
-    $tec = $g['tecnico'];
+    $tec = $g['tecnico'] ?? null;
     if ($tec && isset($conteo[$tec])) {
         $conteo[$tec]++;
     }
 }
+
 
 
 // Colores
@@ -451,7 +452,7 @@ h1 {
 <div class="resumen">
 <?php foreach ($conteo as $nombre => $total): ?>
     <div class="item-resumen">
-        <span class="color" style="background: <?= $colores[$nombre] ?>"></span>
+        <span style="color: <?= $colores[$nombre] ?>">■</span>
         <?= htmlspecialchars($nombre) ?>: <strong><?= $total ?></strong>
     </div>
 <?php endforeach; ?>
