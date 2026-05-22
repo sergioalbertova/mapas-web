@@ -395,6 +395,17 @@ h1 {
     gap: 5px;
 }
 
+/* ===== FINES DE SEMANA ===== */
+
+/* SÁBADO */
+.sabado {
+    background: rgba(0,0,0,0.04);
+}
+
+.domingo {
+    background: rgba(0,0,0,0.08);
+}
+
 
 </style>
 
