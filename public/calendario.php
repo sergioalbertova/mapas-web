@@ -109,6 +109,37 @@ $nombreMes = $meses[$mes] . " " . $anio;
     box-shadow: inset 0 0 0 2px #1565C0;
 }
 
+/* ===== LEYENDA ===== */
+.leyenda {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.item-leyenda {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--subtext);
+}
+
+.color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+/* ===== HOY MÁS VISIBLE ===== */
+.hoy {
+    border: 3px solid var(--primary);
+    background: #BBDEFB !important;
+    box-shadow: inset 0 0 0 2px #1565C0;
+}
+``
+
 </style>
 
 </head>
@@ -122,6 +153,14 @@ $nombreMes = $meses[$mes] . " " . $anio;
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
+    <div class="leyenda">
+<?php foreach ($colores as $nombre => $color): ?>
+    <div class="item-leyenda">
+        <span class="color" style="background: <?= $color ?>"></span>
+        <?= htmlspecialchars($nombre) ?>
+    </div>
+<?php endforeach; ?>
+</div>
 
 <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
