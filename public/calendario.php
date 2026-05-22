@@ -47,20 +47,6 @@ foreach ($guardias as $g) {
     ];
 }
 
-// ✅ CONTADOR DE GUARDIAS (SEGURO)
-$conteo = [];
-foreach ($colores as $nombre => $c) {
-    $conteo[$nombre] = 0;
-}
-
-foreach ($guardias as $g) {
-    $tec = $g['tecnico'] ?? null;
-    if ($tec && isset($conteo[$tec])) {
-        $conteo[$tec]++;
-    }
-}
-
-
 
 // Colores
 $colores = [
