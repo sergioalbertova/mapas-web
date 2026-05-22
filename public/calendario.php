@@ -69,6 +69,19 @@ $colores = [
     "ERIK"        => "#7B1FA2",
 ];
 
+// ✅ CONTADOR DE GUARDIAS (CORREGIDO)
+$conteo = [];
+foreach ($colores as $nombre => $c) {
+    $conteo[$nombre] = 0;
+}
+
+foreach ($guardias as $g) {
+    $tec = $g['tecnico'] ?? null;
+    if ($tec && isset($conteo[$tec])) {
+        $conteo[$tec]++;
+    }
+}
+
 // Día actual
 $hoy = date('Y-m-d');
 $tecnicoHoy = isset($mapa[$hoy]) ? ($mapa[$hoy]['tecnico'] ?? "Sin guardia") : "Sin guardia";
