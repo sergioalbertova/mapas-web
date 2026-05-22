@@ -26,7 +26,7 @@ $mesSiguiente = $mes + 1;
 $anioSiguiente = $anio;
 if ($mesSiguiente > 12) { $mesSiguiente = 1; $anioSiguiente++; }
 
-// Obtener guardias del mes
+// Obtener guardias
 $stmt = $pdo->prepare("
     SELECT fecha, tecnico, cumple, cumpleanero
     FROM guardias
@@ -37,7 +37,7 @@ $stmt = $pdo->prepare("
 $stmt->execute(['mes' => $mes, 'anio' => $anio]);
 $guardias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Convertir a mapa por fecha
+// Convertir a mapa
 $mapa = [];
 foreach ($guardias as $g) {
     $mapa[$g['fecha']] = [
@@ -47,7 +47,7 @@ foreach ($guardias as $g) {
     ];
 }
 
-// Colores por técnico
+// Colores
 $colores = [
     "JUAN CARLOS" => "#1976D2",
     "SERGIO"      => "#388E3C",
@@ -59,10 +59,8 @@ $colores = [
 $hoy = date('Y-m-d');
 $tecnicoHoy = isset($mapa[$hoy]) ? ($mapa[$hoy]['tecnico'] ?? "Sin guardia") : "Sin guardia";
 
-// Mostrar info de hoy solo si estamos en el mes actual
 $mostrarHoy = ($mes == date('n') && $anio == date('Y'));
 
-// Meses en español
 $meses = [
     1 => "ENERO", 2 => "FEBRERO", 3 => "MARZO", 4 => "ABRIL",
     5 => "MAYO", 6 => "JUNIO", 7 => "JULIO", 8 => "AGOSTO",
@@ -78,9 +76,12 @@ $nombreMes = $meses[$mes] . " " . $anio;
 <title>Calendario de Guardias</title>
 
 <style>
-/* ===== TU CSS ORIGINAL (NO TOCADO) ===== */
 
-/* ✅ AGREGADO: LEYENDA */
+/* ============================ TU CSS ORIGINAL ============================ */
+/* (NO SE MODIFICÓ NADA ARRIBA) */
+
+
+/* ===== ✅ AGREGADO SEGURO ===== */
 .leyenda {
     display: flex;
     justify-content: center;
@@ -103,12 +104,13 @@ $nombreMes = $meses[$mes] . " " . $anio;
     border-radius: 3px;
 }
 
-/* ✅ MEJORA visual (NO rompe nada) */
+/* ✅ mejora visual SIN romper */
 .hoy {
     border: 3px solid var(--primary);
     background: #BBDEFB !important;
     box-shadow: inset 0 0 0 2px #1565C0;
 }
+
 </style>
 
 </head>
@@ -122,19 +124,20 @@ $nombreMes = $meses[$mes] . " " . $anio;
 
 <div class="navegacion">
 
-    <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
+<a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
-    <?php if ($mostrarHoy): ?>
-    <div class="info-hoy">
-        <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
-    </div>
-    <?php endif; ?>
+<?php if ($mostrarHoy): ?>
+<div class="info-hoy">
+<strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+</div>
+<?php endif; ?>
 
-    <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
+<a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
 
-    <button class="boton" onclick="toggleTheme()">🌙 Tema</button>
+<button class="boton" onclick="toggleTheme()">🌙 Tema</button>
 
-    <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
+<a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
+
 </div>
 
 <!-- ✅ AGREGADO: LEYENDA -->
@@ -149,7 +152,8 @@ $nombreMes = $meses[$mes] . " " . $anio;
 
 <table class="tabla-calendario">
 <tr>
-    <th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th>
+<th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th>
+<th>Vie</th><th>Sáb</th><th>Dom</th>
 </tr>
 
 <tr>
@@ -175,7 +179,6 @@ while ($dia <= $diasMes) {
     if ($cumple) $clases[] = "cumple-dia";
 
     echo "<td class='".implode(' ', $clases)."'>";
-
     echo "<div class='celda'>";
 
     echo "<div class='dia-numero'>";
