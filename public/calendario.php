@@ -84,10 +84,10 @@ $nombreMes = $meses[$mes] . " " . $anio;
 /* ===== ✅ AGREGADO SEGURO ===== */
 .leyenda {
     display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
 }
 
 .item-leyenda {
