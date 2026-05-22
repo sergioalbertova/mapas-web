@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id'])) {
 date_default_timezone_set('America/Mexico_City');
 require "db.php";
 
-// Obtener mes y año
 $mes = isset($_GET['mes']) ? intval($_GET['mes']) : date('n');
 $anio = isset($_GET['anio']) ? intval($_GET['anio']) : date('Y');
 
@@ -16,7 +15,6 @@ $primerDia = mktime(0, 0, 0, $mes, 1, $anio);
 $diasMes = date('t', $primerDia);
 $diaSemana = date('N', $primerDia);
 
-// Navegación
 $mesAnterior = $mes - 1;
 $anioAnterior = $anio;
 if ($mesAnterior < 1) { $mesAnterior = 12; $anioAnterior--; }
@@ -25,7 +23,6 @@ $mesSiguiente = $mes + 1;
 $anioSiguiente = $anio;
 if ($mesSiguiente > 12) { $mesSiguiente = 1; $anioSiguiente++; }
 
-// Guardias
 $stmt = $pdo->prepare("
     SELECT fecha, tecnico, cumple, cumpleanero
     FROM guardias
@@ -41,7 +38,6 @@ foreach ($guardias as $g) {
     $mapa[$g['fecha']] = $g;
 }
 
-// Colores
 $colores = [
     "JUAN CARLOS" => "#1976D2",
     "SERGIO"      => "#388E3C",
@@ -51,7 +47,6 @@ $colores = [
 
 $hoy = date('Y-m-d');
 $tecnicoHoy = $mapa[$hoy]['tecnico'] ?? "Sin guardia";
-
 $mostrarHoy = ($mes == date('n') && $anio == date('Y'));
 
 $meses = [
@@ -71,44 +66,61 @@ $nombreMes = $meses[$mes] . " " . $anio;
 
 <style>
 :root {
-    --bg:#F4F7FA;
-    --card-bg:#FFF;
-    --primary:#0054A6;
-    --primary-hover:#003F7D;
-    --text:#1F2933;
-    --subtext:#6B7280;
+    --bg: #F4F7FA;
+    --card-bg: #FFF;
+    --primary: #0054A6;
+    --primary-hover: #003F7D;
+    --subtext: #6B7280;
 }
 
+/* Layout principal con sidebar */
 body {
+    margin:0;
+    display:flex;
     font-family: Segoe UI;
-    background:var(--bg);
+    background: var(--bg);
 }
 
-/* CALENDARIO */
+.main {
+    margin-left: 240px;
+    padding: 30px;
+    width: calc(100% - 240px);
+}
+
+/* contenedor */
 .contenedor {
-    max-width:900px;
+    max-width: 900px;
     margin:auto;
-    background:var(--card-bg);
+    background: var(--card-bg);
     padding:20px;
     border-radius:12px;
 }
 
-.tabla-calendario {
-    width:100%;
-    border-collapse:collapse;
+/* navegación */
+.navegacion {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
 }
 
-.tabla-calendario td {
-    height:90px;
-    border:1px solid #ddd;
+.boton {
+    background: var(--primary);
+    color:white;
+    padding:8px 14px;
+    border-radius:6px;
+    text-decoration:none;
 }
 
-/* ✅ NUEVO: LEYENDA */
+.boton:hover {
+    background: var(--primary-hover);
+}
+
+/* leyenda */
 .leyenda {
     display:flex;
-    flex-wrap:wrap;
-    gap:12px;
     justify-content:center;
+    gap:12px;
     margin-bottom:15px;
 }
 
@@ -126,21 +138,34 @@ body {
     border-radius:3px;
 }
 
-/* ✅ MEJORADO: HOY */
+/* tabla */
+.tabla-calendario {
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabla-calendario td {
+    height:90px;
+    border:1px solid #ddd;
+    padding:5px;
+}
+
+/* ✅ HOY MEJORADO */
 .hoy {
-    border:3px solid var(--primary);
-    background: #E3F2FD !important;
+    background: #BBDEFB !important;
+    border: 3px solid #0D47A1 !important;
+    box-shadow: inset 0 0 0 2px #1565C0;
 }
 
 .icono-hoy {
     width:10px;
     height:10px;
-    background:var(--primary);
+    background:#0D47A1;
     border-radius:50%;
 }
 
 .tecnico {
-    color:#fff;
+    color:white;
     padding:3px;
     border-radius:4px;
     font-size:13px;
@@ -152,23 +177,28 @@ body {
 
 <body>
 
+<?php require "sidebar.php"; ?>
+
+<div class="main">
 <div class="contenedor">
 
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
-<a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>">◀</a>
 
-<?php if ($mostrarHoy): ?>
-<div>
-Hoy: <?= date("d/m/Y") ?> — <b><?= htmlspecialchars($tecnicoHoy) ?></b>
+    <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
+
+    <?php if ($mostrarHoy): ?>
+        <div>
+            <strong>Hoy:</strong> <?= date("d/m/Y") ?> — <b><?= htmlspecialchars($tecnicoHoy) ?></b>
+        </div>
+    <?php endif; ?>
+
+    <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
+
 </div>
-<?php endif; ?>
 
-<a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>">▶</a>
-</div>
-
-<!-- ✅ NUEVO: LEYENDA -->
+<!-- LEYENDA -->
 <div class="leyenda">
 <?php foreach ($colores as $nombre => $color): ?>
     <div class="item-leyenda">
@@ -186,7 +216,7 @@ Hoy: <?= date("d/m/Y") ?> — <b><?= htmlspecialchars($tecnicoHoy) ?></b>
 
 <tr>
 <?php
-for ($i=1;$i<$diaSemana;$i++) echo "<td></td>";
+for ($i=1; $i<$diaSemana; $i++) echo "<td></td>";
 
 $dia=1;
 while ($dia <= $diasMes):
@@ -198,18 +228,18 @@ $info = $mapa[$fecha] ?? null;
 $tecnico = $info['tecnico'] ?? null;
 
 $clases=[];
-if ($fecha==$hoy) $clases[]="hoy";
+if ($fecha == $hoy) $clases[]="hoy";
 
 echo "<td class='".implode(" ",$clases)."'>";
 
 echo "<div>";
 echo "<div>";
-if ($fecha==$hoy) echo "<span class='icono-hoy'></span>";
+if ($fecha==$hoy) echo "<span class='icono-hoy'></span> ";
 echo "$dia</div>";
 
 if ($tecnico){
-$color=$colores[$tecnico] ?? "#333";
-echo "<div class='tecnico' style='background:$color'>$tecnico</div>";
+    $color = $colores[$tecnico] ?? "#333";
+    echo "<div class='tecnico' style='background:$color'>$tecnico</div>";
 }
 
 echo "</div></td>";
@@ -223,6 +253,8 @@ endwhile;
 </table>
 
 </div>
+</div>
+
 </body>
 </html>
 ``
