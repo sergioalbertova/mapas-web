@@ -8,13 +8,16 @@ if (!isset($_SESSION['user_id'])) {
 date_default_timezone_set('America/Mexico_City');
 require "db.php";
 
+// Obtener mes y año desde la URL o usar actuales
 $mes = isset($_GET['mes']) ? intval($_GET['mes']) : date('n');
 $anio = isset($_GET['anio']) ? intval($_GET['anio']) : date('Y');
 
+// Primer día del mes
 $primerDia = mktime(0, 0, 0, $mes, 1, $anio);
 $diasMes = date('t', $primerDia);
 $diaSemana = date('N', $primerDia);
 
+// Mes anterior y siguiente
 $mesAnterior = $mes - 1;
 $anioAnterior = $anio;
 if ($mesAnterior < 1) { $mesAnterior = 12; $anioAnterior--; }
@@ -23,6 +26,7 @@ $mesSiguiente = $mes + 1;
 $anioSiguiente = $anio;
 if ($mesSiguiente > 12) { $mesSiguiente = 1; $anioSiguiente++; }
 
+// Obtener guardias
 $stmt = $pdo->prepare("
     SELECT fecha, tecnico, cumple, cumpleanero
     FROM guardias
@@ -33,11 +37,17 @@ $stmt = $pdo->prepare("
 $stmt->execute(['mes' => $mes, 'anio' => $anio]);
 $guardias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Convertir a mapa
 $mapa = [];
 foreach ($guardias as $g) {
-    $mapa[$g['fecha']] = $g;
+    $mapa[$g['fecha']] = [
+        'tecnico'     => $g['tecnico'],
+        'cumple'      => $g['cumple'],
+        'cumpleanero' => $g['cumpleanero']
+    ];
 }
 
+// Colores
 $colores = [
     "JUAN CARLOS" => "#1976D2",
     "SERGIO"      => "#388E3C",
@@ -45,14 +55,17 @@ $colores = [
     "ERIK"        => "#7B1FA2",
 ];
 
+// Día actual
 $hoy = date('Y-m-d');
-$tecnicoHoy = $mapa[$hoy]['tecnico'] ?? "Sin guardia";
+$tecnicoHoy = isset($mapa[$hoy]) ? ($mapa[$hoy]['tecnico'] ?? "Sin guardia") : "Sin guardia";
+
 $mostrarHoy = ($mes == date('n') && $anio == date('Y'));
 
+// Meses
 $meses = [
-    1=>"ENERO",2=>"FEBRERO",3=>"MARZO",4=>"ABRIL",
-    5=>"MAYO",6=>"JUNIO",7=>"JULIO",8=>"AGOSTO",
-    9=>"SEPTIEMBRE",10=>"OCTUBRE",11=>"NOVIEMBRE",12=>"DICIEMBRE"
+    1 => "ENERO", 2 => "FEBRERO", 3 => "MARZO", 4 => "ABRIL",
+    5 => "MAYO", 6 => "JUNIO", 7 => "JULIO", 8 => "AGOSTO",
+    9 => "SEPTIEMBRE", 10 => "OCTUBRE", 11 => "NOVIEMBRE", 12 => "DICIEMBRE"
 ];
 
 $nombreMes = $meses[$mes] . " " . $anio;
@@ -66,17 +79,11 @@ $nombreMes = $meses[$mes] . " " . $anio;
 
 <style>
 
-/* ===== FIX GLOBAL LINKS (flechas) ===== */
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-/* ===== LEYENDA ===== */
+/* ✅ LEYENDA (AGREGADO) */
 .leyenda {
     display: flex;
     justify-content: center;
-    gap: 14px;
+    gap: 12px;
     margin-bottom: 15px;
     flex-wrap: wrap;
 }
@@ -95,30 +102,11 @@ a {
     border-radius: 3px;
 }
 
-/* ===== BOTONES ===== */
-.boton {
-    background: var(--primary);
-    color: white !important;
-    padding: 8px 14px;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* ===== HOY MEJORADO ===== */
+/* ✅ HOY MEJORADO (solo mejora visual) */
 .hoy {
-    background: #90CAF9 !important;
-    border: 3px solid #0D47A1 !important;
+    border: 3px solid var(--primary);
+    background: #BBDEFB !important;
     box-shadow: inset 0 0 0 2px #1565C0;
-}
-
-/* ===== ICONO HOY ===== */
-.icono-hoy {
-    width: 10px;
-    height: 10px;
-    background: #0D47A1;
-    border-radius: 50%;
 }
 
 </style>
@@ -126,7 +114,6 @@ a {
 </head>
 
 <body>
-
 <?php require "sidebar.php"; ?>
 
 <div class="main">
@@ -140,9 +127,11 @@ a {
 
 <?php if ($mostrarHoy): ?>
 <div class="info-hoy">
-<strong>Hoy:</strong> <?= date("d/m/Y") ?> — <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+<strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
 </div>
 <?php endif; ?>
+
+<a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
 
 <button class="boton" onclick="toggleTheme()">🌙 Tema</button>
 
@@ -150,55 +139,71 @@ a {
 
 </div>
 
-<!-- LEYENDA -->
+<!-- ✅ LEYENDA AGREGADA -->
 <div class="leyenda">
 <?php foreach ($colores as $nombre => $color): ?>
     <div class="item-leyenda">
         <span class="color" style="background: <?= $color ?>"></span>
-        <?= $nombre ?>
+        <?= htmlspecialchars($nombre) ?>
     </div>
 <?php endforeach; ?>
 </div>
 
 <table class="tabla-calendario">
 <tr>
-<th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th>
-<th>Vie</th><th>Sáb</th><th>Dom</th>
+    <th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th>
 </tr>
 
 <tr>
 <?php
-for ($i=1; $i<$diaSemana; $i++) echo "<td></td>";
+for ($i = 1; $i < $diaSemana; $i++) echo "<td></td>";
 
-$dia=1;
-while ($dia <= $diasMes):
+$dia = 1;
+while ($dia <= $diasMes) {
 
-$fecha = sprintf("%04d-%02d-%02d",$anio,$mes,$dia);
-$dow = date('N',strtotime($fecha));
+    $fecha = sprintf("%04d-%02d-%02d", $anio, $mes, $dia);
+    $dow = date('N', strtotime($fecha));
 
-$info = $mapa[$fecha] ?? null;
-$tecnico = $info['tecnico'] ?? null;
+    $info = $mapa[$fecha] ?? null;
+    $tecnico = $info['tecnico'] ?? null;
+    $cumple = $info['cumple'] ?? false;
+    $cumpleanero = $info['cumpleanero'] ?? null;
 
-$clases = [];
-if ($fecha == $hoy) $clases[] = "hoy";
+    $clases = [];
+    if ($fecha == $hoy) $clases[] = "hoy";
+    if ($tecnico === "FESTIVO") $clases[] = "festivo";
+    if ($dow == 6) $clases[] = "sabado";
+    if ($dow == 7) $clases[] = "domingo";
+    if ($cumple) $clases[] = "cumple-dia";
 
-echo "<td class='".implode(" ",$clases)."'>";
+    echo "<td class='".implode(' ', $clases)."'>";
 
-echo "<div class='dia-numero'>";
-if ($fecha == $hoy) echo "<span class='icono-hoy'></span>";
-echo "$dia</div>";
+    echo "<div class='celda'>";
 
-if ($tecnico) {
-    $color = $colores[$tecnico] ?? "#333";
-    echo "<div class='tecnico' style='background:$color'>$tecnico</div>";
+    echo "<div class='dia-numero'>";
+    if ($fecha == $hoy) echo "<span class='icono-hoy'></span>";
+    echo "$dia</div>";
+
+    if ($cumple) {
+        echo "<div class='cumple-wrapper'>
+                <svg class='icono-cumple' width='18' height='18' viewBox='0 0 24 24'>
+                    <path fill='#ff4081' d='...'/>
+                </svg>
+                <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
+              </div>";
+    }
+
+    if ($tecnico) {
+        $color = $colores[$tecnico] ?? "#333";
+        echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
+    }
+
+    echo "</div></td>";
+
+    if ($dow == 7) echo "</tr><tr>";
+
+    $dia++;
 }
-
-echo "</td>";
-
-if ($dow==7) echo "</tr><tr>";
-
-$dia++;
-endwhile;
 ?>
 </tr>
 </table>
@@ -206,13 +211,10 @@ endwhile;
 </div>
 </div>
 
-<!-- ✅ SCRIPT TEMA OSCURO -->
 <script>
 function toggleTheme() {
     document.body.classList.toggle("dark");
-    localStorage.setItem("theme",
-        document.body.classList.contains("dark") ? "dark" : "light"
-    );
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 }
 
 if (localStorage.getItem("theme") === "dark") {
@@ -222,3 +224,4 @@ if (localStorage.getItem("theme") === "dark") {
 
 </body>
 </html>
+``
