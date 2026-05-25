@@ -398,11 +398,11 @@ h1 {
 /* ===== FINES DE SEMANA (FORZADO) ===== */
 
 .tabla-calendario td.sabado {
-    background: #11579c !important;
+    background: #b6d3f0 !important;
 }
 
 .tabla-calendario td.domingo {
-    background: #eeb4b4 !important;
+    background: #838788 !important;
 }
 
 
