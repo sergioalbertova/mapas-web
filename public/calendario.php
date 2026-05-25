@@ -374,7 +374,7 @@ h1 {
 /* ✅ mejora visual SIN romper */
 .hoy {
     border: 3px solid var(--primary);
-    background: #BBDEFB !important;
+    background: #33526b !important;
     box-shadow: inset 0 0 0 2px #1565C0;
 }
 
@@ -398,7 +398,7 @@ h1 {
 /* ===== FINES DE SEMANA (FORZADO) ===== */
 
 .tabla-calendario td.sabado {
-    background: #b6d3f0 !important;
+    background: #9ea0a1 !important;
 }
 
 .tabla-calendario td.domingo {
