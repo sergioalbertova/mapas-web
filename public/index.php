@@ -38,7 +38,7 @@ body.dark {
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
-    background: var(--bg);
+    background: radial-gradient(circle at top, #0f172a, #020617);
     color: var(--text);
     display: flex;
     transition: 0.3s;
@@ -150,34 +150,48 @@ body {
 /* GRID 4×2 */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 22px;
 }
 
 /* TARJETA EMPRESARIAL */
 .card {
-    background: var(--card-bg);
-    padding: 22px 20px;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px var(--shadow);
+    background: linear-gradient(145deg, #1f2937, #111827);
+    padding: 20px;
+    border-radius: 18px;
+
+    border: 1px solid rgba(255,255,255,0.05);
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+
     display: flex;
     align-items: flex-start;
     gap: 14px;
+
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.25s ease;
+
     text-decoration: none;
     color: inherit;
 }
+
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 18px var(--shadow);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
 
+
 .card svg {
-    width: 32px;
-    height: 32px;
-    fill: var(--primary);
-    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    fill: #00aaff;
+}
+
+/* contenedor visual para icono */
+.card svg {
+    background: rgba(0,120,212,0.15);
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .card-content {
@@ -186,16 +200,16 @@ body {
 }
 
 .card-title {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 4px;
 }
 
 .card-sub {
     font-size: 13px;
-    color: var(--subtext);
+    color: #9ca3af;
 }
+
+
 </style>
 </head>
 
