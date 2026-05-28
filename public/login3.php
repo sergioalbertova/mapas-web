@@ -85,7 +85,7 @@ body {
 
     
 /* 👇 NUEVO */
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 5px solid rgba(255, 255, 255, 0.89);
 
 
     box-shadow: 0 25px 50px rgba(0,0,0,0.6);
