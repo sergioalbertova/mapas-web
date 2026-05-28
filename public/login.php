@@ -122,7 +122,20 @@ body {
     border-radius: 10px;
     padding: 10px;
     margin-top: 5px;
+
+    
+/* 👇 NUEVO */
+    border: 1px solid transparent;
+    transition: 0.2s;
+
 }
+
+.input-with-icon:focus-within {
+    border: 1px solid rgba(0,120,212,0.6);
+    box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
+}
+
+
 
 .input-with-icon .icon {
     margin-right: 10px;
