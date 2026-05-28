@@ -15,7 +15,7 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <head>
 <meta charset="UTF-8">
 <title>Inicio</title>
-
+<link rel="stylesheet" href="sidebar.css">
 <style>
 :root {
     --bg: #F4F7FA;
@@ -45,7 +45,7 @@ body {
 }
 
 
-/* SIDEBAR */
+/* SIDEBAR
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -118,7 +118,7 @@ body {
 .sidebar.collapsed .nav-item:hover .tooltip {
     opacity: 1;
     left: 75px;
-}
+} */
 
 /* MAIN */
 .main {
@@ -127,10 +127,12 @@ body {
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease;
 }
+
+/*
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
-}
+} */
 
 /* TITULO */
 .main h2 {
