@@ -15,7 +15,7 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <head>
 <meta charset="UTF-8">
 <title>Inicio</title>
-<link rel="stylesheet" href="sidebar.css">
+
 <style>
 :root {
     --bg: #F4F7FA;
@@ -213,6 +213,8 @@ body {
 
 
 </style>
+
+<link rel="stylesheet" href="sidebar.css">
 </head>
 
 <body>
