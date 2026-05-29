@@ -215,9 +215,11 @@ body {
 </style>
 
 <link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 </head>
 
 <body>
+<?php require "topbar.php"; ?>
 
 <?php require "sidebar.php"; ?>
 

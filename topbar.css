@@ -1,0 +1,64 @@
+.topbar {
+    height: 60px;
+
+    background: rgba(17, 24, 39, 0.75);
+    backdrop-filter: blur(10px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* IZQUIERDA */
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: #9ca3af;
+    cursor: pointer;
+}
+
+.topbar-title {
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+/* DERECHA */
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* USUARIO */
+.user-info {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* ICONOS */
+.top-icon {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.top-icon:hover {
+    color: #00aaff;
+}
