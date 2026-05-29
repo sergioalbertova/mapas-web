@@ -123,7 +123,7 @@ body {
 /* MAIN */
 .main {
     margin-left: 240px;
-    padding: 40px;
+    padding: 20px 40px;
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease;
 }
@@ -219,11 +219,13 @@ body {
 </head>
 
 <body>
-<?php require "topbar.php"; ?>
+
 
 <?php require "sidebar.php"; ?>
 
 <div class="main">
+    
+    <?php require "topbar.php"; ?>
 
     <h2>Bienvenido, <?= htmlspecialchars($nombreUsuario) ?></h2>
     <div class="subtitle">Panel principal de operaciones TI</div>
