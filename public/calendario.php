@@ -419,9 +419,9 @@ h1 {
 
 <div class="main">
 
-<?php require "topbar.php"; ?>
-<div class="contenedor">
 
+<div class="contenedor">
+<?php require "topbar.php"; ?>
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
