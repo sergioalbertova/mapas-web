@@ -8,6 +8,14 @@ if (!isset($_SESSION['user_id'])) {
 date_default_timezone_set('America/Mexico_City');
 require "db.php";
 
+$id = $_SESSION['user_id'];
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
+
 // Obtener mes y año desde la URL o usar actuales
 $mes = isset($_GET['mes']) ? intval($_GET['mes']) : date('n');
 $anio = isset($_GET['anio']) ? intval($_GET['anio']) : date('Y');
@@ -436,7 +444,7 @@ h1 {
 
 <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
 
-<button class="boton" onclick="toggleTheme()">🌙 Tema</button>
+<!-- <button class="boton" onclick="toggleTheme()">🌙 Tema</button> -->
 
 <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 
