@@ -16,7 +16,7 @@ $stmt->execute([$id]);
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 
-// Obtener mes y año desde la URL o usar actuales
+// Obtener mes y año
 $mes = isset($_GET['mes']) ? intval($_GET['mes']) : date('n');
 $anio = isset($_GET['anio']) ? intval($_GET['anio']) : date('Y');
 
@@ -55,7 +55,6 @@ foreach ($guardias as $g) {
     ];
 }
 
-
 // Colores
 $colores = [
     "JUAN CARLOS" => "#1976D2",
@@ -64,23 +63,16 @@ $colores = [
     "ERIK"        => "#7B1FA2",
 ];
 
-// ✅ CONTADOR DE GUARDIAS (CORREGIDO)
+// Contador
 $conteo = [];
-foreach ($colores as $nombre => $c) {
-    $conteo[$nombre] = 0;
-}
-
+foreach ($colores as $nombre => $c) $conteo[$nombre] = 0;
 foreach ($guardias as $g) {
-    $tec = $g['tecnico'] ?? null;
-    if ($tec && isset($conteo[$tec])) {
-        $conteo[$tec]++;
-    }
+    if (isset($conteo[$g['tecnico']])) $conteo[$g['tecnico']]++;
 }
 
 // Día actual
 $hoy = date('Y-m-d');
-$tecnicoHoy = isset($mapa[$hoy]) ? ($mapa[$hoy]['tecnico'] ?? "Sin guardia") : "Sin guardia";
-
+$tecnicoHoy = $mapa[$hoy]['tecnico'] ?? "Sin guardia";
 $mostrarHoy = ($mes == date('n') && $anio == date('Y'));
 
 $meses = [
@@ -97,82 +89,64 @@ $nombreMes = $meses[$mes] . " " . $anio;
 <meta charset="UTF-8">
 <title>Calendario de Guardias</title>
 
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
+
 <style>
-/* ============================
-   PALETA CORPORATIVA
-   ============================ */
+/* VARIABLES TIHIL */
 :root {
     --bg: #F4F7FA;
-    --sidebar-bg: #FFFFFF;
-    --sidebar-hover: #E8EEF5;
-    --card-bg: #FFFFFF;
     --text: #1F2933;
+    --card-bg: #FFFFFF;
     --subtext: #6B7280;
     --primary: #0054A6;
     --primary-hover: #003F7D;
-    --accent-cyan: #00AEEF;
-    --accent-red: #EF3E42;
     --shadow: rgba(0,0,0,0.08);
 }
 
-/* ============================
-   TEMA OSCURO
-   ============================ */
 body.dark {
-    --bg: #1A1D21;
-    --sidebar-bg: #24272C;
-    --sidebar-hover: #2F3338;
-    --card-bg: #2C2F34;
+    --bg: #0f172a;
     --text: #E5E7EB;
+    --card-bg: #1f2937;
     --subtext: #9CA3AF;
     --primary: #00AEEF;
     --primary-hover: #0088C0;
     --shadow: rgba(0,0,0,0.45);
 }
 
-/* ============================
-   ESTILOS GENERALES
-   ============================ */
+/* LAYOUT */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
     background: var(--bg);
     color: var(--text);
-    transition: 0.3s;
     display: flex;
+    transition: 0.3s;
 }
 
-
-
-/* ============================
-   CONTENIDO PRINCIPAL (SIN TOPBAR)
-   ============================ */
 .main {
     margin-left: 240px;
     padding: 30px;
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease, width 0.25s ease;
-    display: flex;
-    justify-content: center;
+    transition: margin-left 0.25s ease;
 }
 
-.sidebar.collapsed + .main {
+.sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
 
-/* ============================
-   CALENDARIO
-   ============================ */
+/* CONTENEDOR */
 .contenedor {
     max-width: 900px;
-    width: 100%;
+    margin: 0 auto;
     background: var(--card-bg);
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 20px var(--shadow);
 }
 
+/* CALENDARIO */
 h1 {
     text-align: center;
     margin-bottom: 5px;
@@ -184,7 +158,6 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
     margin-bottom: 20px;
 }
 
@@ -195,7 +168,6 @@ h1 {
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
     text-decoration: none;
 }
 
@@ -206,7 +178,6 @@ h1 {
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
 }
 
 .tabla-calendario th {
@@ -219,7 +190,6 @@ h1 {
     height: 90px;
     padding: 5px;
     border: 1px solid #ddd;
-    font-size: 14px;
     background: var(--card-bg);
 }
 
@@ -231,18 +201,10 @@ h1 {
     gap: 6px;
 }
 
-.icono-hoy {
-    width: 10px;
-    height: 10px;
-    background: var(--primary);
-    border-radius: 50%;
-}
-
 .hoy {
     border: 3px solid var(--primary);
+    background: rgba(0,174,239,0.15) !important;
 }
-
-/* puedes tener clases festivo, sabado, domingo si las usas en tu CSS original */
 
 .tecnico {
     margin-top: 4px;
@@ -253,9 +215,6 @@ h1 {
     display: inline-block;
 }
 
-/* ============================
-   ESTILO CUMPLEAÑOS
-   ============================ */
 .cumple-dia {
     background: #E3F2FD !important;
 }
@@ -267,35 +226,26 @@ h1 {
     margin-bottom: 4px;
 }
 
-.icono-cumple {
-    width: 18px;
-    height: 18px;
-}
-
 .cumpleanero {
     font-weight: bold;
     color: #ff4081;
     font-size: 13px;
 }
-/* ============================ TU CSS ORIGINAL ============================ */
-/* (NO SE MODIFICÓ NADA ARRIBA) */
 
-
-/* ===== ✅ AGREGADO SEGURO ===== */
-.leyenda {
+.leyenda, .resumen {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 10px;
-    font-size: 12px;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
-.item-leyenda {
+.item-leyenda, .item-resumen {
+    font-size: 13px;
+    color: var(--subtext);
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
-    color: var(--subtext);
 }
 
 .color {
@@ -304,78 +254,33 @@ h1 {
     border-radius: 3px;
 }
 
-/* ✅ mejora visual SIN romper */
-.hoy {
-    border: 3px solid var(--primary);
-    background: #33526b !important;
-    box-shadow: inset 0 0 0 2px #1565C0;
-}
-
-/* ===== RESUMEN DE GUARDIAS ===== */
-.resumen {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
-
-.item-resumen {
-    font-size: 13px;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-/* ===== FINES DE SEMANA (FORZADO) ===== */
-
-.tabla-calendario td.sabado {
-    background: #9ea0a1 !important;
-}
-
-.tabla-calendario td.domingo {
-    background: #838788 !important;
-}
-
-
-
-
+.sabado { background: #9ea0a1 !important; }
+.domingo { background: #838788 !important; }
 </style>
-
-<link rel="stylesheet" href="sidebar.css">
-<link rel="stylesheet" href="topbar.css">
 
 </head>
 <body>
+
 <?php require "sidebar.php"; ?>
-<?php require "topbar.php"; ?>-
+
 <div class="main">
 
+<?php require "topbar.php"; ?>
 
 <div class="contenedor">
 
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
+    <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
-<a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
+    <?php if ($mostrarHoy): ?>
+        <div><strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong></div>
+    <?php endif; ?>
 
-<?php if ($mostrarHoy): ?>
-<div class="info-hoy">
-<strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
-</div>
-<?php endif; ?>
-
-<a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
-
-<!-- <button class="boton" onclick="toggleTheme()">🌙 Tema</button> -->
-
-<a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
-
+    <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 </div>
 
-<!-- ✅ AGREGADO: LEYENDA -->
 <div class="leyenda">
 <?php foreach ($colores as $nombre => $color): ?>
     <div class="item-leyenda">
@@ -417,23 +322,16 @@ while ($dia <= $diasMes) {
 
     $clases = [];
     if ($fecha == $hoy) $clases[] = "hoy";
-    if ($tecnico === "FESTIVO") $clases[] = "festivo";
     if ($dow == 6) $clases[] = "sabado";
     if ($dow == 7) $clases[] = "domingo";
     if ($cumple) $clases[] = "cumple-dia";
 
     echo "<td class='".implode(' ', $clases)."'>";
-    echo "<div class='celda'>";
-
     echo "<div class='dia-numero'>";
-    if ($fecha == $hoy) echo "<span class='icono-hoy'></span>";
     echo "$dia</div>";
 
     if ($cumple) {
         echo "<div class='cumple-wrapper'>
-                <svg class='icono-cumple' width='18' height='18' viewBox='0 0 24 24'>
-                    <path fill='#ff4081' d='M12 2c.6 0 1 .4 1 1v2h-2V3c0-.6.4-1 1-1zm-4 4h8c1.1 0 2 .9 2 2v3H6V8c0-1.1.9-2 2-2zm-3 7h14c1.1 0 2 .9 2 2v5H3v-5c0-1.1.9-2 2-2zm2 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z'/>
-                </svg>
                 <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
               </div>";
     }
@@ -443,7 +341,7 @@ while ($dia <= $diasMes) {
         echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
     }
 
-    echo "</div></td>";
+    echo "</td>";
 
     if ($dow == 7) echo "</tr><tr>";
 
@@ -456,16 +354,7 @@ while ($dia <= $diasMes) {
 </div>
 </div>
 
-<script>
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-}
-
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-}
-</script>
 <script src="theme.js"></script>
+
 </body>
 </html>
