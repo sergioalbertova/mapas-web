@@ -410,11 +410,16 @@ h1 {
 
 </style>
 
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
+
 </head>
 <body>
 <?php require "sidebar.php"; ?>
 
 <div class="main">
+
+<?php require "topbar.php"; ?>
 <div class="contenedor">
 
 <h1><?= $nombreMes ?></h1>
@@ -528,6 +533,6 @@ if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 </script>
-
+<script src="theme.js"></script>
 </body>
 </html>
