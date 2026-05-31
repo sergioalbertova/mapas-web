@@ -57,7 +57,7 @@ body {
     display: flex;
 }
 
-/* SIDEBAR */
+/* SIDEBAR 
 .sidebar {
     width: 240px;
     background: var(--sidebar-bg);
@@ -131,7 +131,7 @@ body {
     opacity: 1;
     left: 75px;
 }
-
+*/
 /* MAIN */
 .main {
     margin-left: 240px;
