@@ -295,14 +295,7 @@ h1 {
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
 </div>
 
-<div class="leyenda">
-<?php foreach ($colores as $nombre => $color): ?>
-    <div class="item-leyenda">
-        <span class="color" style="background: <?= $color ?>"></span>
-        <?= htmlspecialchars($nombre) ?>
-    </div>
-<?php endforeach; ?>
-</div>
+
 
 <div class="resumen">
 <?php foreach ($conteo as $nombre => $total): ?>
