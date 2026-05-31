@@ -102,6 +102,7 @@ $nombreMes = $meses[$mes] . " " . $anio;
     --primary: #0054A6;
     --primary-hover: #003F7D;
     --shadow: rgba(0,0,0,0.12);
+    --border: rgba(0,0,0,0.18);
 }
 
 body.dark {
@@ -112,6 +113,7 @@ body.dark {
     --primary: #00AEEF;
     --primary-hover: #0088C0;
     --shadow: rgba(0,0,0,0.45);
+    --border: rgba(255,255,255,0.15);
 }
 
 /* LAYOUT */
@@ -160,7 +162,7 @@ h1 {
     font-weight: 700;
     letter-spacing: -1px;
     color: var(--primary);
-    border-bottom: 2px solid rgba(0,0,0,0.08);
+    border-bottom: 2px solid var(--border);
     padding-bottom: 10px;
 }
 
@@ -207,10 +209,26 @@ body.dark .navegacion {
     background: var(--primary-hover);
 }
 
+/* SELECTORES */
+.selector {
+    display: flex;
+    gap: 10px;
+}
+
+.selector select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 15px;
+}
+
 /* CALENDARIO */
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed; /* 🔥 MISMO ANCHO PARA TODAS LAS COLUMNAS */
 }
 
 .tabla-calendario th {
@@ -223,7 +241,7 @@ body.dark .navegacion {
 .tabla-calendario td {
     height: 100px;
     padding: 6px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
     background: var(--card-bg);
     transition: 0.2s ease;
 }
@@ -321,11 +339,25 @@ body.dark .navegacion {
 
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
-    <?php if ($mostrarHoy): ?>
-    <div class="info-hoy">
-        <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+    <div class="selector">
+        <form method="GET">
+            <select name="mes" onchange="this.form.submit()">
+                <?php foreach ($meses as $num => $nombre): ?>
+                    <option value="<?= $num ?>" <?= $num == $mes ? 'selected' : '' ?>>
+                        <?= $nombre ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <select name="anio" onchange="this.form.submit()">
+                <?php for ($y = date('Y') - 5; $y <= date('Y') + 5; $y++): ?>
+                    <option value="<?= $y ?>" <?= $y == $anio ? 'selected' : '' ?>>
+                        <?= $y ?>
+                    </option>
+                <?php endfor; ?>
+            </select>
+        </form>
     </div>
-    <?php endif; ?>
 
     <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
 
@@ -333,7 +365,20 @@ body.dark .navegacion {
 
 </div>
 
+<?php if ($mostrarHoy): ?>
+<div class="info-hoy">
+    <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+</div>
+<?php endif; ?>
 
+<div class="leyenda">
+<?php foreach ($colores as $nombre => $color): ?>
+    <div class="item-leyenda">
+        <span class="color" style="background: <?= $color ?>"></span>
+        <?= htmlspecialchars($nombre) ?>
+    </div>
+<?php endforeach; ?>
+</div>
 
 <div class="resumen">
 <?php foreach ($conteo as $nombre => $total): ?>
