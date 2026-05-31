@@ -23,27 +23,11 @@
 </div>
 <script>
 function toggleTheme() {
-    const body = document.body;
-    const isDark = body.classList.toggle("dark");
-
-    // Guardar preferencia
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-
-    // Cambiar icono
-    const btn = document.querySelector(".theme-toggle");
-    btn.textContent = isDark ? "☀️" : "🌙";
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 }
 
-// Aplicar tema guardado al cargar
-document.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-        document.body.classList.add("dark");
-    }
-
-    // Ajustar icono inicial
-    const btn = document.querySelector(".theme-toggle");
-    btn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
-});
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
 </script>
