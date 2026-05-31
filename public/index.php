@@ -16,9 +16,7 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <meta charset="UTF-8">
 <title>Inicio</title>
 
-<!-- ============================
-     VARIABLES DE TEMA TIHIL
-     ============================ -->
+
 <style>
 :root {
     --bg: #F4F7FA;
@@ -166,6 +164,8 @@ body {
     
     <?php require "topbar.php"; ?>
 
+    <h2>Bienvenido, <?= htmlspecialchars($nombreUsuario) ?></h2>
+    <div class="subtitle">Panel principal de operaciones TI</div>
     
     <div class="cards-grid">
 
