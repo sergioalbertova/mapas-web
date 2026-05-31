@@ -138,7 +138,7 @@ body {
 
 /* CONTENEDOR */
 .contenedor {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     background: var(--card-bg);
     padding: 20px;
