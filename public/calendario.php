@@ -149,10 +149,13 @@ body {
 /* CALENDARIO */
 h1 {
     text-align: center;
-    margin-bottom: 5px;
-    font-size: 28px;
+    margin-bottom: 10px;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
     color: var(--primary);
 }
+
 
 .navegacion {
     display: flex;
@@ -256,6 +259,17 @@ h1 {
 
 .sabado { background: #9ea0a1 !important; }
 .domingo { background: #838788 !important; }
+
+.info-hoy {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    background: rgba(0, 174, 239, 0.12);
+    padding: 10px 16px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
 </style>
 
 </head>
