@@ -101,7 +101,7 @@ $nombreMes = $meses[$mes] . " " . $anio;
     --subtext: #6B7280;
     --primary: #0054A6;
     --primary-hover: #003F7D;
-    --shadow: rgba(0,0,0,0.08);
+    --shadow: rgba(0,0,0,0.12);
 }
 
 body.dark {
@@ -136,48 +136,78 @@ body {
     width: calc(100% - 70px);
 }
 
-/* CONTENEDOR */
+/* CONTENEDOR PREMIUM */
 .contenedor {
     max-width: 1200px;
     margin: 0 auto;
     background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px var(--shadow);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px var(--shadow);
+    animation: fadeIn 0.4s ease;
 }
 
-/* CALENDARIO */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* TÍTULO DEL MES */
 h1 {
     text-align: center;
-    margin-bottom: 10px;
-    font-size: 36px;
+    margin-bottom: 15px;
+    font-size: 40px;
     font-weight: 700;
     letter-spacing: -1px;
     color: var(--primary);
+    border-bottom: 2px solid rgba(0,0,0,0.08);
+    padding-bottom: 10px;
 }
 
+/* INFO HOY */
+.info-hoy {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    background: rgba(0, 174, 239, 0.12);
+    padding: 12px 18px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+}
 
+/* NAVEGACIÓN GLASS */
 .navegacion {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    padding: 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    background: rgba(255,255,255,0.4);
+}
+
+body.dark .navegacion {
+    background: rgba(0,0,0,0.25);
 }
 
 .boton {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     cursor: pointer;
     text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s ease;
 }
 
 .boton:hover {
     background: var(--primary-hover);
 }
 
+/* CALENDARIO */
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
@@ -186,14 +216,21 @@ h1 {
 .tabla-calendario th {
     background: var(--primary);
     color: white;
-    padding: 10px;
+    padding: 12px;
+    font-size: 15px;
 }
 
 .tabla-calendario td {
-    height: 90px;
-    padding: 5px;
-    border: 1px solid #ddd;
+    height: 100px;
+    padding: 6px;
+    border: 1px solid rgba(0,0,0,0.05);
     background: var(--card-bg);
+    transition: 0.2s ease;
+}
+
+.tabla-calendario td:hover {
+    background: rgba(0, 174, 239, 0.12);
+    cursor: pointer;
 }
 
 .dia-numero {
@@ -204,20 +241,24 @@ h1 {
     gap: 6px;
 }
 
+/* DÍA ACTUAL PREMIUM */
 .hoy {
     border: 3px solid var(--primary);
     background: rgba(0,174,239,0.15) !important;
+    box-shadow: 0 0 12px rgba(0,174,239,0.5);
 }
 
+/* TECNICOS */
 .tecnico {
     margin-top: 4px;
-    padding: 3px;
+    padding: 4px;
     border-radius: 4px;
     color: white;
-    font-size: 13px;
+    font-size: 14px;
     display: inline-block;
 }
 
+/* CUMPLEAÑOS */
 .cumple-dia {
     background: #E3F2FD !important;
 }
@@ -232,19 +273,20 @@ h1 {
 .cumpleanero {
     font-weight: bold;
     color: #ff4081;
-    font-size: 13px;
+    font-size: 14px;
 }
 
+/* LEYENDA Y RESUMEN */
 .leyenda, .resumen {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 15px;
+    gap: 20px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
 .item-leyenda, .item-resumen {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--subtext);
     display: flex;
     align-items: center;
@@ -252,24 +294,14 @@ h1 {
 }
 
 .color {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
 }
 
+/* FINES DE SEMANA */
 .sabado { background: #9ea0a1 !important; }
 .domingo { background: #838788 !important; }
-
-.info-hoy {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text);
-    background: rgba(0, 174, 239, 0.12);
-    padding: 10px 16px;
-    border-radius: 8px;
-    border-left: 4px solid var(--primary);
-}
-
 </style>
 
 </head>
@@ -286,13 +318,19 @@ h1 {
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
+
     <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
 
     <?php if ($mostrarHoy): ?>
-        <div><strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong></div>
+    <div class="info-hoy">
+        <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+    </div>
     <?php endif; ?>
 
+    <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
+
     <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
+
 </div>
 
 
@@ -334,8 +372,7 @@ while ($dia <= $diasMes) {
     if ($cumple) $clases[] = "cumple-dia";
 
     echo "<td class='".implode(' ', $clases)."'>";
-    echo "<div class='dia-numero'>";
-    echo "$dia</div>";
+    echo "<div class='dia-numero'>$dia</div>";
 
     if ($cumple) {
         echo "<div class='cumple-wrapper'>
