@@ -11,23 +11,15 @@
     <div class="topbar-right">
         
         <div class="user-info">
-            <?= htmlspecialchars($nombreUsuario) ?>
+            <?= htmlspecialchars($nombreUsuario ?? 'Usuario') ?>
         </div>
 
-        <button onclick="toggleTheme()" class="top-icon theme-toggle">🌙</button>
+        <!-- Botón de tema -->
+        <button class="top-icon theme-toggle" onclick="toggleTheme()">🌙</button>
 
+        <!-- Logout -->
         <a href="logout.php" class="top-icon">⎋</a>
 
     </div>
 
 </div>
-<script>
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-}
-
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-}
-</script>

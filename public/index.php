@@ -16,109 +16,58 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <meta charset="UTF-8">
 <title>Inicio</title>
 
+<!-- ============================
+     VARIABLES DE TEMA TIHIL
+     ============================ -->
 <style>
 :root {
     --bg: #F4F7FA;
-    --card-bg: #FFFFFF;
     --text: #1F2933;
-    --subtext: #6B7280;
-    --primary: #0054A6;
+
+    --topbar-bg: rgba(255,255,255,0.85);
+    --topbar-text: #1F2933;
+    --topbar-border: rgba(0,0,0,0.1);
+
+    --sidebar-bg: #FFFFFF;
+    --sidebar-text: #1F2933;
+    --sidebar-border: rgba(0,0,0,0.1);
+
+    --card-bg: #FFFFFF;
+    --card-text: #1F2933;
+
+    --accent: #00AEEF;
     --shadow: rgba(0,0,0,0.08);
 }
 
 body.dark {
-    --bg: #1A1D21;
-    --card-bg: #2C2F34;
+    --bg: #0f172a;
     --text: #E5E7EB;
-    --subtext: #9CA3AF;
-    --primary: #00AEEF;
+
+    --topbar-bg: rgba(17,24,39,0.85);
+    --topbar-text: #E5E7EB;
+    --topbar-border: rgba(255,255,255,0.1);
+
+    --sidebar-bg: #020617;
+    --sidebar-text: #E5E7EB;
+    --sidebar-border: rgba(255,255,255,0.1);
+
+    --card-bg: #1f2937;
+    --card-text: #E5E7EB;
+
     --shadow: rgba(0,0,0,0.45);
 }
 
+/* ============================
+     ESTILOS BASE
+     ============================ */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
-    background: radial-gradient(circle at top, #0f172a, #020617);
+    background: var(--bg);
     color: var(--text);
     display: flex;
-    transition: 0.3s;
+    transition: background 0.3s ease, color 0.3s ease;
 }
-
-
-/* SIDEBAR
-.sidebar {
-    width: 240px;
-    background: var(--sidebar-bg);
-    height: 100vh;
-    box-shadow: 4px 0 20px var(--shadow);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    transition: width 0.25s ease;
-    overflow: visible;
-    z-index: 2000;
-}
-.sidebar.collapsed { width: 70px; }
-
-.sidebar h2 {
-    margin: 0 0 20px;
-    font-size: 20px;
-    color: var(--primary);
-    transition: opacity 0.25s ease;
-}
-.sidebar.collapsed h2 { opacity: 0; }
-
-.nav-item {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-}
-.nav-item:hover { background: var(--sidebar-hover); }
-
-.nav-item a {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:inherit;
-    text-decoration:none;
-}
-
-.nav-item svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-.sidebar.collapsed .nav-text { display: none; }
-
-.tooltip {
-    position: absolute;
-    left: 80px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--sidebar-bg);
-    padding: 6px 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px var(--shadow);
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, left 0.2s ease;
-    z-index: 99999;
-}
-.sidebar.collapsed .nav-item:hover .tooltip {
-    opacity: 1;
-    left: 75px;
-} */
 
 /* MAIN */
 .main {
@@ -128,11 +77,10 @@ body {
     transition: margin-left 0.25s ease;
 }
 
-/*
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
-} */
+}
 
 /* TITULO */
 .main h2 {
@@ -144,27 +92,26 @@ body {
 
 .subtitle {
     text-align: center;
-    color: var(--subtext);
+    color: var(--text);
+    opacity: 0.7;
     margin-bottom: 40px;
     font-size: 15px;
 }
 
-/* GRID 4×2 */
+/* GRID */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 22px;
 }
 
-/* TARJETA EMPRESARIAL */
+/* TARJETAS */
 .card {
-    background: linear-gradient(145deg, #1f2937, #111827);
+    background: var(--card-bg);
     padding: 20px;
     border-radius: 18px;
-
     border: 1px solid rgba(255,255,255,0.05);
-
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 25px var(--shadow);
 
     display: flex;
     align-items: flex-start;
@@ -174,23 +121,18 @@ body {
     transition: all 0.25s ease;
 
     text-decoration: none;
-    color: inherit;
+    color: var(--card-text);
 }
 
 .card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 40px var(--shadow);
 }
-
 
 .card svg {
     width: 26px;
     height: 26px;
-    fill: #00aaff;
-}
-
-/* contenedor visual para icono */
-.card svg {
+    fill: var(--accent);
     background: rgba(0,120,212,0.15);
     padding: 10px;
     border-radius: 10px;
@@ -208,10 +150,8 @@ body {
 
 .card-sub {
     font-size: 13px;
-    color: #9ca3af;
+    opacity: 0.7;
 }
-
-
 </style>
 
 <link rel="stylesheet" href="sidebar.css">
@@ -219,7 +159,6 @@ body {
 </head>
 
 <body>
-
 
 <?php require "sidebar.php"; ?>
 
@@ -298,8 +237,8 @@ body {
         <!-- TEMA OSCURO -->
         <div class="card" onclick="toggleTheme()">
             <svg viewBox="0 0 24 24">
-    <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79 9 9 0 0121 12.79z"/></svg>
-
+                <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79 9 9 0 0121 12.79z"/>
+            </svg>
             <div class="card-content">
                 <div class="card-title">Tema oscuro</div>
                 <div class="card-sub">Cambiar apariencia</div>
@@ -309,13 +248,8 @@ body {
     </div>
 </div>
 
-<script>
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
-}
-
-
-</script>
+<!-- Scripts -->
+<script src="theme.js"></script>
 
 </body>
 </html>
