@@ -256,6 +256,8 @@ body.dark .fila-seleccionada {
     display: none;
 }
 </style>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 </head>
 
 <body>
@@ -264,6 +266,7 @@ body.dark .fila-seleccionada {
 
 <div class="main">
 
+    <?php require "topbar.php"; ?>
     <div class="top-bar">
         <label>Piso:</label>
         <select id="selectPiso">
@@ -598,6 +601,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script>
-
+<script src="theme.js"></script>
 </body>
 </html>

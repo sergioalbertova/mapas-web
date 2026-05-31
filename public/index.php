@@ -166,9 +166,7 @@ body {
     
     <?php require "topbar.php"; ?>
 
-    <h2>Bienvenido, <?= htmlspecialchars($nombreUsuario) ?></h2>
-    <div class="subtitle">Panel principal de operaciones TI</div>
-
+    
     <div class="cards-grid">
 
         <!-- INICIO -->
