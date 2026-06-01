@@ -1,8 +1,8 @@
 /* =========================
-   SIDEBAR TIHIL — TEMA DINÁMICO
+   TEMA DINÁMICO
    ========================= */
 
-.sidebar {
+#sidebar {
     width: 240px;
     min-height: 100vh;
 
@@ -19,16 +19,16 @@
     left: 0;
 
     transition: width 0.25s ease;
-    z-index: 2000;
+    z-index: 2000; /* IMPORTANTE: NO MÁS ALTO QUE EL TOPBAR */
 }
 
 /* Sidebar colapsado */
-.sidebar.collapsed {
+#sidebar.collapsed {
     width: 70px;
 }
 
 /* Encabezado */
-.sidebar-header {
+#sidebar .sidebar-header {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 20px;
@@ -36,19 +36,19 @@
     transition: opacity 0.25s ease;
 }
 
-.sidebar.collapsed .sidebar-header {
+#sidebar.collapsed .sidebar-header {
     opacity: 0;
 }
 
 /* Menú */
-.sidebar-menu {
+#sidebar .sidebar-menu {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
 /* Item */
-.nav-item {
+#sidebar .nav-item {
     padding: 10px 12px;
     border-radius: 8px;
     margin-bottom: 8px;
@@ -64,12 +64,12 @@
     color: var(--sidebar-text);
 }
 
-.nav-item:hover {
+#sidebar .nav-item:hover {
     background: rgba(0, 174, 239, 0.12);
 }
 
 /* Enlaces */
-.nav-item a {
+#sidebar .nav-item a {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -79,19 +79,19 @@
 }
 
 /* Iconos */
-.nav-item svg {
+#sidebar .nav-item svg {
     width: 20px;
     height: 20px;
     fill: currentColor;
 }
 
 /* Ocultar texto al colapsar */
-.sidebar.collapsed .nav-text {
+#sidebar.collapsed .nav-text {
     display: none;
 }
 
 /* Tooltip cuando está colapsado */
-.tooltip {
+#sidebar .tooltip {
     position: absolute;
     left: 80px;
     top: 50%;
@@ -114,7 +114,7 @@
     z-index: 99999;
 }
 
-.sidebar.collapsed .nav-item:hover .tooltip {
+#sidebar.collapsed .nav-item:hover .tooltip {
     opacity: 1;
     left: 75px;
 }
