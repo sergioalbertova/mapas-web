@@ -94,10 +94,6 @@ body {
     border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.sidebar.collapsed ~ .itil-topbar {
-    left: 70px;
-}
-
 .itil-topbar a {
     text-decoration: none;
     color: var(--text);
@@ -134,8 +130,14 @@ body {
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
 
-/* CORRECCIÓN CRÍTICA */
-.sidebar.collapsed ~ .topbar + .itil-topbar + .main {
+/* ============================================================
+   CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
+   ============================================================ */
+#sidebar.collapsed ~ * .itil-topbar {
+    left: 70px !important;
+}
+
+#sidebar.collapsed ~ * .main {
     margin-left: 70px !important;
     width: calc(100% - 70px) !important;
 }
