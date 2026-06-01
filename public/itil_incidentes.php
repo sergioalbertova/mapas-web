@@ -1,17 +1,15 @@
 <?php
 require "session_config.php";
 require "db.php";
-
+$id = $_SESSION['user_id'];
 /* ============================================================
    OBTENER TÉCNICO LOGUEADO
    ============================================================ */
-$tecnico_id = intval($_SESSION['user_id']);
-
-$stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
-$stmt->execute([$tecnico_id]);
-$tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
-
-$nombreTecnico = $tecnico ? $tecnico['usuario'] . " - " . $tecnico['nombre'] : "Usuario";
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 
 /* ============================================================
    OBTENER INCIDENTES
