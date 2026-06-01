@@ -81,7 +81,7 @@ body {
 /* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
-    top: 0;
+    top: 55px; /* debajo del topbar general */
     left: 240px;
     right: 0;
     height: 55px;
@@ -119,7 +119,7 @@ body {
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
-    margin-top: 95px; /* espacio para topbar ITIL */
+    margin-top: 110px; /* 55px topbar general + 55px topbar ITIL */
     padding: 25px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
@@ -176,7 +176,10 @@ td {
 
 <?php require "sidebar.php"; ?>
 
-<!-- === TOPBAR ITIL (FIJO) === -->
+<!-- === TOPBAR GENERAL (PRIMERO) === -->
+<?php require "topbar.php"; ?>
+
+<!-- === TOPBAR ITIL (DEBAJO DEL GENERAL) === -->
 <div class="itil-topbar">
 
     <a href="itil_incidentes.php">
@@ -217,12 +220,9 @@ td {
 </div>
 
 <!-- ========================= -->
-<!-- MAIN + TOPBAR GENERAL     -->
+<!-- MAIN + CONTENIDO         -->
 <!-- ========================= -->
 <div class="main">
-
-    <!-- TOPBAR GENERAL DEL SISTEMA -->
-    <?php require "topbar.php"; ?>
 
     <div class="table-box">
         <h2>Incidentes registrados</h2>
