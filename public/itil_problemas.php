@@ -76,7 +76,7 @@ body {
 /* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
-    top: 60px !important; /* DEBAJO DEL TOPBAR GENERAL */
+    top: 0;
     left: 240px;
     right: 0;
     height: 55px;
@@ -86,53 +86,41 @@ body {
     gap: 25px;
     padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2500 !important; /* DEBAJO DEL GENERAL, ENCIMA DEL CONTENIDO */
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    z-index: 2100;
 }
-
-.sidebar.collapsed ~ .itil-topbar {
-    left: 70px;
-}
+.sidebar.collapsed ~ .itil-topbar { left: 70px; }
 
 .itil-topbar a {
     text-decoration: none;
     color: var(--text);
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 8px;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
     display:flex;
     align-items:center;
-    gap:10px;
-    transition: 0.2s ease;
-    font-size: 15px;
+    gap:8px;
 }
-
-.itil-topbar a:hover {
-    background: var(--sidebar-hover);
-    transform: translateY(-1px);
-}
+.itil-topbar a:hover { background: var(--sidebar-hover); }
 
 .itil-topbar svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     fill: currentColor;
-    opacity: 0.85;
 }
+
 
 /* === MAIN === */
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
-    margin-top: 125px !important; /* 55px general + 60px ITIL */
+    margin-top: 75px;
     padding: 20px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
-
-.sidebar.collapsed ~ .topbar + .itil-topbar + .main {
+#sidebar.collapsed + .itil-topbar + .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
-
 
 /* === TARJETAS === */
 .card-itil {
