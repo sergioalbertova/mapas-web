@@ -78,83 +78,7 @@ body {
     display: flex;
 }
 
-/* ========================= */
-/* SIDEBAR ORIGINAL          */
-/* ========================= */
-.sidebar {
-    width: 240px;
-    background: var(--sidebar-bg);
-    height: 100vh;
-    box-shadow: 4px 0 20px var(--shadow);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    transition: width 0.25s ease;
-    overflow: visible;
-    z-index: 2000;
-}
-.sidebar.collapsed { width: 70px; }
 
-.sidebar h2 {
-    margin: 0 0 20px;
-    font-size: 20px;
-    color: var(--primary);
-    transition: opacity 0.25s ease;
-}
-.sidebar.collapsed h2 { opacity: 0; }
-
-.nav-item {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-}
-.nav-item:hover { background: var(--sidebar-hover); }
-
-.nav-item a {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:inherit;
-    text-decoration:none;
-}
-
-.nav-item svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-.sidebar.collapsed .nav-text { display: none; }
-
-/* TOOLTIP */
-.tooltip {
-    position: absolute;
-    left: 80px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--sidebar-bg);
-    padding: 6px 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px var(--shadow);
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, left 0.2s ease;
-    z-index: 99999;
-}
-.sidebar.collapsed .nav-item:hover .tooltip {
-    opacity: 1;
-    left: 75px;
-}
 
 /* ====== TOPBAR ITIL ====== */
 .itil-topbar {
@@ -244,6 +168,10 @@ td {
 .estado_En_progreso { background: #fff3cd; color: #b8860b; }
 .estado_Cerrado { background: #e8f5e9; color: #2e7d32; }
 </style>
+
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
+
 </head>
 
 <body>
@@ -252,6 +180,7 @@ td {
 <!-- SIDEBAR REAL              -->
 <!-- ========================= -->
 <div class="sidebar" id="sidebar">
+      <?php require "topbar.php"; ?>
 
     <div class="toggle-btn" onclick="toggleSidebar()">
         <svg><path d="M3 12h18M3 6h18M3 18h18"/></svg>
