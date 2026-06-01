@@ -3,10 +3,10 @@ require "session_config.php";
 require "db.php";
 
 $id = $_SESSION['user_id'];
+
 /* ============================================================
    OBTENER TÉCNICO LOGUEADO
    ============================================================ */
-// Obtener nombre real del usuario
 $stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
 $stmt->execute([$id]);
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -36,9 +36,10 @@ $problemas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 
-
 <style>
-/* === TODO EL CSS ES EL MISMO QUE TU ARCHIVO REAL === */
+/* ========================= */
+/* VARIABLES                 */
+/* ========================= */
 :root {
     --bg: #F4F7FA;
     --sidebar-bg: #FFFFFF;
@@ -63,6 +64,9 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
+/* ========================= */
+/* GENERAL                   */
+/* ========================= */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
@@ -71,12 +75,12 @@ body {
     display: flex;
 }
 
-
-
-/* ====== TOPBAR ITIL ====== */
+/* ========================= */
+/* TOPBAR ITIL (DEBAJO)     */
+/* ========================= */
 .itil-topbar {
     position: fixed;
-    top: 0;
+    top: 60px !important; /* DEBAJO DEL TOPBAR GENERAL */
     left: 240px;
     right: 0;
     height: 55px;
@@ -86,43 +90,58 @@ body {
     gap: 25px;
     padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2100;
+    z-index: 2500 !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
-.sidebar.collapsed ~ .itil-topbar { left: 70px; }
+
+.sidebar.collapsed ~ .itil-topbar {
+    left: 70px;
+}
 
 .itil-topbar a {
     text-decoration: none;
     color: var(--text);
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 6px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:10px;
+    transition: 0.2s ease;
+    font-size: 15px;
 }
-.itil-topbar a:hover { background: var(--sidebar-hover); }
+
+.itil-topbar a:hover {
+    background: var(--sidebar-hover);
+    transform: translateY(-1px);
+}
 
 .itil-topbar svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     fill: currentColor;
+    opacity: 0.85;
 }
 
-
-/* === MAIN === */
+/* ========================= */
+/* MAIN                      */
+/* ========================= */
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
-    margin-top: 75px;
+    margin-top: 125px !important; /* 55px general + 60px ITIL */
     padding: 20px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
-#sidebar.collapsed + .itil-topbar + .main {
+
+.sidebar.collapsed ~ .topbar + .itil-topbar + .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
 
-/* === TARJETAS === */
+/* ========================= */
+/* TARJETAS                  */
+/* ========================= */
 .card-itil {
     background: var(--card-bg);
     border-radius: 10px;
@@ -141,8 +160,6 @@ body {
 
 <!-- === TOPBAR GENERAL (PRIMERO) === -->
 <?php require "topbar.php"; ?>
-
-
 
 <!-- === TOPBAR ITIL (DEBAJO DEL GENERAL) === -->
 <div class="itil-topbar">
@@ -225,7 +242,7 @@ body {
 
 </div>
 
-<!-- === SCRIPTS ORIGINALES === -->
+<!-- === SCRIPTS === -->
 <script>
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
