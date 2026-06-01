@@ -39,7 +39,11 @@ $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <meta charset="UTF-8">
 <title>Incidentes ITIL</title>
 
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
+
 <style>
+
 /* ========================= */
 /* VARIABLES                 */
 /* ========================= */
@@ -78,10 +82,28 @@ body {
     display: flex;
 }
 
-/* ====== TOPBAR ITIL ====== */
+/* ========================= */
+/* TOPBAR GENERAL (PRIMERO) */
+/* ========================= */
+.topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 240px;
+    right: 0;
+    height: 55px;
+    z-index: 3000 !important; /* SIEMPRE ARRIBA */
+}
+
+.sidebar.collapsed ~ .topbar {
+    left: 70px;
+}
+
+/* ========================= */
+/* TOPBAR ITIL (DEBAJO)     */
+/* ========================= */
 .itil-topbar {
     position: fixed;
-    top: 55px; /* debajo del topbar general */
+    top: 55px !important; /* DEBAJO DEL GENERAL */
     left: 240px;
     right: 0;
     height: 55px;
@@ -91,9 +113,12 @@ body {
     gap: 25px;
     padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2100;
+    z-index: 2500 !important; /* DEBAJO DEL GENERAL */
 }
-.sidebar.collapsed ~ .itil-topbar { left: 70px; }
+
+.sidebar.collapsed ~ .itil-topbar {
+    left: 70px;
+}
 
 .itil-topbar a {
     text-decoration: none;
@@ -107,24 +132,18 @@ body {
 }
 .itil-topbar a:hover { background: var(--sidebar-hover); }
 
-.itil-topbar svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
 /* ========================= */
 /* MAIN                      */
 /* ========================= */
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
-    margin-top: 110px; /* 55px topbar general + 55px topbar ITIL */
+    margin-top: 110px !important; /* 55 + 55 */
     padding: 25px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
 
-.sidebar.collapsed ~ .itil-topbar + .main {
+.sidebar.collapsed ~ .topbar + .itil-topbar + .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
@@ -165,10 +184,8 @@ td {
 .estado_Abierto { background: #ffebee; color: #c62828; }
 .estado_En_progreso { background: #fff3cd; color: #b8860b; }
 .estado_Cerrado { background: #e8f5e9; color: #2e7d32; }
-</style>
 
-<link rel="stylesheet" href="sidebar.css">
-<link rel="stylesheet" href="topbar.css">
+</style>
 
 </head>
 
