@@ -91,7 +91,8 @@ body {
     left: 240px;
     right: 0;
     height: 55px;
-    z-index: 3000 !important; /* SIEMPRE ARRIBA */
+    z-index: 3000 !important;
+    background: var(--sidebar-bg);
 }
 
 .sidebar.collapsed ~ .topbar {
@@ -103,34 +104,49 @@ body {
 /* ========================= */
 .itil-topbar {
     position: fixed;
-    top: 55px !important; /* DEBAJO DEL GENERAL */
+    top: 60px !important; /* BAJADO PARA QUE NO SE META */
     left: 240px;
     right: 0;
     height: 55px;
-    background: var(--sidebar-bg);
+    background: var(--card-bg);
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 18px;
     padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2500 !important; /* DEBAJO DEL GENERAL */
+    z-index: 2500 !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
 .sidebar.collapsed ~ .itil-topbar {
     left: 70px;
 }
 
+/* ESTILO PROFESIONAL DEL MENÚ ITIL */
 .itil-topbar a {
     text-decoration: none;
     color: var(--text);
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 6px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:10px;
+    transition: 0.2s ease;
+    font-size: 15px;
 }
-.itil-topbar a:hover { background: var(--sidebar-hover); }
+
+.itil-topbar a:hover {
+    background: var(--sidebar-hover);
+    transform: translateY(-1px);
+}
+
+.itil-topbar svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    opacity: 0.85;
+}
 
 /* ========================= */
 /* MAIN                      */
@@ -138,7 +154,7 @@ body {
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
-    margin-top: 110px !important; /* 55 + 55 */
+    margin-top: 125px !important; /* 55 + 60 */
     padding: 25px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
