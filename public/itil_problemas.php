@@ -134,9 +134,10 @@ body {
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
 
+/* CORRECCIÓN CRÍTICA */
 .sidebar.collapsed ~ .topbar + .itil-topbar + .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
+    margin-left: 70px !important;
+    width: calc(100% - 70px) !important;
 }
 
 /* ========================= */
