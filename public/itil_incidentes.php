@@ -78,8 +78,6 @@ body {
     display: flex;
 }
 
-
-
 /* ====== TOPBAR ITIL ====== */
 .itil-topbar {
     position: fixed;
@@ -115,18 +113,18 @@ body {
     fill: currentColor;
 }
 
-
 /* ========================= */
 /* MAIN                      */
 /* ========================= */
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
-    margin-top: 95px;
+    margin-top: 95px; /* espacio para topbar ITIL */
     padding: 25px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
-#sidebar.collapsed + .itil-topbar + .main {
+
+.sidebar.collapsed ~ .itil-topbar + .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
@@ -175,11 +173,10 @@ td {
 </head>
 
 <body>
-    <?php require "sidebar.php"; ?>
- <?php require "topbar.php"; ?>
 
+<?php require "sidebar.php"; ?>
 
-<!-- === TOPBAR REAL === -->
+<!-- === TOPBAR ITIL (FIJO) === -->
 <div class="itil-topbar">
 
     <a href="itil_incidentes.php">
@@ -199,12 +196,12 @@ td {
 
     <a href="itil_catalogo.php">
         <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Catalogo Incidentes
+        Catálogo Incidentes
     </a>
 
     <a href="itil_solicitudes.php">
         <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Solicitudes
+        En Proceso
     </a>
 
     <a href="itil_sla.php">
@@ -220,9 +217,13 @@ td {
 </div>
 
 <!-- ========================= -->
-<!-- MAIN                      -->
+<!-- MAIN + TOPBAR GENERAL     -->
 <!-- ========================= -->
 <div class="main">
+
+    <!-- TOPBAR GENERAL DEL SISTEMA -->
+    <?php require "topbar.php"; ?>
+
     <div class="table-box">
         <h2>Incidentes registrados</h2>
 
