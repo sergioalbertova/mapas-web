@@ -1,12 +1,15 @@
 <?php
 session_start();
+require "db.php";
 
-// Eliminar todas las variables de sesión
-session_unset();
+if (isset($_SESSION['user_id'])) {
+    $stmt = $pdo->prepare("UPDATE usuarios SET remember_token = NULL WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+}
 
-// Destruir la sesión
+setcookie("remember_token", "", time() - 3600, "/");
+
 session_destroy();
-
-// Redirigir al login
 header("Location: login.php");
 exit;
+?>
