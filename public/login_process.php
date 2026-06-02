@@ -13,7 +13,16 @@ $clave   = trim($_POST['clave']);
 
 // Buscar usuario
 $stmt = $pdo->prepare("SELECT id, usuario, clave FROM usuarios WHERE usuario = ?");
-$stmt->execute([$usuario]);
+
+$stmt = $pdo->prepare("
+    SELECT id, usuario, clave 
+    FROM usuarios 
+    WHERE LOWER(usuario) = LOWER(:u)
+");
+$stmt->execute([':u' => $usuario]);
+
+
+//$stmt->execute([$usuario]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Validar usuario y contraseña
