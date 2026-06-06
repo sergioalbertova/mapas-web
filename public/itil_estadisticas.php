@@ -295,6 +295,7 @@ if (!empty($paramsURL)) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    
 <meta charset="UTF-8">
 <title>Dashboard de estadísticas</title>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -302,6 +303,147 @@ if (!empty($paramsURL)) {
 <link rel="stylesheet" href="itil_estadisticas.css">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
+<style>
+/* ========================= */
+/* VARIABLES                 */
+/* ========================= */
+:root {
+    --bg: #F4F7FA;
+    --sidebar-bg: #FFFFFF;
+    --sidebar-hover: #E8EEF5;
+    --card-bg: #FFFFFF;
+    --text: #1F2933;
+    --subtext: #6B7280;
+    --primary: #0054A6;
+    --primary-hover: #003F7D;
+    --shadow: rgba(0,0,0,0.08);
+}
+
+body.dark {
+    --bg: #1A1D21;
+    --sidebar-bg: #24272C;
+    --sidebar-hover: #2F3338;
+    --card-bg: #2C2F34;
+    --text: #E5E7EB;
+    --subtext: #9CA3AF;
+    --primary: #4FC3F7;
+    --primary-hover: #81D4FA;
+    --shadow: rgba(0,0,0,0.45);
+}
+
+/* ========================= */
+/* GENERAL                   */
+/* ========================= */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+}
+
+/* ========================= */
+/* TOPBAR GENERAL (PRIMERO) */
+/* ========================= */
+.topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 240px;
+    right: 0;
+    height: 55px;
+    z-index: 3000 !important;
+    background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+#sidebar.collapsed ~ .topbar {
+    left: 70px;
+}
+
+
+/* ========================= */
+/* TOPBAR ITIL (DEBAJO)     */
+/* ========================= */
+.itil-topbar {
+    position: fixed;
+    top: 60px !important; /* DEBAJO DEL TOPBAR GENERAL */
+    left: 240px;
+    right: 0;
+    height: 55px;
+    background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 0 25px;
+    box-shadow: 0 2px 8px var(--shadow);
+    z-index: 2500 !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transition: 0.2s ease;
+    font-size: 15px;
+}
+
+.itil-topbar a:hover {
+    background: var(--sidebar-hover);
+    transform: translateY(-1px);
+}
+
+.itil-topbar svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    opacity: 0.85;
+}
+
+/* ========================= */
+/* MAIN                      */
+/* ========================= */
+.main {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    margin-top: 125px !important; /* 55px general + 60px ITIL */
+    padding: 20px;
+    transition: margin-left 0.25s ease, width 0.25s ease;
+}
+
+/* ============================================================
+   CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
+   ============================================================ */
+#sidebar.collapsed ~ * .itil-topbar {
+    left: 70px !important;
+}
+
+#sidebar.collapsed ~ * .main {
+    margin-left: 70px !important;
+    width: calc(100% - 70px) !important;
+}
+
+/* ========================= */
+/* TARJETAS                  */
+/* ========================= */
+.card-itil {
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px var(--shadow);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+}
+
+.modal { position: fixed !important; }
+</style>
 </head>
 <body>
 
