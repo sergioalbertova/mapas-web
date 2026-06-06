@@ -301,90 +301,7 @@ if (!empty($paramsURL)) {
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 <link rel="stylesheet" href="itil_estadisticas.css">
-<style>
 
-
-/* ========================= */
-/* TOPBAR GENERAL (PRIMERO) */
-/* ========================= */
-.topbar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    z-index: 3000 !important;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    box-shadow: 0 2px 8px var(--shadow);
-}
-
-#sidebar.collapsed ~ .topbar {
-    left: 70px;
-}
-
-
-/* ========================= */
-/* TOPBAR ITIL (DEBAJO)     */
-/* ========================= */
-.itil-topbar {
-    position: fixed;
-    top: 60px !important; /* DEBAJO DEL TOPBAR GENERAL */
-    left: 240px;
-    right: 0;
-    height: 55px;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 0 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2500 !important;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-}
-
-.itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 8px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    transition: 0.2s ease;
-    font-size: 15px;
-}
-
-.itil-topbar a:hover {
-    background: var(--sidebar-hover);
-    transform: translateY(-1px);
-}
-
-.itil-topbar svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-    opacity: 0.85;
-}
-
-
-/* ============================================================
-   CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
-   ============================================================ */
-#sidebar.collapsed ~ * .itil-topbar {
-    left: 70px !important;
-}
-
-#sidebar.collapsed ~ * .main {
-    margin-left: 70px !important;
-    width: calc(100% - 70px) !important;
-}
-
-
-</style>
 </head>
 <body>
 
@@ -438,7 +355,7 @@ if (!empty($paramsURL)) {
 <br/>
 
 <!-- FILTROS SUPERIORES -->
- <center>
+
 
 <div class="filtro-bar">
 
@@ -483,7 +400,7 @@ if (!empty($paramsURL)) {
 
     </div>
 </div>
-<center/>
+
 <!-- BANNER DE FILTRO POR TÉCNICO -->
 <?php if ($tecnicoFiltro): ?>
 <div class="filtro-filtro-activo">
