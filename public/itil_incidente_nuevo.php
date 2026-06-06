@@ -104,19 +104,17 @@ body {
     left: 240px;
     right: 0;
     height: 55px;
-    background: var(--card-bg);
+    background: var(--sidebar-bg);
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 25px;
     padding: 0 25px;
     box-shadow: 0 2px 8px var(--shadow);
     z-index: 2500 !important;
     border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.sidebar.collapsed ~ .itil-topbar {
-    left: 70px;
-}
+
 
 .itil-topbar a {
     text-decoration: none;
@@ -150,13 +148,20 @@ body {
     margin-left: 240px;
     width: calc(100% - 240px);
     margin-top: 125px !important;
-    padding: 25px;
+   padding: 20px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
 
-.sidebar.collapsed ~ .topbar + .itil-topbar + .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
+/* ============================================================
+   CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
+   ============================================================ */
+#sidebar.collapsed ~ * .itil-topbar {
+    left: 70px !important;
+}
+
+#sidebar.collapsed ~ * .main {
+    margin-left: 70px !important;
+    width: calc(100% - 70px) !important;
 }
 
 /* ====== FORM ====== */
@@ -241,44 +246,45 @@ button:hover {
 
 <!-- === TOPBAR GENERAL (PRIMERO) === -->
 <?php require "topbar.php"; ?>
-<!-- ====== TOPBAR ITIL ====== -->
+
+<!-- === TOPBAR ITIL (DEBAJO DEL GENERAL) === -->
 <div class="itil-topbar">
+
     <a href="itil_incidentes.php">
         <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
         Incidentes
     </a>
 
     <a href="itil_incidente_nuevo.php">
-        <svg><path d="M12 5v14m7-7H5"/></svg>
-        Nuevo incidente
+        <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Nuevo
     </a>
 
     <a href="itil_problemas.php">
-        <svg><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+        <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Problemas
     </a>
 
-      <a href="itil_catalogo.php">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M4 4h16v4H4zm0 6h16v10H4z" />
-        </svg>
-        Catalogo Incidentes
+    <a href="itil_catalogo.php">
+        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
+        Catálogo Incidentes
     </a>
 
     <a href="itil_solicitudes.php">
-        <svg><path d="M3 6h18v12H3z"/></svg>
-        Solicitudes
+        <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        En Proceso
     </a>
 
     <a href="itil_sla.php">
-        <svg><path d="M12 2v20m10-10H2"/></svg>
+        <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         SLA
     </a>
 
     <a href="itil_estadisticas.php">
-        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8"/></svg>
+        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Estadísticas
     </a>
+
 </div>
 
 <!-- ====== MAIN ====== -->
