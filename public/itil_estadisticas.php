@@ -307,40 +307,7 @@ if (!empty($paramsURL)) {
 /* ========================= */
 /* VARIABLES                 */
 /* ========================= */
-:root {
-    --bg: #F4F7FA;
-    --sidebar-bg: #FFFFFF;
-    --sidebar-hover: #E8EEF5;
-    --card-bg: #FFFFFF;
-    --text: #1F2933;
-    --subtext: #6B7280;
-    --primary: #0054A6;
-    --primary-hover: #003F7D;
-    --shadow: rgba(0,0,0,0.08);
-}
 
-body.dark {
-    --bg: #1A1D21;
-    --sidebar-bg: #24272C;
-    --sidebar-hover: #2F3338;
-    --card-bg: #2C2F34;
-    --text: #E5E7EB;
-    --subtext: #9CA3AF;
-    --primary: #4FC3F7;
-    --primary-hover: #81D4FA;
-    --shadow: rgba(0,0,0,0.45);
-}
-
-/* ========================= */
-/* GENERAL                   */
-/* ========================= */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-}
 
 /* ========================= */
 /* TOPBAR GENERAL (PRIMERO) */
