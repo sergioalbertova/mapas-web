@@ -438,6 +438,8 @@ if (!empty($paramsURL)) {
 <br/>
 
 <!-- FILTROS SUPERIORES -->
+ <center>
+
 <div class="filtro-bar">
 
     <!-- FILTRO POR FECHAS -->
@@ -481,7 +483,7 @@ if (!empty($paramsURL)) {
 
     </div>
 </div>
-
+<center/>
 <!-- BANNER DE FILTRO POR TÉCNICO -->
 <?php if ($tecnicoFiltro): ?>
 <div class="filtro-filtro-activo">
