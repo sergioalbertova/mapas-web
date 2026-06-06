@@ -431,18 +431,7 @@ body {
     width: calc(100% - 70px) !important;
 }
 
-/* ========================= */
-/* TARJETAS                  */
-/* ========================= */
-.card-itil {
-    background: var(--card-bg);
-    border-radius: 10px;
-    box-shadow: 0 2px 6px var(--shadow);
-    padding: 14px 16px;
-    margin-bottom: 14px;
-}
 
-.modal { position: fixed !important; }
 </style>
 </head>
 <body>
