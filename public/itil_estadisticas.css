@@ -49,8 +49,13 @@ body {
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 6px var(--shadow);
-    align-self: center;
+    
 }
+.filtro-bar {
+    margin: 0 auto;
+    width: fit-content;
+}
+
 
 .filtro-row {
     display: flex;
