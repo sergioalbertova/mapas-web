@@ -174,6 +174,24 @@ body {
     margin: auto;
 }
 
+/* SOLO el botón del formulario, no los del topbar */
+.form-box button {
+    margin-top: 25px;
+    padding: 12px 18px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.form-box button:hover {
+    background: var(--primary-hover);
+}
+
 label { 
     font-weight: bold; 
     margin-top: 15px; 
@@ -196,28 +214,13 @@ textarea {
 }
 
 /* ====== BOTÓN AZUL ====== */
-button {
-    margin-top: 25px;
-    padding: 12px 18px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    transition: 0.2s;
-}
 
-button:hover {
-    background: var(--primary-hover);
-}
 
 /* ====== AUTOCOMPLETE ====== */
 .lista {
     background: var(--card-bg);
     border: 1px solid var(--sidebar-hover);
-    border-radius: 6px;
+    borderbutton-radius: 6px;
     max-height: 200px;
     overflow-y: auto;
     display: none;
