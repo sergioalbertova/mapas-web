@@ -408,28 +408,8 @@ body {
     opacity: 0.85;
 }
 
-/* ========================= */
-/* MAIN                      */
-/* ========================= */
-.main {
-    margin-left: 240px;
-    width: calc(100% - 240px);
-    margin-top: 125px !important; /* 55px general + 60px ITIL */
-    padding: 20px;
-    transition: margin-left 0.25s ease, width 0.25s ease;
-}
 
-/* ============================================================
-   CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
-   ============================================================ */
-#sidebar.collapsed ~ * .itil-topbar {
-    left: 70px !important;
-}
 
-#sidebar.collapsed ~ * .main {
-    margin-left: 70px !important;
-    width: calc(100% - 70px) !important;
-}
 
 
 </style>
