@@ -432,6 +432,10 @@ if (!empty($paramsURL)) {
     </a>
 
 </div>
+<br/>
+<br/>
+<br/>
+<br/>
 
 <!-- FILTROS SUPERIORES -->
 <div class="filtro-bar">
