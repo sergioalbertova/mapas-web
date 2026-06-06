@@ -81,9 +81,11 @@ body {
     height: 55px;
     z-index: 3000 !important;
     background: var(--sidebar-bg);
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     padding: 0 20px;
     box-shadow: 0 2px 8px var(--shadow);
 }
@@ -91,6 +93,7 @@ body {
 .sidebar.collapsed ~ .topbar {
     left: 70px;
 }
+
 
 /* ========================= */
 /* TOPBAR ITIL (DEBAJO)     */
