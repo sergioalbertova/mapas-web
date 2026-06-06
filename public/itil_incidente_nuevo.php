@@ -48,6 +48,7 @@ $catalogo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     --primary-hover: #003F7D;
     --shadow: rgba(0,0,0,0.08);
 }
+
 body.dark {
     --bg: #1A1D21;
     --sidebar-bg: #24272C;
@@ -80,19 +81,23 @@ body {
     height: 55px;
     z-index: 3000 !important;
     background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .sidebar.collapsed ~ .topbar {
     left: 70px;
 }
 
-
 /* ========================= */
 /* TOPBAR ITIL (DEBAJO)     */
 /* ========================= */
 .itil-topbar {
     position: fixed;
-    top: 60px !important; /* BAJADO PARA QUE NO SE META */
+    top: 60px !important;
     left: 240px;
     right: 0;
     height: 55px;
@@ -110,7 +115,6 @@ body {
     left: 70px;
 }
 
-/* ESTILO PROFESIONAL DEL MENÚ ITIL */
 .itil-topbar a {
     text-decoration: none;
     color: var(--text);
@@ -142,7 +146,7 @@ body {
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
-    margin-top: 125px !important; /* 55 + 60 */
+    margin-top: 125px !important;
     padding: 25px;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
@@ -158,32 +162,47 @@ body {
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 3px 10px var(--shadow);
+    max-width: 900px;
+    margin: auto;
 }
-label { font-weight: bold; margin-top: 15px; display: block; }
+
+label { 
+    font-weight: bold; 
+    margin-top: 15px; 
+    display: block; 
+}
+
 input, select, textarea {
-    width: 100%; padding: 10px; margin-top: 6px;
-    border-radius: 6px; border: 1px solid var(--sidebar-hover);
-    background: var(--bg); color: var(--text);
+    width: 100%; 
+    padding: 10px; 
+    margin-top: 6px;
+    border-radius: 6px; 
+    border: 1px solid var(--sidebar-hover);
+    background: var(--bg); 
+    color: var(--text);
 }
-textarea { height: 120px; resize: vertical; }
+
+textarea { 
+    height: 120px; 
+    resize: vertical; 
+}
 
 /* ====== BOTÓN AZUL ====== */
 button {
     margin-top: 25px;
-    padding: 14px 22px;
+    padding: 12px 18px;
     background: var(--primary);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    box-shadow: 0 3px 6px var(--shadow);
+    font-size: 15px;
+    font-weight: 600;
     transition: 0.2s;
 }
+
 button:hover {
     background: var(--primary-hover);
-    transform: scale(1.03);
 }
 
 /* ====== AUTOCOMPLETE ====== */
@@ -198,6 +217,7 @@ button:hover {
     width: 100%;
     z-index: 3000;
 }
+
 .lista div { padding: 10px; cursor: pointer; }
 .lista div:hover { background: var(--sidebar-hover); }
 
@@ -209,6 +229,7 @@ button:hover {
 .fila-3 > div {
     flex: 1;
 }
+
 </style>
 </head>
 
