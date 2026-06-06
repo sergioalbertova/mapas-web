@@ -33,7 +33,8 @@ $catalogo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 <head>
 <meta charset="UTF-8">
 <title>Nuevo incidente ITIL</title>
-
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 <style>
 /* ====== VARIABLES ====== */
 :root {
