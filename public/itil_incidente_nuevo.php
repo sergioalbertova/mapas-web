@@ -69,6 +69,22 @@ body {
     display: flex;
 }
 
+/* ========================= */
+/* TOPBAR GENERAL (PRIMERO) */
+/* ========================= */
+.topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 240px;
+    right: 0;
+    height: 55px;
+    z-index: 3000 !important;
+    background: var(--sidebar-bg);
+}
+
+.sidebar.collapsed ~ .topbar {
+    left: 70px;
+}
 
 
 /* ====== TOPBAR ITIL ====== */
