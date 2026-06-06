@@ -299,10 +299,10 @@ if (!empty($paramsURL)) {
 <meta charset="UTF-8">
 <title>Dashboard de estadísticas</title>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
-<link rel="stylesheet" href="itil_estadisticas.css">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
+<link rel="stylesheet" href="itil_estadisticas.css">
+
 <style>
 /* ========================= */
 /* VARIABLES                 */
