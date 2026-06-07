@@ -375,7 +375,21 @@ if (!empty($paramsURL)) {
     opacity: 0.85;
 }
 
+/* NAVEGACIÓN GLASS */
+.navegacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    background: rgba(255,255,255,0.4);
+}
 
+body.dark .navegacion {
+    background: rgba(0,0,0,0.25);
+}
 
 
 
