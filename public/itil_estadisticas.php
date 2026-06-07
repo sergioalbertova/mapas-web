@@ -390,6 +390,14 @@ if (!empty($paramsURL)) {
 body.dark .navegacion {
     background: rgba(0,0,0,0.25);
 }
+.itil-topbar {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(10px);
+}
+
+body.dark .itil-topbar {
+    background: rgba(36, 39, 44, 0.65) !important;
+}
 
 
 
