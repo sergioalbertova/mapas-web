@@ -60,6 +60,18 @@
             </a>
         </li>
 
+        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
+            <li class="nav-item">
+                <a href="activeuser_admin.php">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2l8 4v6c0 5-3.5 9.7-8 10-4.5-.3-8-5-8-10V6l8-4zm-1 13l5-5-1.4-1.4L11 12.2l-1.6-1.6L8 12l3 3z"/>
+                    </svg>
+                    <span class="nav-text">Modificar usuarios</span>
+                </a>
+            </li>
+        <?php endif; ?>
+
+
         <li class="nav-item">
             <a href="logout.php">
                 <svg viewBox="0 0 24 24">
