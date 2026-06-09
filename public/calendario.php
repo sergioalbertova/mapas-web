@@ -359,44 +359,15 @@ body.dark .icono-futbol {
 }
 
 .icono-guardia {
-    width: 20px;
-    height: 20px;
-    fill: var(--primary);
-    margin: 0 6px;
-    display: inline-block;
-    transform-box: fill-box;
-    transform-origin: center;
-}
-
-body.dark .icono-guardia {
-    fill: #4fc3ff;
-}
-
-/* Animación */
-.rebote {
-    animation: reboteGuardia 0.8s ease-in-out infinite;
-}
-
-@keyframes reboteGuardia {
-    0%   { transform: translateY(0); }
-    30%  { transform: translateY(-5px); }
-    50%  { transform: translateY(0); }
-    70%  { transform: translateY(-3px); }
-    100% { transform: translateY(0); }
-}
-
-.icono-guardia {
     width: 18px;
     height: 18px;
-    fill: #00AEEF !important; /* azul TIHIL brillante */
+    color: #00AEEF !important; /* azul TIHIL */
     margin-right: 6px;
     display: inline-block;
-    transform-box: fill-box;
-    transform-origin: center;
 }
 
 body.dark .icono-guardia {
-    fill: #4fc3ff !important; /* azul claro en modo oscuro */
+    color: #4fc3ff !important; /* azul claro en modo oscuro */
 }
 
 /* Animación */
@@ -411,6 +382,7 @@ body.dark .icono-guardia {
     70%  { transform: translateY(-3px); }
     100% { transform: translateY(0); }
 }
+
 
 
 </style>
@@ -508,14 +480,14 @@ while ($dia <= $diasMes) {
     echo "<td class='".implode(' ', $clases)."'>";
     echo "<div class='dia-numero'>$dia</div>";
 
-  if ($cumple) {
-    echo "<div class='cumple-wrapper'>
-            <svg class='icono-futbol rebote' viewBox='0 0 24 24' style='overflow: visible;'>
-                <path d='M12 2a10 10 0 100 20 10 10 0 000-20zm5.93 6.36l-2.12-.3-1.06-1.88 1.3-1.8a8.03 8.03 0 012.88 3.98zM9.25 4.18l1.3 1.8-1.06 1.88-2.12.3a8.03 8.03 0 012.88-3.98zM4.07 14.36a8.03 8.03 0 01-.02-4.72l1.8 1.3.3 2.12-1.88 1.06zm3.18 5.46l-.3-2.12 1.88-1.06 1.8 1.3a8.03 8.03 0 01-3.38.88zm6.5-.88l1.8-1.3 1.88 1.06-.3 2.12a8.03 8.03 0 01-3.38-.88zm5.18-4.58l-1.88-1.06.3-2.12 1.8-1.3a8.03 8.03 0 01-.22 4.48zM12 14.5l-2.12-1.06-.3-2.12L12 10l2.42 1.32-.3 2.12L12 14.5z'/>
-            </svg>
-            <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
-          </div>";
-}
+    if ($cumple) {
+        echo "<div class='cumple-wrapper'>
+                <svg class='icono-futbol rebote' viewBox='0 0 24 24' style='overflow: visible;'>
+                    <path d='M12 2a10 10 0 100 20 10 10 0 000-20zm5.93 6.36l-2.12-.3-1.06-1.88 1.3-1.8a8.03 8.03 0 012.88 3.98zM9.25 4.18l1.3 1.8-1.06 1.88-2.12.3a8.03 8.03 0 012.88-3.98zM4.07 14.36a8.03 8.03 0 01-.02-4.72l1.8 1.3.3 2.12-1.88 1.06zm3.18 5.46l-.3-2.12 1.88-1.06 1.8 1.3a8.03 8.03 0 01-3.38.88zm6.5-.88l1.8-1.3 1.88 1.06-.3 2.12a8.03 8.03 0 01-3.38-.88zm5.18-4.58l-1.88-1.06.3-2.12 1.8-1.3a8.03 8.03 0 01-.22 4.48zM12 14.5l-2.12-1.06-.3-2.12L12 10l2.42 1.32-.3 2.12L12 14.5z'/>
+                </svg>
+                <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
+              </div>";
+    }
 
     if ($tecnico) {
         $color = $colores[$tecnico] ?? "#333";
@@ -523,12 +495,11 @@ while ($dia <= $diasMes) {
         echo "<div class='tecnico' style='background:$color'>";
 
         // SOLO HOY aparece el ícono animado de guardia
-       if ($fecha == $hoy) {
-    echo "<svg class='icono-guardia rebote' viewBox='0 0 24 24' style='overflow: visible;'>
-            <path d='M12 2l8 4v6c0 5-3.5 9.7-8 10-4.5-.3-8-5-8-10V6l8-4zm-1 13l5-5-1.4-1.4L11 12.2l-1.6-1.6L8 12l3 3z'/>
-          </svg>";
-                            }
-
+        if ($fecha == $hoy) {
+            echo "<svg class='icono-guardia rebote' viewBox='0 0 24 24' fill='currentColor' style='overflow: visible;'>
+                    <path d='M12 2l8 4v6c0 5-3.5 9.7-8 10-4.5-.3-8-5-8-10V6l8-4zm-1 13l5-5-1.4-1.4L11 12.2l-1.6-1.6L8 12l3 3z'/>
+                  </svg>";
+        }
 
         echo htmlspecialchars($tecnico) . "</div>";
     }
@@ -549,5 +520,6 @@ while ($dia <= $diasMes) {
 <script src="theme.js"></script>
 
 </body>
+
 
 </html>
