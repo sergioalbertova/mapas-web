@@ -435,13 +435,6 @@ body.dark .icono-guardia {
 <?php if ($mostrarHoy): ?>
 <div class="info-hoy">
     <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia:
-
-    <?php if (!empty($tecnicoHoy)): ?>
-        <svg class="icono-guardia rebote" viewBox="0 0 24 24" style="overflow: visible;">
-            <path d="M12 2a7 7 0 00-7 7v3a3 3 0 003 3h1v-6H8V9a4 4 0 118 0v1h-1v6h1a3 3 0 003-3V9a7 7 0 00-7-7z"/>
-        </svg>
-    <?php endif; ?>
-
     <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
 </div>
 <?php endif; ?>
@@ -480,15 +473,7 @@ while ($dia <= $diasMes) {
     $cumpleanero = $info['cumpleanero'] ?? null;
 
     $clases = [];
-    // SOLO HOY aparece el ícono animado
-    if ($fecha == $hoy) {
-        echo "<svg class='icono-guardia rebote' viewBox='0 0 24 24' style='overflow: visible;'>
-                <path d='M12 2a7 7 0 00-7 7v3a3 3 0 003 3h1v-6H8V9a4 4 0 118 0v1h-1v6h1a3 3 0 003-3V9a7 7 0 00-7-7z'/>
-              </svg>";
-    }
-
-
-
+    if ($fecha == $hoy) $clases[] = "hoy";
 
     if ($dow == 6) $clases[] = "sabado";
     if ($dow == 7) $clases[] = "domingo";
@@ -506,11 +491,19 @@ while ($dia <= $diasMes) {
           </div>";
 }
 
-
-
     if ($tecnico) {
         $color = $colores[$tecnico] ?? "#333";
-        echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
+
+        echo "<div class='tecnico' style='background:$color'>";
+
+        // SOLO HOY aparece el ícono animado de guardia
+        if ($fecha == $hoy) {
+            echo "<svg class='icono-guardia rebote' viewBox='0 0 24 24' style='overflow: visible;'>
+                    <path d='M12 2a7 7 0 00-7 7v3a3 3 0 003 3h1v-6H8V9a4 4 0 118 0v1h-1v6h1a3 3 0 003-3V9a7 7 0 00-7-7z'/>
+                  </svg>";
+        }
+
+        echo htmlspecialchars($tecnico) . "</div>";
     }
 
     echo "</td>";
@@ -529,4 +522,5 @@ while ($dia <= $diasMes) {
 <script src="theme.js"></script>
 
 </body>
+
 </html>
