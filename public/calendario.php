@@ -329,6 +329,25 @@ body.dark .navegacion {
     vertical-align: middle;
 }
 
+/* ANIMACIÓN DE REBOTE */
+.rebote {
+    animation: reboteFutbol 0.8s ease-in-out infinite;
+}
+
+@keyframes reboteFutbol {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(-6px); }
+    50%  { transform: translateY(0); }
+    70%  { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
+/* MODO OSCURO */
+body.dark .icono-futbol {
+    fill: #4fc3ff;
+}
+
+
 
 </style>
 
