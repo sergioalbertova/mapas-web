@@ -32,6 +32,85 @@ if (!$user) {
 <link rel="stylesheet" href="topbar.css">
 
 <style>
+
+:root {
+    --bg: #F4F7FA;
+    --text: #1F2933;
+
+    --topbar-bg: rgba(255,255,255,0.85);
+    --topbar-text: #1F2933;
+    --topbar-border: rgba(0,0,0,0.1);
+
+    --sidebar-bg: #FFFFFF;
+    --sidebar-text: #1F2933;
+    --sidebar-border: rgba(0,0,0,0.1);
+
+    --card-bg: #FFFFFF;
+    --card-text: #1F2933;
+
+    --accent: #00AEEF;
+    --shadow: rgba(0,0,0,0.08);
+}
+
+body.dark {
+    --bg: #0f172a;
+    --text: #E5E7EB;
+
+    --topbar-bg: rgba(17,24,39,0.85);
+    --topbar-text: #E5E7EB;
+    --topbar-border: rgba(255,255,255,0.1);
+
+    --sidebar-bg: #020617;
+    --sidebar-text: #E5E7EB;
+    --sidebar-border: rgba(255,255,255,0.1);
+
+    --card-bg: #1f2937;
+    --card-text: #E5E7EB;
+
+    --shadow: rgba(0,0,0,0.45);
+}
+
+/* ============================
+     ESTILOS BASE
+     ============================ */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* MAIN */
+.main {
+    margin-left: 240px;
+    padding: 20px 40px;
+    width: calc(100% - 240px);
+    transition: margin-left 0.25s ease;
+}
+
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+/* TITULO */
+.main h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text);
+    opacity: 0.7;
+    margin-bottom: 40px;
+    font-size: 15px;
+}
+
 .contenedor {
     padding: 20px;
 }
