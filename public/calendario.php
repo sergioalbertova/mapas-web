@@ -327,13 +327,19 @@ body.dark .navegacion {
     fill: #00aaff;
     margin-right: 6px;
 
-    /* ESTO ES LO QUE HACE QUE EL SVG ACEPTE TRANSFORMACIONES */
     display: inline-block;
     transform-box: fill-box;
     transform-origin: center;
 }
 
-/* ANIMACIÓN DE REBOTE */
+.icono-futbol:hover {
+    transform: none !important;
+}
+.cumple-wrapper {
+    transform: none !important;
+}
+
+
 .rebote {
     animation: reboteFutbol 0.8s ease-in-out infinite;
 }
@@ -345,6 +351,7 @@ body.dark .navegacion {
     70%  { transform: translateY(-3px); }
     100% { transform: translateY(0); }
 }
+
 
 /* MODO OSCURO */
 body.dark .icono-futbol {
