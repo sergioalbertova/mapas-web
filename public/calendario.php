@@ -359,18 +359,17 @@ body.dark .icono-futbol {
 }
 
 .icono-guardia {
-    width: 18px;
-    height: 18px;
-    fill: white; /* se ve bien sobre el fondo del técnico */
-    margin-right: 6px;
-
+    width: 20px;
+    height: 20px;
+    fill: var(--primary);
+    margin: 0 6px;
     display: inline-block;
     transform-box: fill-box;
     transform-origin: center;
 }
 
 body.dark .icono-guardia {
-    fill: #e0f7ff;
+    fill: #4fc3ff;
 }
 
 /* Animación */
@@ -435,9 +434,18 @@ body.dark .icono-guardia {
 
 <?php if ($mostrarHoy): ?>
 <div class="info-hoy">
-    <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+    <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia:
+
+    <?php if (!empty($tecnicoHoy)): ?>
+        <svg class="icono-guardia rebote" viewBox="0 0 24 24" style="overflow: visible;">
+            <path d="M12 2a7 7 0 00-7 7v3a3 3 0 003 3h1v-6H8V9a4 4 0 118 0v1h-1v6h1a3 3 0 003-3V9a7 7 0 00-7-7z"/>
+        </svg>
+    <?php endif; ?>
+
+    <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
 </div>
 <?php endif; ?>
+
 
 
 
@@ -492,16 +500,9 @@ while ($dia <= $diasMes) {
 
 
     if ($tecnico) {
-    $color = $colores[$tecnico] ?? "#333";
-
-    echo "<div class='tecnico' style='background:$color'>
-            <svg class='icono-guardia rebote' viewBox='0 0 24 24' style='overflow: visible;'>
-                <path d='M12 2a7 7 0 00-7 7v3a3 3 0 003 3h1v-6H8V9a4 4 0 118 0v1h-1v6h1a3 3 0 003-3V9a7 7 0 00-7-7z'/>
-            </svg>
-            " . htmlspecialchars($tecnico) . "
-          </div>";
-}
-
+        $color = $colores[$tecnico] ?? "#333";
+        echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
+    }
 
     echo "</td>";
 
