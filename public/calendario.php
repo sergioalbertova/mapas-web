@@ -358,6 +358,33 @@ body.dark .icono-futbol {
     fill: #4fc3ff;
 }
 
+.icono-guardia {
+    width: 18px;
+    height: 18px;
+    fill: white; /* se ve bien sobre el fondo del técnico */
+    margin-right: 6px;
+
+    display: inline-block;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+body.dark .icono-guardia {
+    fill: #e0f7ff;
+}
+
+/* Animación */
+.rebote {
+    animation: reboteGuardia 0.8s ease-in-out infinite;
+}
+
+@keyframes reboteGuardia {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(-5px); }
+    50%  { transform: translateY(0); }
+    70%  { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
 
 
 
@@ -465,9 +492,16 @@ while ($dia <= $diasMes) {
 
 
     if ($tecnico) {
-        $color = $colores[$tecnico] ?? "#333";
-        echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
-    }
+    $color = $colores[$tecnico] ?? "#333";
+
+    echo "<div class='tecnico' style='background:$color'>
+            <svg class='icono-guardia rebote' viewBox='0 0 24 24' style='overflow: visible;'>
+                <path d='M12 2a7 7 0 00-7 7v3a3 3 0 003 3h1v-6H8V9a4 4 0 118 0v1h-1v6h1a3 3 0 003-3V9a7 7 0 00-7-7z'/>
+            </svg>
+            " . htmlspecialchars($tecnico) . "
+          </div>";
+}
+
 
     echo "</td>";
 
