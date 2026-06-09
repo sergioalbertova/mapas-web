@@ -324,9 +324,13 @@ body.dark .navegacion {
 .icono-futbol {
     width: 20px;
     height: 20px;
-    fill: #00aaff; /* color TIHIL */
+    fill: #00aaff;
     margin-right: 6px;
-    vertical-align: middle;
+
+    /* ESTO ES LO QUE HACE QUE EL SVG ACEPTE TRANSFORMACIONES */
+    display: inline-block;
+    transform-box: fill-box;
+    transform-origin: center;
 }
 
 /* ANIMACIÓN DE REBOTE */
@@ -346,6 +350,7 @@ body.dark .navegacion {
 body.dark .icono-futbol {
     fill: #4fc3ff;
 }
+
 
 
 
