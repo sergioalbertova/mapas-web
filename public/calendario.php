@@ -320,6 +320,22 @@ body.dark .navegacion {
 /* FINES DE SEMANA */
 .sabado { background: #9ea0a1 !important; }
 .domingo { background: #838788 !important; }
+
+.icono-futbol {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('data:image/svg+xml;utf8,
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff">
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm5.93 6.36l-2.12-.3-1.06-1.88 1.3-1.8a8.03 8.03 0 012.88 3.98zM9.25 4.18l1.3 1.8-1.06 1.88-2.12.3a8.03 8.03 0 012.88-3.98zM4.07 14.36a8.03 8.03 0 01-.02-4.72l1.8 1.3.3 2.12-1.88 1.06zm3.18 5.46l-.3-2.12 1.88-1.06 1.8 1.3a8.03 8.03 0 01-3.38.88zm6.5-.88l1.8-1.3 1.88 1.06-.3 2.12a8.03 8.03 0 01-3.38-.88zm5.18-4.58l-1.88-1.06.3-2.12 1.8-1.3a8.03 8.03 0 01-.22 4.48zM12 14.5l-2.12-1.06-.3-2.12L12 10l2.42 1.32-.3 2.12L12 14.5z"/>
+        </svg>');
+}
+
 </style>
 
 </head>
@@ -412,11 +428,13 @@ while ($dia <= $diasMes) {
     echo "<td class='".implode(' ', $clases)."'>";
     echo "<div class='dia-numero'>$dia</div>";
 
-    if ($cumple) {
-        echo "<div class='cumple-wrapper'>
-                <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
-              </div>";
-    }
+   if ($cumple) {
+    echo "<div class='cumple-wrapper'>
+            <i class='icono-futbol'></i>
+            <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
+          </div>";
+}
+
 
     if ($tecnico) {
         $color = $colores[$tecnico] ?? "#333";
