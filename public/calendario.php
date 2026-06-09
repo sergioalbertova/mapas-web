@@ -499,7 +499,7 @@ while ($dia <= $diasMes) {
         // SOLO HOY aparece el ícono animado de guardia
         if ($fecha == $hoy) {
             echo "<svg viewBox='0 0 24 24'>
-                        <path d='M22 7l-5 5 1.5 1.5L23.5 8A6 6 0 0112 3a6 6 0 016 11l-9 9-4-4 9-9A6 6 0 0112 5a6 6 0 0110 2z'/>
+                 <path d='M2 21l1-4 6-6-2-2 3-3 2 2 3-3 3 3-3 3 2 2-6 6-4 1-1-1z'/>
                 </svg>";
         }
 
