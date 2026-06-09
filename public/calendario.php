@@ -480,7 +480,16 @@ while ($dia <= $diasMes) {
     $cumpleanero = $info['cumpleanero'] ?? null;
 
     $clases = [];
-    if ($fecha == $hoy) $clases[] = "hoy";
+    // SOLO HOY aparece el ícono animado
+    if ($fecha == $hoy) {
+        echo "<svg class='icono-guardia rebote' viewBox='0 0 24 24' style='overflow: visible;'>
+                <path d='M12 2a7 7 0 00-7 7v3a3 3 0 003 3h1v-6H8V9a4 4 0 118 0v1h-1v6h1a3 3 0 003-3V9a7 7 0 00-7-7z'/>
+              </svg>";
+    }
+
+
+
+
     if ($dow == 6) $clases[] = "sabado";
     if ($dow == 7) $clases[] = "domingo";
     if ($cumple) $clases[] = "cumple-dia";
