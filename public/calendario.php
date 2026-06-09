@@ -385,6 +385,32 @@ body.dark .icono-guardia {
     100% { transform: translateY(0); }
 }
 
+.icono-guardia {
+    width: 18px;
+    height: 18px;
+    fill: #00AEEF !important; /* azul TIHIL brillante */
+    margin-right: 6px;
+    display: inline-block;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+body.dark .icono-guardia {
+    fill: #4fc3ff !important; /* azul claro en modo oscuro */
+}
+
+/* Animación */
+.rebote {
+    animation: reboteGuardia 0.8s ease-in-out infinite;
+}
+
+@keyframes reboteGuardia {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(-5px); }
+    50%  { transform: translateY(0); }
+    70%  { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
 
 
 </style>
@@ -497,11 +523,12 @@ while ($dia <= $diasMes) {
         echo "<div class='tecnico' style='background:$color'>";
 
         // SOLO HOY aparece el ícono animado de guardia
-        if ($fecha == $hoy) {
-            echo "<svg viewBox='0 0 24 24'>
-                 <path d='M2 21l1-4 6-6-2-2 3-3 2 2 3-3 3 3-3 3 2 2-6 6-4 1-1-1z'/>
-                </svg>";
-        }
+       if ($fecha == $hoy) {
+    echo "<svg class='icono-guardia rebote' viewBox='0 0 24 24' style='overflow: visible;'>
+            <path d='M12 2l8 4v6c0 5-3.5 9.7-8 10-4.5-.3-8-5-8-10V6l8-4zm-1 13l5-5-1.4-1.4L11 12.2l-1.6-1.6L8 12l3 3z'/>
+          </svg>";
+                            }
+
 
         echo htmlspecialchars($tecnico) . "</div>";
     }
