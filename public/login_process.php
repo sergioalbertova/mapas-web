@@ -15,15 +15,13 @@ $clave   = trim($_POST['clave']);
 $stmt = $pdo->prepare("SELECT id, usuario, clave FROM usuarios WHERE usuario = ?");
 
 $stmt = $pdo->prepare("
-    SELECT id, usuario, clave 
+    SELECT id, usuario, clave, rol
     FROM usuarios 
     WHERE LOWER(usuario) = LOWER(:u)
 ");
 $stmt->execute([':u' => $usuario]);
-
-
-//$stmt->execute([$usuario]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
 // Validar usuario y contraseña
 if (!$user || !password_verify($clave, $user['clave'])) {
@@ -33,6 +31,8 @@ if (!$user || !password_verify($clave, $user['clave'])) {
 
 // Crear sesión
 $_SESSION['user_id'] = $user['id'];
+$_SESSION['rol'] = $user['rol'];
+
 
 // ===============================
 //  REMEMBER ME (si está marcado)
