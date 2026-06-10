@@ -13,7 +13,7 @@ $stmt = $pdo->prepare("
     UPDATE activeuser SET
         nomuser   = :nomuser,
         ubicacion = :ubicacion,
-        hor       = :hor,
+        hor1      = :hor1,
         piso      = :piso,
         ubimapa2  = :ubimapa2
     WHERE idu = :idu
@@ -22,7 +22,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([
     ':nomuser'   => $_POST['nomuser']   ?? null,
     ':ubicacion' => $_POST['ubicacion'] ?? null,
-    ':hor'       => $_POST['hor']       ?? null,
+    ':hor1'      => $_POST['hor']       ?? null,   // ← este es el campo correcto
     ':piso'      => $_POST['piso']      ?? null,
     ':ubimapa2'  => $_POST['ubimapa2']  ?? null,
     ':idu'       => $idu
