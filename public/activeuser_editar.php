@@ -127,7 +127,7 @@ input {
         <label>Piso</label>
         <input type="text" name="piso" value="<?= safe($user['piso']) ?>">
 
-        <label>Ubicación en mapa 2</label>
+        <label>Ubicación en mapa</label>
         <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
         <button class="btn-guardar">Guardar cambios</button>
