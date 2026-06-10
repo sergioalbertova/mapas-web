@@ -21,6 +21,10 @@ if (!$user) {
     echo "Usuario no encontrado";
     exit;
 }
+
+function safe($v) {
+    return htmlspecialchars($v ?? "", ENT_QUOTES, 'UTF-8');
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -32,85 +36,6 @@ if (!$user) {
 <link rel="stylesheet" href="topbar.css">
 
 <style>
-
-:root {
-    --bg: #F4F7FA;
-    --text: #1F2933;
-
-    --topbar-bg: rgba(255,255,255,0.85);
-    --topbar-text: #1F2933;
-    --topbar-border: rgba(0,0,0,0.1);
-
-    --sidebar-bg: #FFFFFF;
-    --sidebar-text: #1F2933;
-    --sidebar-border: rgba(0,0,0,0.1);
-
-    --card-bg: #FFFFFF;
-    --card-text: #1F2933;
-
-    --accent: #00AEEF;
-    --shadow: rgba(0,0,0,0.08);
-}
-
-body.dark {
-    --bg: #0f172a;
-    --text: #E5E7EB;
-
-    --topbar-bg: rgba(17,24,39,0.85);
-    --topbar-text: #E5E7EB;
-    --topbar-border: rgba(255,255,255,0.1);
-
-    --sidebar-bg: #020617;
-    --sidebar-text: #E5E7EB;
-    --sidebar-border: rgba(255,255,255,0.1);
-
-    --card-bg: #1f2937;
-    --card-text: #E5E7EB;
-
-    --shadow: rgba(0,0,0,0.45);
-}
-
-/* ============================
-     ESTILOS BASE
-     ============================ */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* MAIN */
-.main {
-    margin-left: 240px;
-    padding: 20px 40px;
-    width: calc(100% - 240px);
-    transition: margin-left 0.25s ease;
-}
-
-.sidebar.collapsed ~ .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
-}
-
-/* TITULO */
-.main h2 {
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.subtitle {
-    text-align: center;
-    color: var(--text);
-    opacity: 0.7;
-    margin-bottom: 40px;
-    font-size: 15px;
-}
-
 .contenedor {
     padding: 20px;
 }
@@ -140,7 +65,7 @@ label {
     font-weight: 600;
 }
 
-input, textarea {
+input {
     width: 100%;
     padding: 10px;
     border-radius: 10px;
@@ -148,10 +73,6 @@ input, textarea {
     background: var(--bg);
     color: var(--text);
     margin-top: 5px;
-}
-
-textarea {
-    height: 90px;
 }
 
 .btn-guardar {
@@ -192,40 +113,22 @@ textarea {
 
     <form action="activeuser_editar_guardar.php" method="POST" class="form-card">
 
-        <input type="hidden" name="idu" value="<?= $user['idu'] ?>">
+        <input type="hidden" name="idu" value="<?= safe($user['idu']) ?>">
 
         <label>Nombre</label>
-        <input type="text" name="nomuser" value="<?= htmlspecialchars($user['nomuser']) ?>">
+        <input type="text" name="nomuser" value="<?= safe($user['nomuser']) ?>">
 
         <label>Ubicación</label>
-        <input type="text" name="ubicacion" value="<?= htmlspecialchars($user['ubicacion']) ?>">
+        <input type="text" name="ubicacion" value="<?= safe($user['ubicacion']) ?>">
 
-        <label>Horario 1</label>
-        <input type="text" name="hor1" value="<?= htmlspecialchars($user['hor1']) ?>">
-
-        <label>Horario 2</label>
-        <input type="text" name="hor2" value="<?= htmlspecialchars($user['hor2']) ?>">
-
-        <label>Horario 3</label>
-        <input type="text" name="hor3" value="<?= htmlspecialchars($user['hor3']) ?>">
+        <label>HOR</label>
+        <input type="text" name="hor" value="<?= safe($user['hor']) ?>">
 
         <label>Piso</label>
-        <input type="text" name="piso" value="<?= htmlspecialchars($user['piso']) ?>">
-
-        <label>UX</label>
-        <input type="number" name="ux" value="<?= htmlspecialchars($user['ux']) ?>">
-
-        <label>UY</label>
-        <input type="number" name="uy" value="<?= htmlspecialchars($user['uy']) ?>">
-
-        <label>Ubicación en mapa</label>
-        <input type="text" name="ubimapa" value="<?= htmlspecialchars($user['ubimapa']) ?>">
+        <input type="text" name="piso" value="<?= safe($user['piso']) ?>">
 
         <label>Ubicación en mapa 2</label>
-        <input type="number" name="ubimapa2" value="<?= htmlspecialchars($user['ubimapa2']) ?>">
-
-        <label>Observaciones</label>
-        <textarea name="observaciones"><?= htmlspecialchars($user['observaciones']) ?></textarea>
+        <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
         <button class="btn-guardar">Guardar cambios</button>
         <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
