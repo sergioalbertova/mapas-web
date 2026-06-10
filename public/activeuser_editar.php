@@ -180,7 +180,8 @@ input {
         <input type="text" name="ubicacion" value="<?= safe($user['ubicacion'] ?? null) ?>">
 
         <label>HOR</label>
-        <input type="text" name="hor" value="<?= safe($user['hor'] ?? null) ?>">
+<input type="text" name="hor" value="<?= safe($user['hor1'] ?? null) ?>">
+
 
         <label>Piso</label>
         <input type="text" name="piso" value="<?= safe($user['piso'] ?? null) ?>">
