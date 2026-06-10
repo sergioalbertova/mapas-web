@@ -9,6 +9,10 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
 
 $idu = $_POST['idu'] ?? null;
 
+// Convertir vacío a NULL para evitar error en INTEGER
+$ubimapa2 = $_POST['ubimapa2'] ?? null;
+$ubimapa2 = ($ubimapa2 === "" ? null : $ubimapa2);
+
 $stmt = $pdo->prepare("
     UPDATE activeuser SET
         nomuser   = :nomuser,
@@ -22,9 +26,9 @@ $stmt = $pdo->prepare("
 $stmt->execute([
     ':nomuser'   => $_POST['nomuser']   ?? null,
     ':ubicacion' => $_POST['ubicacion'] ?? null,
-    ':hor1'      => $_POST['hor']       ?? null,   // ← este es el campo correcto
+    ':hor1'      => $_POST['hor']       ?? null,
     ':piso'      => $_POST['piso']      ?? null,
-    ':ubimapa2'  => $_POST['ubimapa2']  ?? null,
+    ':ubimapa2'  => $ubimapa2,
     ':idu'       => $idu
 ]);
 
