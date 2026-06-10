@@ -9,7 +9,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
 
 $idu = $_POST['idu'] ?? null;
 
-// Convertir vacío a NULL para evitar error en INTEGER
+// Manejo de enteros vacíos
 $ubimapa2 = $_POST['ubimapa2'] ?? null;
 $ubimapa2 = ($ubimapa2 === "" ? null : $ubimapa2);
 
@@ -18,6 +18,7 @@ $stmt = $pdo->prepare("
         nomuser   = :nomuser,
         ubicacion = :ubicacion,
         hor1      = :hor1,
+        hor2      = :hor2,
         piso      = :piso,
         ubimapa2  = :ubimapa2
     WHERE idu = :idu
@@ -27,6 +28,7 @@ $stmt->execute([
     ':nomuser'   => $_POST['nomuser']   ?? null,
     ':ubicacion' => $_POST['ubicacion'] ?? null,
     ':hor1'      => $_POST['hor']       ?? null,
+    ':hor2'      => $_POST['monitor']   ?? null,
     ':piso'      => $_POST['piso']      ?? null,
     ':ubimapa2'  => $ubimapa2,
     ':idu'       => $idu

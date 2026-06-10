@@ -154,27 +154,31 @@ input {
     <div class="titulo">Nuevo usuario</div>
     <div class="subtitulo">Registrar un nuevo usuario en ActiveUser</div>
 
-    <form action="activeuser_nuevo_guardar.php" method="POST" class="form-card">
+<form action="activeuser_nuevo_guardar.php" method="POST" class="form-card">
 
-        <label>Nombre</label>
-        <input type="text" name="nomuser" required>
+    <label>Nombre</label>
+    <input type="text" name="nomuser" required>
 
-        <label>Ubicación</label>
-        <input type="text" name="ubicacion">
+    <label>Ubicación</label>
+    <input type="text" name="ubicacion">
 
-        <label>HOR</label>
-        <input type="text" name="hor">
+    <label>HOR</label>
+    <input type="text" name="hor">
 
-        <label>Piso</label>
-        <input type="text" name="piso">
+    <label>Monitor</label>
+    <input type="text" name="monitor">
 
-        <label>Ubicación en mapa 2</label>
-        <input type="number" name="ubimapa2">
+    <label>Piso</label>
+    <input type="text" name="piso">
 
-        <button class="btn-guardar">Guardar usuario</button>
-        <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
+    <label>Ubicación en mapa 2</label>
+    <input type="number" name="ubimapa2">
 
-    </form>
+    <button class="btn-guardar">Guardar usuario</button>
+    <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
+
+</form>
+
 
 </div>
 

@@ -2,14 +2,6 @@
 require "session_config.php";
 require "db.php";
 
-$id = $_SESSION['user_id'];
-
-// Obtener nombre real del usuario
-$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
-$stmt->execute([$id]);
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
-
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
     header("Location: index.php");
     exit;
@@ -47,18 +39,14 @@ function safe($v) {
 :root {
     --bg: #F4F7FA;
     --text: #1F2933;
-
     --topbar-bg: rgba(255,255,255,0.85);
     --topbar-text: #1F2933;
     --topbar-border: rgba(0,0,0,0.1);
-
     --sidebar-bg: #FFFFFF;
     --sidebar-text: #1F2933;
     --sidebar-border: rgba(0,0,0,0.1);
-
     --card-bg: #FFFFFF;
     --card-text: #1F2933;
-
     --accent: #00AEEF;
     --shadow: rgba(0,0,0,0.08);
 }
@@ -66,18 +54,14 @@ function safe($v) {
 body.dark {
     --bg: #0f172a;
     --text: #E5E7EB;
-
     --topbar-bg: rgba(17,24,39,0.85);
     --topbar-text: #E5E7EB;
     --topbar-border: rgba(255,255,255,0.1);
-
     --sidebar-bg: #020617;
     --sidebar-text: #E5E7EB;
     --sidebar-border: rgba(255,255,255,0.1);
-
     --card-bg: #1f2937;
     --card-text: #E5E7EB;
-
     --shadow: rgba(0,0,0,0.45);
 }
 
@@ -87,19 +71,12 @@ body {
     background: var(--bg);
     color: var(--text);
     display: flex;
-    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .main {
     margin-left: 240px;
     padding: 20px 40px;
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease;
-}
-
-.sidebar.collapsed ~ .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
 }
 
 .contenedor {
@@ -109,7 +86,6 @@ body {
 .titulo {
     font-size: 26px;
     font-weight: 600;
-    margin-bottom: 5px;
 }
 
 .subtitulo {
@@ -179,23 +155,25 @@ input {
 
     <form action="activeuser_editar_guardar.php" method="POST" class="form-card">
 
-        <input type="hidden" name="idu" value="<?= safe($user['idu'] ?? null) ?>">
+        <input type="hidden" name="idu" value="<?= safe($user['idu']) ?>">
 
         <label>Nombre</label>
-        <input type="text" name="nomuser" value="<?= safe($user['nomuser'] ?? null) ?>">
+        <input type="text" name="nomuser" value="<?= safe($user['nomuser']) ?>">
 
         <label>Ubicación</label>
-        <input type="text" name="ubicacion" value="<?= safe($user['ubicacion'] ?? null) ?>">
+        <input type="text" name="ubicacion" value="<?= safe($user['ubicacion']) ?>">
 
         <label>HOR</label>
-<input type="text" name="hor" value="<?= safe($user['hor1'] ?? null) ?>">
+        <input type="text" name="hor" value="<?= safe($user['hor1']) ?>">
 
+        <label>Monitor</label>
+        <input type="text" name="monitor" value="<?= safe($user['hor2']) ?>">
 
         <label>Piso</label>
-        <input type="text" name="piso" value="<?= safe($user['piso'] ?? null) ?>">
+        <input type="text" name="piso" value="<?= safe($user['piso']) ?>">
 
         <label>Ubicación en mapa 2</label>
-        <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2'] ?? null) ?>">
+        <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
         <button class="btn-guardar">Guardar cambios</button>
         <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
