@@ -171,22 +171,22 @@ input {
 
     <form action="activeuser_editar_guardar.php" method="POST" class="form-card">
 
-        <input type="hidden" name="idu" value="<?= safe($user['idu']) ?>">
+        <input type="hidden" name="idu" value="<?= safe($user['idu'] ?? null) ?>">
 
         <label>Nombre</label>
-        <input type="text" name="nomuser" value="<?= safe($user['nomuser']) ?>">
+        <input type="text" name="nomuser" value="<?= safe($user['nomuser'] ?? null) ?>">
 
         <label>Ubicación</label>
-        <input type="text" name="ubicacion" value="<?= safe($user['ubicacion']) ?>">
+        <input type="text" name="ubicacion" value="<?= safe($user['ubicacion'] ?? null) ?>">
 
         <label>HOR</label>
-        <input type="text" name="hor" value="<?= safe($user['hor']) ?>">
+        <input type="text" name="hor" value="<?= safe($user['hor'] ?? null) ?>">
 
         <label>Piso</label>
-        <input type="text" name="piso" value="<?= safe($user['piso']) ?>">
+        <input type="text" name="piso" value="<?= safe($user['piso'] ?? null) ?>">
 
         <label>Ubicación en mapa 2</label>
-        <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
+        <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2'] ?? null) ?>">
 
         <button class="btn-guardar">Guardar cambios</button>
         <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
