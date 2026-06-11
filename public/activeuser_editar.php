@@ -1,31 +1,3 @@
-<?php
-require "session_config.php";
-require "db.php";
-
-if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
-    header("Location: index.php");
-    exit;
-}
-
-$idu = $_GET['idu'] ?? null;
-if (!$idu) {
-    header("Location: activeuser_admin.php");
-    exit;
-}
-
-$stmt = $pdo->prepare("SELECT * FROM activeuser WHERE idu = ?");
-$stmt->execute([$idu]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$user) {
-    echo "Usuario no encontrado";
-    exit;
-}
-
-function safe($v) {
-    return htmlspecialchars($v ?? "", ENT_QUOTES, 'UTF-8');
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -73,16 +45,31 @@ body {
     display: flex;
 }
 
-/* Ajuste del área principal */
 .main {
     margin-left: 240px;
     padding: 20px 40px;
     width: calc(100% - 240px);
 }
 
-/* CENTRAR EL FORMULARIO */
+/* Contenedor general */
 .contenedor {
     padding: 20px;
+}
+
+/* Títulos */
+.titulo {
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.subtitulo {
+    opacity: 0.7;
+    margin-bottom: 25px;
+}
+
+/* Wrapper para centrar solo el formulario */
+.form-wrapper {
+    width: 100%;
     display: flex;
     justify-content: center;
 }
@@ -95,17 +82,6 @@ body {
     box-shadow: 0 10px 25px var(--shadow);
     max-width: 600px;
     width: 100%;
-}
-
-/* Títulos */
-.titulo {
-    font-size: 26px;
-    font-weight: 600;
-}
-
-.subtitulo {
-    opacity: 0.7;
-    margin-bottom: 25px;
 }
 
 /* Etiquetas */
@@ -124,7 +100,7 @@ input {
     background: var(--bg);
     color: var(--text);
     margin-top: 5px;
-    margin-bottom: 12px; /* Separación entre inputs */
+    margin-bottom: 12px;
 }
 
 /* Botones */
@@ -150,7 +126,6 @@ input {
 }
 </style>
 
-
 </head>
 <body>
 
@@ -165,32 +140,34 @@ input {
     <div class="titulo">Editar usuario</div>
     <div class="subtitulo">Modifica los datos del usuario seleccionado</div>
 
-    <form action="activeuser_editar_guardar.php" method="POST" class="form-card">
+    <div class="form-wrapper">
+        <form action="activeuser_editar_guardar.php" method="POST" class="form-card">
 
-        <input type="hidden" name="idu" value="<?= safe($user['idu']) ?>">
+            <input type="hidden" name="idu" value="<?= safe($user['idu']) ?>">
 
-        <label>Nombre</label>
-        <input type="text" name="nomuser" value="<?= safe($user['nomuser']) ?>">
+            <label>Nombre</label>
+            <input type="text" name="nomuser" value="<?= safe($user['nomuser']) ?>">
 
-        <label>Ubicación</label>
-        <input type="text" name="ubicacion" value="<?= safe($user['ubicacion']) ?>">
+            <label>Ubicación</label>
+            <input type="text" name="ubicacion" value="<?= safe($user['ubicacion']) ?>">
 
-        <label>HOR</label>
-        <input type="text" name="hor" value="<?= safe($user['hor1']) ?>">
+            <label>HOR</label>
+            <input type="text" name="hor" value="<?= safe($user['hor1']) ?>">
 
-        <label>Monitor</label>
-        <input type="text" name="monitor" value="<?= safe($user['hor2']) ?>">
+            <label>Monitor</label>
+            <input type="text" name="monitor" value="<?= safe($user['hor2']) ?>">
 
-        <label>Piso</label>
-        <input type="text" name="piso" value="<?= safe($user['piso']) ?>">
+            <label>Piso</label>
+            <input type="text" name="piso" value="<?= safe($user['piso']) ?>">
 
-        <label>Ubicación en mapa 2</label>
-        <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
+            <label>Ubicación en mapa 2</label>
+            <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
-        <button class="btn-guardar">Guardar cambios</button>
-        <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
+            <button class="btn-guardar">Guardar cambios</button>
+            <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
 
-    </form>
+        </form>
+    </div>
 
 </div>
 
