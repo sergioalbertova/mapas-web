@@ -95,7 +95,7 @@ body {
 
 .form-card {
     background: var(--card-bg);
-    padding: 20px;
+    padding: 30px;
     border-radius: 14px;
     box-shadow: 0 10px 25px var(--shadow);
     max-width: 600px;
@@ -137,6 +137,16 @@ input {
     text-decoration: none;
     display: inline-block;
 }
+
+.contenedor {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+input {
+    margin-bottom: 12px;
+}
+
 </style>
 
 </head>
