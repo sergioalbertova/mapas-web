@@ -73,16 +73,31 @@ body {
     display: flex;
 }
 
+/* Ajuste del área principal */
 .main {
     margin-left: 240px;
     padding: 20px 40px;
     width: calc(100% - 240px);
 }
 
+/* CENTRAR EL FORMULARIO */
 .contenedor {
     padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
+/* Tarjeta del formulario */
+.form-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px var(--shadow);
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Títulos */
 .titulo {
     font-size: 26px;
     font-weight: 600;
@@ -93,30 +108,26 @@ body {
     margin-bottom: 25px;
 }
 
-.form-card {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 14px;
-    box-shadow: 0 10px 25px var(--shadow);
-    max-width: 600px;
-}
-
+/* Etiquetas */
 label {
     display: block;
     margin-top: 12px;
     font-weight: 600;
 }
 
+/* Inputs */
 input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border-radius: 10px;
     border: 1px solid var(--sidebar-border);
     background: var(--bg);
     color: var(--text);
     margin-top: 5px;
+    margin-bottom: 12px; /* Separación entre inputs */
 }
 
+/* Botones */
 .btn-guardar {
     margin-top: 20px;
     padding: 12px 18px;
@@ -137,17 +148,8 @@ input {
     text-decoration: none;
     display: inline-block;
 }
-
-.contenedor {
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-}
-input {
-    margin-bottom: 12px;
-}
-
 </style>
+
 
 </head>
 <body>
