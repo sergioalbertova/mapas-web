@@ -54,6 +54,9 @@ body {
 /* Contenedor general */
 .contenedor {
     padding: 20px;
+    display: flex;
+    flex-direction: column; /* ← IMPORTANTE */
+    align-items: center;    /* ← Centra horizontalmente */
 }
 
 /* Títulos */
