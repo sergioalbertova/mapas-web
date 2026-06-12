@@ -175,8 +175,16 @@ input {
         <label>Ubicación en mapa 2</label>
         <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
+         <label>XM</label>
+        <input type="text" name="xm" value="<?= safe($user['xm']) ?>">
+
+        <label>YM</label>
+        <input type="text" name="ym" value="<?= safe($user['ym']) ?>">
+
         <button class="btn-guardar">Guardar cambios</button>
         <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
+
+       
 
     </form>
 

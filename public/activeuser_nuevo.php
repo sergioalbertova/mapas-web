@@ -174,6 +174,13 @@ input {
     <label>Ubicación en mapa 2</label>
     <input type="number" name="ubimapa2">
 
+     <label>XM</label>
+    <input type="text" name="xm">
+
+    <label>YM</label>
+    <input type="text" name="ym">
+
+
     <button class="btn-guardar">Guardar usuario</button>
     <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
 
