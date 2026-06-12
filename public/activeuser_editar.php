@@ -122,8 +122,8 @@ input {
 /* --- MARCADOR PROFESIONAL --- */
 .marcador {
     position: absolute;
-    width: 28px;
-    height: 28px;
+    width: 18px;
+    height: 18px;
     background: #ff1744;
     border-radius: 50% 50% 50% 0;
     transform: translate(-50%, -100%) rotate(-45deg);
@@ -153,6 +153,47 @@ input {
     display: none;
     pointer-events: none;
 }
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
+    50% { transform: translate(-50%, -100%) rotate(-45deg) scale(1.15); }
+    100% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
+}
+
+.btn-guardar,
+.btn-regresar {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s ease;
+}
+
+/* Botón guardar */
+.btn-guardar {
+    background: var(--accent);
+    color: white;
+    border: none;
+}
+
+.btn-guardar:hover {
+    background: #008fcc;
+}
+
+/* Botón regresar */
+.btn-regresar {
+    background: #6b7280;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-regresar:hover {
+    background: #4b5563;
+}
+
+
 </style>
 
 </head>
