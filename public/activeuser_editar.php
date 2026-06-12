@@ -25,6 +25,16 @@ if (!$user) {
 function safe($v) {
     return htmlspecialchars($v ?? "", ENT_QUOTES, 'UTF-8');
 }
+
+// Obtener XM/YM desde la tabla ubicacion
+$ubimapa2 = $user['ubimapa2'];
+
+$stmt2 = $pdo->prepare("SELECT xm, ym FROM ubicacion WHERE idubicacion = ?");
+$stmt2->execute([$ubimapa2]);
+$coords = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+$xm = $coords['xm'] ?? null;
+$ym = $coords['ym'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -81,6 +91,9 @@ body {
 
 .contenedor {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .titulo {
@@ -99,6 +112,7 @@ body {
     border-radius: 14px;
     box-shadow: 0 10px 25px var(--shadow);
     max-width: 600px;
+    width: 100%;
 }
 
 label {
@@ -115,6 +129,7 @@ input {
     background: var(--bg);
     color: var(--text);
     margin-top: 5px;
+    margin-bottom: 12px;
 }
 
 .btn-guardar {
@@ -136,6 +151,37 @@ input {
     border-radius: 10px;
     text-decoration: none;
     display: inline-block;
+}
+
+/* MAPA */
+.mapa-wrapper {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.mapa-container {
+    position: relative;
+    width: 100%;
+}
+
+.mapa {
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid var(--sidebar-border);
+}
+
+.marcador {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: red;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 12px rgba(255,0,0,0.8);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    display: none;
 }
 </style>
 
@@ -175,24 +221,86 @@ input {
         <label>Ubicación en mapa 2</label>
         <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
-         <label>XM</label>
-        <input type="text" name="xm" value="<?= safe($user['xm']) ?>">
+        <label>XM (desde tabla ubicacion)</label>
+        <input type="text" id="xm" value="<?= safe($xm) ?>">
 
-        <label>YM</label>
-        <input type="text" name="ym" value="<?= safe($user['ym']) ?>">
+        <label>YM (desde tabla ubicacion)</label>
+        <input type="text" id="ym" value="<?= safe($ym) ?>">
 
         <button class="btn-guardar">Guardar cambios</button>
         <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
 
-       
-
     </form>
+
+    <!-- MAPA -->
+    <div class="mapa-wrapper">
+        <h3>Ubicación en el mapa</h3>
+
+        <div class="mapa-container">
+            <img id="mapa" src="mapas/piso<?= safe($user['piso']) ?>.png" class="mapa">
+            <div id="marcador" class="marcador"></div>
+        </div>
+
+        <button onclick="guardarXY()" class="btn-guardar" style="margin-top:20px;">
+            Guardar XM/YM en tabla ubicacion
+        </button>
+    </div>
 
 </div>
 
 </div>
 
 <script src="theme.js"></script>
+
+<script>
+let xm = <?= $xm ? $xm : "null" ?>;
+let ym = <?= $ym ? $ym : "null" ?>;
+
+const mapa = document.getElementById("mapa");
+const marcador = document.getElementById("marcador");
+
+mapa.onload = () => {
+    if (xm !== null && ym !== null) {
+        const x = xm * mapa.offsetWidth;
+        const y = ym * mapa.offsetHeight;
+
+        marcador.style.left = x + "px";
+        marcador.style.top = y + "px";
+        marcador.style.display = "block";
+    }
+};
+
+// CAPTURAR NUEVAS COORDENADAS
+mapa.addEventListener("click", function(e) {
+    const rect = mapa.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    xm = x / mapa.offsetWidth;
+    ym = y / mapa.offsetHeight;
+
+    document.getElementById("xm").value = xm.toFixed(6);
+    document.getElementById("ym").value = ym.toFixed(6);
+
+    marcador.style.left = (xm * mapa.offsetWidth) + "px";
+    marcador.style.top = (ym * mapa.offsetHeight) + "px";
+    marcador.style.display = "block";
+});
+
+// GUARDAR XM/YM EN TABLA UBICACION
+function guardarXY() {
+    const idubicacion = <?= $ubimapa2 ?>;
+
+    fetch("guardar_xy.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `idubicacion=${idubicacion}&xm=${xm}&ym=${ym}`
+    })
+    .then(r => r.text())
+    .then(t => alert(t));
+}
+</script>
 
 </body>
 </html>
