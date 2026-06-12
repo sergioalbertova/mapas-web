@@ -81,6 +81,7 @@ button {
         <option value="2">Piso 2</option>
         <option value="3">Piso 3</option>
         <option value="4">Piso 4</option>
+        <option value="5">Piso 5</option>
     </select>
 
     <label>Ubicación:</label>
@@ -104,7 +105,7 @@ button {
 <script>
 function cargarMapa() {
     const piso = document.getElementById("piso").value;
-    document.getElementById("mapa").src = "mapas/piso" + piso + ".png";
+    document.getElementById("mapa").src = "piso" + piso + ".jpg";
     document.getElementById("marcador").style.display = "none";
 }
 
