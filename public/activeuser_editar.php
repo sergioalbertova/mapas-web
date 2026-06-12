@@ -193,6 +193,14 @@ input {
     background: #4b5563;
 }
 
+.mapa-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    transform-origin: top left;
+}
+
+
 
 </style>
 
@@ -276,6 +284,16 @@ const container = document.getElementById("mapaContainer");
 
 let zoom = 1;
 
+container.addEventListener("wheel", function(e) {
+    e.preventDefault();
+
+    zoom += e.deltaY * -0.001;
+    zoom = Math.min(Math.max(zoom, 1), 3);
+
+    container.style.transform = `scale(${zoom})`;
+});
+
+
 // Mostrar marcador inicial
 mapa.onload = () => {
     if (xm !== null && ym !== null) {
@@ -329,7 +347,7 @@ container.addEventListener("wheel", function(e) {
     zoom += e.deltaY * -0.001;
     zoom = Math.min(Math.max(zoom, 1), 3);
 
-    mapa.style.transform = `scale(${zoom})`;
+    container.style.transform = `scale(${zoom})`;
 });
 
 // Guardar XM/YM
