@@ -20,9 +20,8 @@ $stmt = $pdo->prepare("
         hor1      = :hor1,
         hor2      = :hor2,
         piso      = :piso,
-        ubimapa2  = :ubimapa2,
-        xm = :xm,
-        ym = :ym
+        ubimapa2  = :ubimapa2
+        
 
     WHERE idu = :idu
 ");
@@ -34,9 +33,8 @@ $stmt->execute([
     ':hor2'      => $_POST['monitor']   ?? null,
     ':piso'      => $_POST['piso']      ?? null,
     ':ubimapa2'  => $ubimapa2,
-    ':idu'     => $idu,
-    ':xm' => ($_POST['xm'] === "" ? null : $_POST['xm']),
-    ':ym' => ($_POST['ym'] === "" ? null : $_POST['ym'])
+    ':idu'     => $idu
+    
 
 ]);
 

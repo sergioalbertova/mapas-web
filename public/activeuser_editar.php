@@ -124,7 +124,7 @@ input {
     position: absolute;
     width: 18px;
     height: 18px;
-    background: #ff1744;
+    background: #007bff;
     border-radius: 50% 50% 50% 0;
     transform: translate(-50%, -100%) rotate(-45deg);
     border: 3px solid white;
