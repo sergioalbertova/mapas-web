@@ -60,7 +60,7 @@
             </a>
         </li>
 
-        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
+       
             <li class="nav-item">
                 <a href="activeuser_admin.php">
                     <svg viewBox="0 0 24 24">
@@ -69,7 +69,7 @@
                     <span class="nav-text">Modificar usuarios</span>
                 </a>
             </li>
-        <?php endif; ?>
+       
 
 
         <li class="nav-item">

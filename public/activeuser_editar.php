@@ -241,13 +241,20 @@ input {
         <label>Ubicación en mapa 2</label>
         <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
-        <label>XM</label>
-        <input type="text" id="xm" value="<?= safe($xm) ?>">
+        <?php if ($_SESSION['rol'] === 'administrador'): ?>
+    <label>XM</label>
+    <input type="text" id="xm" value="<?= safe($xm) ?>">
 
-        <label>YM</label>
-        <input type="text" id="ym" value="<?= safe($ym) ?>">
+    <label>YM</label>
+    <input type="text" id="ym" value="<?= safe($ym) ?>">
+<?php else: ?>
+    <input type="hidden" id="xm" value="<?= safe($xm) ?>">
+    <input type="hidden" id="ym" value="<?= safe($ym) ?>">
+<?php endif; ?>
 
+        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
         <button class="btn-guardar">Guardar cambios</button>
+         <?php endif; ?>
         <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
 
     </form>
@@ -261,10 +268,11 @@ input {
             <div id="marcador" class="marcador"></div>
             <div id="tooltip" class="tooltip"></div>
         </div>
-
+        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>    
         <button onclick="guardarXY()" class="btn-guardar" style="margin-top:20px;">
-            Guardar XM/YM en tabla ubicacion
+            Guardar ubicación
         </button>
+         <?php endif; ?>
     </div>
 
 </div>
