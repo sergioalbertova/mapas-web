@@ -237,7 +237,7 @@ input {
         <h3>Ubicación en el mapa</h3>
 
         <div class="mapa-container">
-            <img id="mapa" src="mapas/piso<?= safe($user['piso']) ?>.png" class="mapa">
+            <img id="mapa" src="piso<?= safe($user['piso']) ?>.jpg" class="mapa">
             <div id="marcador" class="marcador"></div>
         </div>
 
