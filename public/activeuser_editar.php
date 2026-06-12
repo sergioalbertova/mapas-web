@@ -26,7 +26,7 @@ function safe($v) {
     return htmlspecialchars($v ?? "", ENT_QUOTES, 'UTF-8');
 }
 
-// Obtener XM/YM desde la tabla ubicacion
+// Obtener XM/YM desde tabla ubicacion
 $ubimapa2 = $user['ubimapa2'];
 
 $stmt2 = $pdo->prepare("SELECT xm, ym FROM ubicacion WHERE idubicacion = ?");
@@ -46,17 +46,11 @@ $ym = $coords['ym'] ?? null;
 <link rel="stylesheet" href="topbar.css">
 
 <style>
+/* --- ESTILOS TIHIL --- */
 :root {
     --bg: #F4F7FA;
     --text: #1F2933;
-    --topbar-bg: rgba(255,255,255,0.85);
-    --topbar-text: #1F2933;
-    --topbar-border: rgba(0,0,0,0.1);
-    --sidebar-bg: #FFFFFF;
-    --sidebar-text: #1F2933;
-    --sidebar-border: rgba(0,0,0,0.1);
     --card-bg: #FFFFFF;
-    --card-text: #1F2933;
     --accent: #00AEEF;
     --shadow: rgba(0,0,0,0.08);
 }
@@ -64,14 +58,7 @@ $ym = $coords['ym'] ?? null;
 body.dark {
     --bg: #0f172a;
     --text: #E5E7EB;
-    --topbar-bg: rgba(17,24,39,0.85);
-    --topbar-text: #E5E7EB;
-    --topbar-border: rgba(255,255,255,0.1);
-    --sidebar-bg: #020617;
-    --sidebar-text: #E5E7EB;
-    --sidebar-border: rgba(255,255,255,0.1);
     --card-bg: #1f2937;
-    --card-text: #E5E7EB;
     --shadow: rgba(0,0,0,0.45);
 }
 
@@ -96,16 +83,6 @@ body {
     align-items: center;
 }
 
-.titulo {
-    font-size: 26px;
-    font-weight: 600;
-}
-
-.subtitulo {
-    opacity: 0.7;
-    margin-bottom: 25px;
-}
-
 .form-card {
     background: var(--card-bg);
     padding: 20px;
@@ -115,45 +92,15 @@ body {
     width: 100%;
 }
 
-label {
-    display: block;
-    margin-top: 12px;
-    font-weight: 600;
-}
-
 input {
     width: 100%;
     padding: 10px;
     border-radius: 10px;
-    border: 1px solid var(--sidebar-border);
-    background: var(--bg);
-    color: var(--text);
-    margin-top: 5px;
+    border: 1px solid #ccc;
     margin-bottom: 12px;
 }
 
-.btn-guardar {
-    margin-top: 20px;
-    padding: 12px 18px;
-    background: var(--accent);
-    color: white;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-regresar {
-    margin-top: 20px;
-    padding: 12px 18px;
-    background: #6b7280;
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    display: inline-block;
-}
-
-/* MAPA */
+/* --- MAPA --- */
 .mapa-wrapper {
     margin-top: 40px;
     width: 100%;
@@ -163,25 +110,48 @@ input {
 .mapa-container {
     position: relative;
     width: 100%;
+    overflow: hidden;
 }
 
 .mapa {
     width: 100%;
     border-radius: 10px;
-    border: 2px solid var(--sidebar-border);
+    transition: transform 0.2s ease-out;
 }
 
+/* --- MARCADOR PROFESIONAL --- */
 .marcador {
     position: absolute;
-    width: 22px;
-    height: 22px;
-    background: red;
-    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    background: #ff1744;
+    border-radius: 50% 50% 50% 0;
+    transform: translate(-50%, -100%) rotate(-45deg);
     border: 3px solid white;
-    box-shadow: 0 0 12px rgba(255,0,0,0.8);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
+    box-shadow: 0 0 15px rgba(255,0,0,0.9);
+    animation: pulse 1.5s infinite;
+    cursor: pointer;
     display: none;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
+    50% { transform: translate(-50%, -100%) rotate(-45deg) scale(1.2); }
+    100% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
+}
+
+/* --- TOOLTIP --- */
+.tooltip {
+    position: absolute;
+    background: black;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    transform: translate(-50%, -140%);
+    display: none;
+    pointer-events: none;
 }
 </style>
 
@@ -199,6 +169,7 @@ input {
     <div class="titulo">Editar usuario</div>
     <div class="subtitulo">Modifica los datos del usuario seleccionado</div>
 
+    <!-- FORMULARIO -->
     <form action="activeuser_editar_guardar.php" method="POST" class="form-card">
 
         <input type="hidden" name="idu" value="<?= safe($user['idu']) ?>">
@@ -221,10 +192,10 @@ input {
         <label>Ubicación en mapa 2</label>
         <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
-        <label>XM (desde tabla ubicacion)</label>
+        <label>XM</label>
         <input type="text" id="xm" value="<?= safe($xm) ?>">
 
-        <label>YM (desde tabla ubicacion)</label>
+        <label>YM</label>
         <input type="text" id="ym" value="<?= safe($ym) ?>">
 
         <button class="btn-guardar">Guardar cambios</button>
@@ -236,9 +207,10 @@ input {
     <div class="mapa-wrapper">
         <h3>Ubicación en el mapa</h3>
 
-        <div class="mapa-container">
+        <div class="mapa-container" id="mapaContainer">
             <img id="mapa" src="piso<?= safe($user['piso']) ?>.jpg" class="mapa">
             <div id="marcador" class="marcador"></div>
+            <div id="tooltip" class="tooltip"></div>
         </div>
 
         <button onclick="guardarXY()" class="btn-guardar" style="margin-top:20px;">
@@ -258,7 +230,12 @@ let ym = <?= $ym ? $ym : "null" ?>;
 
 const mapa = document.getElementById("mapa");
 const marcador = document.getElementById("marcador");
+const tooltip = document.getElementById("tooltip");
+const container = document.getElementById("mapaContainer");
 
+let zoom = 1;
+
+// Mostrar marcador inicial
 mapa.onload = () => {
     if (xm !== null && ym !== null) {
         const x = xm * mapa.offsetWidth;
@@ -270,7 +247,7 @@ mapa.onload = () => {
     }
 };
 
-// CAPTURAR NUEVAS COORDENADAS
+// Capturar clic para nuevas coordenadas
 mapa.addEventListener("click", function(e) {
     const rect = mapa.getBoundingClientRect();
 
@@ -288,7 +265,33 @@ mapa.addEventListener("click", function(e) {
     marcador.style.display = "block";
 });
 
-// GUARDAR XM/YM EN TABLA UBICACION
+// Tooltip
+marcador.addEventListener("mouseenter", () => {
+    tooltip.innerHTML = `
+        <b><?= safe($user['nomuser']) ?></b><br>
+        Piso: <?= safe($user['piso']) ?><br>
+        Ubicación: <?= safe($user['ubimapa2']) ?>
+    `;
+    tooltip.style.left = marcador.style.left;
+    tooltip.style.top = marcador.style.top;
+    tooltip.style.display = "block";
+});
+
+marcador.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+});
+
+// Zoom con rueda
+container.addEventListener("wheel", function(e) {
+    e.preventDefault();
+
+    zoom += e.deltaY * -0.001;
+    zoom = Math.min(Math.max(zoom, 1), 3);
+
+    mapa.style.transform = `scale(${zoom})`;
+});
+
+// Guardar XM/YM
 function guardarXY() {
     const idubicacion = <?= $ubimapa2 ?>;
 
