@@ -11,10 +11,10 @@ $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 
 
-if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
-    header("Location: index.php");
-    exit;
-}
+//if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
+  //  header("Location: index.php");
+   // exit;
+//}
 ?>
 
 
