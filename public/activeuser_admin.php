@@ -10,15 +10,7 @@ $stmt->execute([$id]);
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 
-
-//if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
-  //  header("Location: index.php");
-   // exit;
-//}
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -69,7 +61,7 @@ body.dark {
 
 /* ============================
      ESTILOS BASE
-     ============================ */
+   ============================ */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
@@ -107,7 +99,6 @@ body {
     margin-bottom: 40px;
     font-size: 15px;
 }
-
 
 .contenedor {
     padding: 20px;
@@ -184,11 +175,14 @@ body.dark .item:hover {
     <input type="text" id="buscar" placeholder="Escribe un nombre…">
 
     <div id="resultados"></div>
- <?php if ($_SESSION['rol'] === 'administrador'): ?>
-    <a href="activeuser_nuevo.php" class="nuevo-btn" id="btnNuevo" style="display:none;">
-        + Nuevo usuario
-    </a>
- <?php endif; ?>
+
+    <!-- SOLO ADMINISTRADOR VE ESTE BOTÓN -->
+    <?php if ($_SESSION['rol'] === 'administrador'): ?>
+        <a href="activeuser_nuevo.php" class="nuevo-btn" id="btnNuevo" style="display:none;">
+            + Nuevo usuario
+        </a>
+    <?php endif; ?>
+
 </div>
 
 </div>
@@ -205,7 +199,7 @@ input.addEventListener("keyup", () => {
 
     if (q.length === 0) {
         resultados.innerHTML = "";
-        btnNuevo.style.display = "none";
+        if (btnNuevo) btnNuevo.style.display = "none";
         return;
     }
 
@@ -217,11 +211,11 @@ input.addEventListener("keyup", () => {
 
             if (data.length === 0) {
                 resultados.innerHTML = "<div class='item'>No encontrado</div>";
-                btnNuevo.style.display = "inline-block";
+                if (btnNuevo) btnNuevo.style.display = "inline-block";
                 return;
             }
 
-            btnNuevo.style.display = "none";
+            if (btnNuevo) btnNuevo.style.display = "none";
 
             data.forEach(u => {
                 let div = document.createElement("div");
