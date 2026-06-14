@@ -184,11 +184,11 @@ body.dark .item:hover {
     <input type="text" id="buscar" placeholder="Escribe un nombre…">
 
     <div id="resultados"></div>
-
+ <?php if ($_SESSION['rol'] === 'administrador'): ?>
     <a href="activeuser_nuevo.php" class="nuevo-btn" id="btnNuevo" style="display:none;">
         + Nuevo usuario
     </a>
-
+ <?php endif; ?>
 </div>
 
 </div>
