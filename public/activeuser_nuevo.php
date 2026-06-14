@@ -171,14 +171,10 @@ input {
     <label>Piso</label>
     <input type="text" name="piso">
 
-    <label>Ubicación en mapa 2</label>
+    <label>Ubicación en mapa</label>
     <input type="number" name="ubimapa2">
 
-     <label>XM</label>
-    <input type="text" name="xm">
-
-    <label>YM</label>
-    <input type="text" name="ym">
+     
 
 
     <button class="btn-guardar">Guardar usuario</button>
