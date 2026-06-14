@@ -169,9 +169,11 @@ body.dark .item:hover {
 
 <div class="contenedor">
 
-    <div class="titulo">Administrar ActiveUser</div>
+    <div class="titulo">Usuarios</div>
+    <?php if ($_SESSION['rol'] === 'administrador'): ?>
     <div class="subtitulo">Buscar, editar o crear usuarios del módulo ActiveUser</div>
-
+    
+    <?php endif; ?>
     <input type="text" id="buscar" placeholder="Escribe un nombre…">
 
     <div id="resultados"></div>
