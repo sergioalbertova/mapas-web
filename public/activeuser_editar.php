@@ -2,19 +2,10 @@
 require "session_config.php";
 require "db.php";
 
-$id = $_SESSION['user_id'];
-
-// Obtener nombre real del usuario
-$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
-$stmt->execute([$id]);
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
-
-
-//if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
-  //  header("Location: index.php");
-    //exit;
-//}
+if (!isset($_SESSION['rol'])) {
+    header("Location: index.php");
+    exit;
+}
 
 $idu = $_GET['idu'] ?? null;
 if (!$idu) {
@@ -55,7 +46,6 @@ $ym = $coords['ym'] ?? null;
 <link rel="stylesheet" href="topbar.css">
 
 <style>
-/* --- ESTILOS TIHIL --- */
 :root {
     --bg: #F4F7FA;
     --text: #1F2933;
@@ -109,67 +99,7 @@ input {
     margin-bottom: 12px;
 }
 
-/* --- MAPA --- */
-.mapa-wrapper {
-    margin-top: 40px;
-    width: 100%;
-    max-width: 900px;
-}
-
-.mapa-container {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
-
-.mapa {
-    width: 100%;
-    border-radius: 10px;
-    transition: transform 0.2s ease-out;
-}
-
-/* --- MARCADOR PROFESIONAL --- */
-.marcador {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    transform: translate(-50%, -100%);
-    pointer-events: none;
-    display: none;
-}
-
-.pin {
-    filter: drop-shadow(0 0 6px rgba(0,0,0,0.5));
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-}
-
-
-/* --- TOOLTIP --- */
-.tooltip {
-    position: absolute;
-    background: black;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    white-space: nowrap;
-    transform: translate(-50%, -140%);
-    display: none;
-    pointer-events: none;
-}
-
-@keyframes pulse {
-    0% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
-    50% { transform: translate(-50%, -100%) rotate(-45deg) scale(1.15); }
-    100% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
-}
-
+/* BOTONES */
 .btn-guardar,
 .btn-regresar {
     display: inline-block;
@@ -181,7 +111,6 @@ input {
     transition: 0.2s ease;
 }
 
-/* Botón guardar */
 .btn-guardar {
     background: var(--accent);
     color: white;
@@ -192,7 +121,6 @@ input {
     background: #008fcc;
 }
 
-/* Botón regresar */
 .btn-regresar {
     background: #6b7280;
     color: white;
@@ -203,6 +131,13 @@ input {
     background: #4b5563;
 }
 
+/* MAPA */
+.mapa-wrapper {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 900px;
+}
+
 .mapa-container {
     position: relative;
     width: 100%;
@@ -210,8 +145,49 @@ input {
     transform-origin: top left;
 }
 
+.mapa {
+    width: 100%;
+    border-radius: 10px;
+    transition: transform 0.2s ease-out;
+}
 
+/* MARCADOR SVG PREMIUM */
+.marcador {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
+    display: none;
+    z-index: 9999;
+}
 
+.pin {
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.7))
+            drop-shadow(0 0 6px rgba(0,174,239,0.9));
+    animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+/* TOOLTIP */
+.tooltip {
+    position: absolute;
+    background: black;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    transform: translate(-50%, -140%);
+    display: none;
+    pointer-events: none;
+    z-index: 99999;
+}
 </style>
 
 </head>
@@ -251,20 +227,19 @@ input {
         <label>Ubicación en mapa 2</label>
         <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
+        <!-- XM / YM SOLO PARA ADMIN -->
         <?php if ($_SESSION['rol'] === 'administrador'): ?>
-    <label>XM</label>
-    <input type="text" id="xm" value="<?= safe($xm) ?>">
+            <label>XM</label>
+            <input type="text" id="xm" value="<?= safe($xm) ?>">
 
-    <label>YM</label>
-    <input type="text" id="ym" value="<?= safe($ym) ?>">
-<?php else: ?>
-    <input type="hidden" id="xm" value="<?= safe($xm) ?>">
-    <input type="hidden" id="ym" value="<?= safe($ym) ?>">
-<?php endif; ?>
+            <label>YM</label>
+            <input type="text" id="ym" value="<?= safe($ym) ?>">
+        <?php else: ?>
+            <input type="hidden" id="xm" value="<?= safe($xm) ?>">
+            <input type="hidden" id="ym" value="<?= safe($ym) ?>">
+        <?php endif; ?>
 
-        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
         <button class="btn-guardar">Guardar cambios</button>
-         <?php endif; ?>
         <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
 
     </form>
@@ -275,19 +250,21 @@ input {
 
         <div class="mapa-container" id="mapaContainer">
             <img id="mapa" src="piso<?= safe($user['piso']) ?>.jpg" class="mapa">
+
             <div id="marcador" class="marcador">
-                <svg viewBox="0 0 24 24" width="24" height="24" class="pin">
-                <path fill="#00AEEF" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                <svg viewBox="0 0 24 24" width="48" height="48" class="pin">
+                    <path fill="#00AEEF" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
                 </svg>
             </div>
 
             <div id="tooltip" class="tooltip"></div>
         </div>
-        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>    
+
+        <?php if ($_SESSION['rol'] === 'administrador'): ?>
         <button onclick="guardarXY()" class="btn-guardar" style="margin-top:20px;">
-            Guardar ubicación
+            Guardar XM/YM en tabla ubicacion
         </button>
-         <?php endif; ?>
+        <?php endif; ?>
     </div>
 
 </div>
@@ -307,16 +284,6 @@ const container = document.getElementById("mapaContainer");
 
 let zoom = 1;
 
-container.addEventListener("wheel", function(e) {
-    e.preventDefault();
-
-    zoom += e.deltaY * -0.001;
-    zoom = Math.min(Math.max(zoom, 1), 3);
-
-    container.style.transform = `scale(${zoom})`;
-});
-
-
 // Mostrar marcador inicial
 mapa.onload = () => {
     if (xm !== null && ym !== null) {
@@ -331,6 +298,10 @@ mapa.onload = () => {
 
 // Capturar clic para nuevas coordenadas
 mapa.addEventListener("click", function(e) {
+    <?php if ($_SESSION['rol'] !== 'administrador'): ?>
+        return;
+    <?php endif; ?>
+
     const rect = mapa.getBoundingClientRect();
 
     const x = e.clientX - rect.left;
