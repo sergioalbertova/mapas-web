@@ -131,8 +131,8 @@ input {
 /* --- MARCADOR PROFESIONAL --- */
 .marcador {
     position: absolute;
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     transform: translate(-50%, -100%);
     pointer-events: none;
     display: none;
