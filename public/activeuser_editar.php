@@ -131,23 +131,24 @@ input {
 /* --- MARCADOR PROFESIONAL --- */
 .marcador {
     position: absolute;
-    width: 18px;
-    height: 18px;
-    background: #007bff;
-    border-radius: 50% 50% 50% 0;
-    transform: translate(-50%, -100%) rotate(-45deg);
-    border: 3px solid white;
-    box-shadow: 0 0 15px rgba(255,0,0,0.9);
-    animation: pulse 1.5s infinite;
-    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
     display: none;
 }
 
-@keyframes pulse {
-    0% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
-    50% { transform: translate(-50%, -100%) rotate(-45deg) scale(1.2); }
-    100% { transform: translate(-50%, -100%) rotate(-45deg) scale(1); }
+.pin {
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.5));
+    animation: pulse 1.5s infinite;
 }
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
 
 /* --- TOOLTIP --- */
 .tooltip {
@@ -274,7 +275,12 @@ input {
 
         <div class="mapa-container" id="mapaContainer">
             <img id="mapa" src="piso<?= safe($user['piso']) ?>.jpg" class="mapa">
-            <div id="marcador" class="marcador"></div>
+            <div id="marcador" class="marcador">
+                <svg viewBox="0 0 24 24" width="24" height="24" class="pin">
+                <path fill="#00AEEF" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                </svg>
+            </div>
+
             <div id="tooltip" class="tooltip"></div>
         </div>
         <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>    
