@@ -383,10 +383,15 @@ mapa.addEventListener("dragstart", e => e.preventDefault());
    POSICIONAR MARCADOR
    ============================ */
 function posicionarMarcador() {
-    if (xm === null || ym === null || baseW === null || baseH === null) return;
+    if (xm === null || ym === null) return;
 
-    const x = xm * baseW;
-    const y = ym * baseH;
+    const w = mapaInner.offsetWidth;
+    const h = mapaInner.offsetHeight;
+
+    if (!w || !h) return;
+
+    const x = xm * w;
+    const y = ym * h;
 
     marcador.style.left = x + "px";
     marcador.style.top = y + "px";
@@ -402,8 +407,17 @@ function posicionarMarcador() {
    CARGA DE IMAGEN
    ============================ */
 mapa.onload = () => {
-    baseW = mapa.offsetWidth;
-    baseH = mapa.offsetHeight;
+    // tamaño base del mapa (sin zoom)
+    baseW = mapa.naturalWidth || mapa.offsetWidth;
+    baseH = mapa.naturalHeight || mapa.offsetHeight;
+
+    // fijar tamaño base del contenedor interno
+    mapaInner.style.width = baseW + "px";
+    mapaInner.style.height = baseH + "px";
+
+    // la imagen llena el contenedor interno
+    mapa.style.width = "100%";
+    mapa.style.height = "auto";
 
     if (xm !== null && ym !== null) {
         posicionarMarcador();
@@ -452,15 +466,26 @@ marcador.addEventListener("mouseleave", () => {
 });
 
 /* ============================
-   ZOOM
+   ZOOM (redimensionando el contenedor, no solo transform)
    ============================ */
 container.addEventListener("wheel", function(e) {
     e.preventDefault();
 
+    if (!baseW || !baseH) return;
+
     zoom += e.deltaY * -0.001;
     zoom = Math.min(Math.max(zoom, 1), 3);
 
-    mapaInner.style.transform = `scale(${zoom})`;
+    const newW = baseW * zoom;
+    const newH = baseH * zoom;
+
+    mapaInner.style.width = newW + "px";
+    mapaInner.style.height = newH + "px";
+
+    mapa.style.width = "100%";
+    mapa.style.height = "auto";
+
+    posicionarMarcador();
 });
 
 /* ============================
@@ -470,12 +495,10 @@ let dragging = false;
 let startX, startY, scrollLeft, scrollTop;
 
 container.addEventListener("mousedown", e => {
-    // solo botón izquierdo
     if (e.button !== 0) return;
 
     const permitir = document.getElementById("permitirMover");
-    // si está permitido mover pin, NO hacemos pan
-    if (permitir && permitir.checked) return;
+    if (permitir && permitir.checked) return; // si se reasigna pin, no pan
 
     dragging = true;
     startX = e.clientX;
@@ -483,7 +506,7 @@ container.addEventListener("mousedown", e => {
     scrollLeft = container.scrollLeft;
     scrollTop = container.scrollTop;
 
-    e.preventDefault(); // evita drag de imagen
+    e.preventDefault();
 });
 
 container.addEventListener("mousemove", e => {
@@ -500,17 +523,13 @@ container.addEventListener("mouseup", () => dragging = false);
 container.addEventListener("mouseleave", () => dragging = false);
 
 /* ============================
-   CENTRAR MARCADOR
+   CENTRAR MARCADOR (ahora sí sobre el pin real)
    ============================ */
 function centrarMarcador(animar = true) {
-    if (xm === null || ym === null || baseW === null || baseH === null) return;
+    if (!marcador.classList.contains("visible")) return;
 
-    // tamaño real escalado
-    const scaledW = baseW * zoom;
-    const scaledH = baseH * zoom;
-
-    const markerX = xm * scaledW;
-    const markerY = ym * scaledH;
+    const markerX = marcador.offsetLeft;
+    const markerY = marcador.offsetTop;
 
     container.scrollTo({
         left: markerX - container.clientWidth / 2,
