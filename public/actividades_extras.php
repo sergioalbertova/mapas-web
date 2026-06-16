@@ -30,16 +30,36 @@ function safe($v) {
 <link rel="stylesheet" href="topbar.css">
 
 <style>
-.contenedor {
-    padding: 20px;
+body {
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    font-family: "Segoe UI", Arial;
 }
 
+/* Contenedor principal */
+.contenedor {
+    padding: 25px;
+}
+
+/* Título */
 .titulo {
     font-size: 26px;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
+/* Botón nuevo */
+.btn-nuevo {
+    padding: 12px 18px;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Tabla TIHIL */
 .tabla {
     width: 100%;
     border-collapse: collapse;
@@ -55,22 +75,16 @@ function safe($v) {
     color: white;
     padding: 12px;
     text-align: left;
+    font-size: 14px;
 }
 
 .tabla td {
     padding: 12px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
 }
 
-.btn-nuevo {
-    padding: 12px 18px;
-    background: var(--accent);
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-}
-
+/* Botones de acción */
 .btn-accion {
     padding: 6px 10px;
     border-radius: 8px;
