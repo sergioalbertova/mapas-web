@@ -1,15 +1,16 @@
 <?php
-// ACTIVAR ERRORES (solo mientras desarrollamos)
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 require "session_config.php";
 require "db.php";
 
-// NO VALIDAMOS ROL — módulo accesible para todos
-$esAdmin = true;
+$id = $_SESSION['user_id'];
 
-// Obtener actividades con ingeniero y nombre de actividad
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
+
+// Obtener actividades
 $stmt = $pdo->query("
     SELECT ae.idextra, ae.fecha, ae.equipo, ae.usuario_afectado, ae.estatus,
            u.nombre AS ingeniero,
@@ -35,40 +36,83 @@ function safe($v) {
 <link rel="stylesheet" href="topbar.css">
 
 <style>
+
+:root {
+    --bg: #F4F7FA;
+    --text: #1F2933;
+
+    --topbar-bg: rgba(255,255,255,0.85);
+    --topbar-text: #1F2933;
+    --topbar-border: rgba(0,0,0,0.1);
+
+    --sidebar-bg: #FFFFFF;
+    --sidebar-text: #1F2933;
+    --sidebar-border: rgba(0,0,0,0.1);
+
+    --card-bg: #FFFFFF;
+    --card-text: #1F2933;
+
+    --accent: #00AEEF;
+    --shadow: rgba(0,0,0,0.08);
+}
+
+body.dark {
+    --bg: #0f172a;
+    --text: #E5E7EB;
+
+    --topbar-bg: rgba(17,24,39,0.85);
+    --topbar-text: #E5E7EB;
+    --topbar-border: rgba(255,255,255,0.1);
+
+    --sidebar-bg: #020617;
+    --sidebar-text: #E5E7EB;
+    --sidebar-border: rgba(255,255,255,0.1);
+
+    --card-bg: #1f2937;
+    --card-text: #E5E7EB;
+
+    --shadow: rgba(0,0,0,0.45);
+}
+
 body {
-    background: var(--bg);
-    color: var(--text);
     margin: 0;
     font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
 }
 
-/* Contenedor principal */
-.contenedor {
-    padding: 25px;
+/* MAIN */
+.main {
+    margin-left: 240px;
+    padding: 20px 40px;
+    width: calc(100% - 240px);
 }
 
-/* Título */
-.titulo {
-    font-size: 26px;
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+/* TÍTULOS */
+.main h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 8px;
     font-weight: 600;
-    margin-bottom: 15px;
 }
 
-/* Botón nuevo */
-.btn-nuevo {
-    padding: 12px 18px;
-    background: var(--accent);
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
+.subtitle {
+    text-align: center;
+    opacity: 0.7;
+    margin-bottom: 40px;
+    font-size: 15px;
 }
 
-/* Tabla TIHIL */
+/* TABLA */
 .tabla {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
     background: var(--card-bg);
     border-radius: 12px;
     overflow: hidden;
@@ -80,16 +124,26 @@ body {
     color: white;
     padding: 12px;
     text-align: left;
-    font-size: 14px;
 }
 
 .tabla td {
     padding: 12px;
-    border-bottom: 1px solid #e5e7eb;
-    font-size: 14px;
+    border-bottom: 1px solid var(--sidebar-border);
 }
 
-/* Botones de acción */
+/* BOTÓN NUEVO */
+.btn-nuevo {
+    padding: 12px 18px;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+/* BOTONES ACCIÓN */
 .btn-accion {
     padding: 6px 10px;
     border-radius: 8px;
@@ -102,6 +156,7 @@ body {
 .ver { background: #2563eb; }
 .editar { background: #059669; }
 .eliminar { background: #dc2626; }
+
 </style>
 
 </head>
@@ -113,45 +168,40 @@ body {
 
 <?php require "topbar.php"; ?>
 
-<div class="contenedor">
+<h2>Actividades Extras</h2>
+<div class="subtitle">Registro de actividades realizadas por los ingenieros</div>
 
-    <div class="titulo">Actividades Extras</div>
+<a href="actividades_extras_nuevo.php" class="btn-nuevo">+ Nueva actividad</a>
 
-    <a href="actividades_extras_nuevo.php" class="btn-nuevo">+ Nueva actividad</a>
+<table class="tabla">
+    <tr>
+        <th>Fecha</th>
+        <th>Ingeniero</th>
+        <th>Actividad</th>
+        <th>Usuario afectado</th>
+        <th>Equipo</th>
+        <th>Estatus</th>
+        <th>Acciones</th>
+    </tr>
 
-    <table class="tabla">
-        <tr>
-            <th>Fecha</th>
-            <th>Ingeniero</th>
-            <th>Actividad</th>
-            <th>Usuario afectado</th>
-            <th>Equipo</th>
-            <th>Estatus</th>
-            <th>Acciones</th>
-        </tr>
+    <?php foreach ($lista as $row): ?>
+    <tr>
+        <td><?= safe($row['fecha']) ?></td>
+        <td><?= safe($row['ingeniero']) ?></td>
+        <td><?= safe($row['actividad']) ?></td>
+        <td><?= safe($row['usuario_afectado']) ?></td>
+        <td><?= safe($row['equipo']) ?></td>
+        <td><?= safe($row['estatus']) ?></td>
+        <td>
+            <a href="actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn-accion ver">Ver</a>
+            <a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn-accion editar">Editar</a>
+            <a href="actividades_extras_eliminar.php?id=<?= $row['idextra'] ?>" class="btn-accion eliminar"
+               onclick="return confirm('¿Eliminar actividad?')">Eliminar</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
 
-        <?php foreach ($lista as $row): ?>
-        <tr>
-            <td><?= safe($row['fecha']) ?></td>
-            <td><?= safe($row['ingeniero']) ?></td>
-            <td><?= safe($row['actividad']) ?></td>
-            <td><?= safe($row['usuario_afectado']) ?></td>
-            <td><?= safe($row['equipo']) ?></td>
-            <td><?= safe($row['estatus']) ?></td>
-            <td>
-                <a href="actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn-accion ver">Ver</a>
-
-                <a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn-accion editar">Editar</a>
-
-                <a href="actividades_extras_eliminar.php?id=<?= $row['idextra'] ?>" class="btn-accion eliminar"
-                   onclick="return confirm('¿Eliminar actividad?')">Eliminar</a>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-
-    </table>
-
-</div>
+</table>
 
 </div>
 
