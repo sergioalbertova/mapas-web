@@ -194,7 +194,7 @@ body {
     <?php foreach ($lista as $row): ?>
     <tr>
         
-        <td><?= date("H:i:s", strtotime($row['fecha'])) ?></td>
+        <td><?= substr($row['fecha'], 0, 19) ?></td>
         <td><?= safe($row['ingeniero']) ?></td>
         <td><?= safe($row['actividad']) ?></td>
         <td><?= safe($row['usuario_afectado']) ?></td>
