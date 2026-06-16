@@ -73,12 +73,16 @@ h2 {
 /* FORMULARIO */
 .form-card {
     background: var(--card-bg);
-    padding: 25px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 10px 25px var(--shadow);
-    max-width: 700px;
-    margin: auto;
+    max-width: 650px;       /* ANCHO PERFECTO */
+    margin: auto;           /* CENTRADO REAL */
+    box-sizing: border-box; /* EVITA DESBORDES */
 }
+
+
+
 
 label {
     font-weight: 600;
@@ -94,6 +98,8 @@ input, select, textarea {
     background: var(--card-bg);
     color: var(--text);
     margin-top: 5px;
+    margin-bottom: 12px;    /* SEPARACIÓN ENTRE CAMPOS */
+    box-sizing: border-box; /* IMPORTANTE */
 }
 
 textarea {
