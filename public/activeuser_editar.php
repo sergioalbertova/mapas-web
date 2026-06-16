@@ -407,23 +407,25 @@ function posicionarMarcador() {
    CARGA DE IMAGEN
    ============================ */
 mapa.onload = () => {
-    // tamaño base del mapa (sin zoom)
-    baseW = mapa.naturalWidth || mapa.offsetWidth;
-    baseH = mapa.naturalHeight || mapa.offsetHeight;
+    // tamaño REAL del JPG
+    baseW = mapa.naturalWidth;
+    baseH = mapa.naturalHeight;
 
-    // fijar tamaño base del contenedor interno
+    // el contenedor interno inicia con el tamaño real
     mapaInner.style.width = baseW + "px";
     mapaInner.style.height = baseH + "px";
 
-    // la imagen llena el contenedor interno
+    // la imagen se ajusta al contenedor interno
     mapa.style.width = "100%";
     mapa.style.height = "auto";
 
+    // posicionar marcador
     if (xm !== null && ym !== null) {
         posicionarMarcador();
         centrarMarcador(false);
     }
 };
+
 
 /* ============================
    MOVER PIN (solo admin)
