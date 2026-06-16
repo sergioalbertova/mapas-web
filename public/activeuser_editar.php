@@ -129,7 +129,8 @@ body {
 
 /* BOTONES */
 .btn-guardar,
-.btn-regresar {
+.btn-regresar,
+.btn-center {
     display: inline-block;
     padding: 12px 20px;
     border-radius: 10px;
@@ -153,15 +154,18 @@ body {
     margin-left: 8px;
 }
 
+.btn-center {
+    background: #2563eb;
+    color: white;
+    border: none;
+    margin-right: 8px;
+}
+
 /* MAPA */
 .mapa-wrapper {
     margin-top: 10px;
     width: 100%;
     max-width: 900px;
-}
-
-.mapa-wrapper h3 {
-    margin-bottom: 10px;
 }
 
 .mapa-container {
@@ -179,7 +183,6 @@ body {
     cursor: grabbing;
 }
 
-/* Contenedor interno */
 .mapa-inner {
     position: relative;
     display: inline-block;
@@ -255,20 +258,8 @@ body {
     pointer-events: none;
     z-index: 999;
 }
-
-/* BOTÓN CENTRAR */
-.btn-center {
-    margin-top: 15px;
-    padding: 10px 16px;
-    background: #2563eb;
-    color: white;
-    border-radius: 10px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-}
 </style>
+
 
 </head>
 <body>
@@ -347,6 +338,7 @@ body {
 
         <?php if ($xm !== null && $ym !== null): ?>
         <button class="btn-center" type="button" onclick="centrarMarcador()">Centrar marcador</button>
+        <button class="btn-center" type="button" onclick="resetZoom()">Restablecer zoom</button>
         <?php endif; ?>
 
         <?php if ($_SESSION['rol'] === 'administrador'): ?>
@@ -359,7 +351,6 @@ body {
 </div>
 
 </div>
-
 <script>
 let xm = <?= $xm !== null ? $xm : "null" ?>;
 let ym = <?= $ym !== null ? $ym : "null" ?>;
@@ -400,13 +391,11 @@ function posicionarMarcador() {
     radar.classList.add("visible");
 }
 
-/* CARGA DE IMAGEN: mapa completo (fit al ancho del contenedor) */
+/* CARGA DE IMAGEN: mapa completo */
 mapa.onload = () => {
-    // el mapa se ajusta al ancho del contenedor, vista completa
     mapaInner.style.width = container.clientWidth + "px";
     mapaInner.style.height = "auto";
 
-    // baseW/baseH = tamaño inicial visible
     baseW = mapaInner.offsetWidth;
     baseH = mapaInner.offsetHeight;
 
@@ -414,11 +403,10 @@ mapa.onload = () => {
 
     if (xm !== null && ym !== null) {
         posicionarMarcador();
-        // NO centramos al inicio, se ve el mapa completo
     }
 };
 
-/* MOVER PIN (solo admin y checkbox activo) */
+/* MOVER PIN */
 mapa.addEventListener("click", function(e) {
     const permitir = document.getElementById("permitirMover");
     if (!permitir || !permitir.checked) return;
@@ -454,7 +442,7 @@ marcador.addEventListener("mouseleave", () => {
     tooltip.style.display = "none";
 });
 
-/* ZOOM: sobre tamaño base visible */
+/* ZOOM REAL */
 container.addEventListener("wheel", function(e) {
     e.preventDefault();
     if (!baseW || !baseH) return;
@@ -462,16 +450,13 @@ container.addEventListener("wheel", function(e) {
     zoom += e.deltaY * -0.001;
     zoom = Math.min(Math.max(zoom, 1), 3);
 
-    const newW = baseW * zoom;
-    const newH = baseH * zoom;
-
-    mapaInner.style.width = newW + "px";
-    mapaInner.style.height = newH + "px";
+    mapaInner.style.width = (baseW * zoom) + "px";
+    mapaInner.style.height = (baseH * zoom) + "px";
 
     posicionarMarcador();
 });
 
-/* ARRASTRAR MAPA (PAN) */
+/* ARRASTRAR MAPA */
 let dragging = false;
 let startX, startY, scrollLeft, scrollTop;
 
@@ -503,7 +488,7 @@ container.addEventListener("mousemove", e => {
 container.addEventListener("mouseup", () => dragging = false);
 container.addEventListener("mouseleave", () => dragging = false);
 
-/* CENTRAR MARCADOR (sobre el pin real) */
+/* CENTRAR MARCADOR */
 function centrarMarcador(animar = true) {
     if (!marcador.classList.contains("visible")) return;
 
@@ -515,6 +500,18 @@ function centrarMarcador(animar = true) {
         top: markerY - container.clientHeight / 2,
         behavior: animar ? "smooth" : "auto"
     });
+}
+
+/* RESTABLECER ZOOM */
+function resetZoom() {
+    zoom = 1;
+
+    mapaInner.style.width = baseW + "px";
+    mapaInner.style.height = baseH + "px";
+
+    posicionarMarcador();
+
+    container.scrollTo({ left: 0, top: 0, behavior: "smooth" });
 }
 
 /* GUARDAR UBICACIÓN */
