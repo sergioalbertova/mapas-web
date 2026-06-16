@@ -104,7 +104,7 @@ body {
 
 <?php require "sidebar.php"; ?>
 
-<div class="main">
+<div class="main">   <!-- ESTA LÍNEA ES CRÍTICA -->
 
 <?php require "topbar.php"; ?>
 
@@ -149,7 +149,7 @@ body {
 
 </div>
 
-</div>
+</div> <!-- CIERRE REAL DE .main -->
 
 <script src="theme.js"></script>
 
