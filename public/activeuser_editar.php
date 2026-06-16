@@ -2,10 +2,13 @@
 require "session_config.php";
 require "db.php";
 
-if (!isset($_SESSION['rol'])) {
-    header("Location: index.php");
-    exit;
-}
+$id = $_SESSION['user_id'];
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 
 $idu = $_GET['idu'] ?? null;
 if (!$idu) {
@@ -26,7 +29,6 @@ function safe($v) {
     return htmlspecialchars($v ?? "", ENT_QUOTES, 'UTF-8');
 }
 
-// Obtener XM/YM desde tabla ubicacion
 $ubimapa2 = $user['ubimapa2'];
 
 $stmt2 = $pdo->prepare("SELECT xm, ym FROM ubicacion WHERE idubicacion = ?");
@@ -40,20 +42,102 @@ $ym = $coords['ym'] ?? null;
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Editar usuario</title>
+<title>Editar ActiveUser</title>
 
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 
 <style>
+/* VARIABLES TIHIL */
 :root {
+    --bg: #F4F7FA;
+    --text: #1F2933;
+    --card-bg: #FFFFFF;
+    --card-text: #1F2933;
     --accent: #00AEEF;
-    --shadow: rgba(0,0,0,0.15);
+    --shadow: rgba(0,0,0,0.08);
+}
+
+body.dark {
+    --bg: #0f172a;
+    --text: #E5E7EB;
+    --card-bg: #1f2937;
+    --card-text: #E5E7EB;
+    --shadow: rgba(0,0,0,0.45);
+}
+
+/* BASE TIHIL */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+}
+
+/* MAIN TIHIL */
+.main {
+    margin-left: 240px;
+    padding: 20px 40px;
+    width: calc(100% - 240px);
+    transition: margin-left 0.25s ease;
+}
+
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+.contenedor {
+    padding: 20px;
+}
+
+/* FORM CARD */
+.form-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px var(--shadow);
+    max-width: 600px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 12px;
+}
+
+/* BOTONES */
+.btn-guardar,
+.btn-regresar {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s ease;
+}
+
+.btn-guardar {
+    background: var(--accent);
+    color: white;
+    border: none;
+}
+
+.btn-regresar {
+    background: #6b7280;
+    color: white;
+    text-decoration: none;
 }
 
 /* MAPA */
 .mapa-wrapper {
-    margin-top: 40px;
+    margin-top: 20px;
     width: 100%;
     max-width: 900px;
 }
@@ -62,7 +146,7 @@ $ym = $coords['ym'] ?? null;
     position: relative;
     width: 100%;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 10px 25px var(--shadow);
 }
 
@@ -72,14 +156,14 @@ $ym = $coords['ym'] ?? null;
     transform-origin: center center;
 }
 
-/* MARCADOR SVG PREMIUM */
+/* MARCADOR */
 .marcador {
     position: absolute;
     width: 48px;
     height: 48px;
     transform: translate(-50%, -100%);
     pointer-events: none;
-    opacity: 0; /* FIX FIREFOX */
+    opacity: 0;
     z-index: 50;
 }
 
@@ -147,11 +231,6 @@ $ym = $coords['ym'] ?? null;
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.btn-center:hover {
-    background: #1d4ed8;
 }
 </style>
 
@@ -213,21 +292,17 @@ $ym = $coords['ym'] ?? null;
         <div class="mapa-container" id="mapaContainer">
             <img id="mapa" src="piso<?= safe($user['piso']) ?>.jpg" class="mapa">
 
-            <!-- MARCADOR -->
             <div id="marcador" class="marcador">
                 <svg viewBox="0 0 24 24" width="48" height="48" class="pin">
                     <path fill="#00AEEF" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
                 </svg>
             </div>
 
-            <!-- RADAR -->
             <div id="radar" class="radar"></div>
 
-            <!-- TOOLTIP -->
             <div id="tooltip" class="tooltip"></div>
         </div>
 
-        <!-- BOTÓN CENTRAR SOLO SI HAY XM/YM -->
         <?php if ($xm !== null && $ym !== null): ?>
         <button class="btn-center" onclick="centrarMarcador()">Centrar marcador</button>
         <?php endif; ?>
@@ -349,6 +424,8 @@ function guardarXY() {
     .then(t => alert(t));
 }
 </script>
+
+<script src="theme.js"></script>
 
 </body>
 </html>
