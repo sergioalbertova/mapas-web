@@ -1,7 +1,12 @@
 <?php
-date_default_timezone_set('America/Mexico_City');
 require "session_config.php";
 require "db.php";
+
+// Zona horaria correcta
+date_default_timezone_set('America/Mexico_City');
+
+// Fecha actual exacta
+$fecha = date("Y-m-d H:i:s");
 
 // Validar que venga el ingeniero
 if (!isset($_POST['idingeniero'])) {
@@ -28,14 +33,15 @@ if (!$idactividad) {
     exit;
 }
 
-// Insertar en BD
+// Insertar en BD con fecha enviada desde PHP
 $stmt = $pdo->prepare("
     INSERT INTO actividades_extras 
-    (idingeniero, idactividad, usuario_afectado, equipo, comentarios, evidencia, estatus)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (fecha, idingeniero, idactividad, usuario_afectado, equipo, comentarios, evidencia, estatus)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ");
 
 $stmt->execute([
+    $fecha,
     $idingeniero,
     $idactividad,
     $usuario_afectado,
