@@ -172,6 +172,11 @@ body {
     border-radius: 12px;
     box-shadow: 0 10px 25px var(--shadow);
     background: #fff;
+    cursor: grab;
+}
+
+.mapa-container:active {
+    cursor: grabbing;
 }
 
 /* Contenedor interno que se escala completo */
@@ -370,7 +375,9 @@ let zoom = 1;
 let baseW = null;
 let baseH = null;
 
-// Posicionar marcador en coordenadas base (sin zoom)
+/* ============================
+   POSICIONAR MARCADOR
+   ============================ */
 function posicionarMarcador() {
     if (xm === null || ym === null || baseW === null || baseH === null) return;
 
@@ -387,7 +394,9 @@ function posicionarMarcador() {
     radar.classList.add("visible");
 }
 
-// Al cargar la imagen
+/* ============================
+   CARGA DE IMAGEN
+   ============================ */
 mapa.onload = () => {
     baseW = mapa.offsetWidth;
     baseH = mapa.offsetHeight;
@@ -398,7 +407,9 @@ mapa.onload = () => {
     }
 };
 
-// Clic para mover marcador (solo admin y si checkbox está activo)
+/* ============================
+   MOVER PIN (solo admin)
+   ============================ */
 mapa.addEventListener("click", function(e) {
 
     const permitir = document.getElementById("permitirMover");
@@ -417,7 +428,9 @@ mapa.addEventListener("click", function(e) {
     posicionarMarcador();
 });
 
-// Tooltip
+/* ============================
+   TOOLTIP
+   ============================ */
 marcador.addEventListener("mouseenter", () => {
     if (!marcador.classList.contains("visible")) return;
 
@@ -435,7 +448,9 @@ marcador.addEventListener("mouseleave", () => {
     tooltip.style.display = "none";
 });
 
-// Zoom con rueda (escala todo el mapaInner)
+/* ============================
+   ZOOM
+   ============================ */
 container.addEventListener("wheel", function(e) {
     e.preventDefault();
 
@@ -445,24 +460,58 @@ container.addEventListener("wheel", function(e) {
     mapaInner.style.transform = `scale(${zoom})`;
 });
 
-// Centrar marcador
+/* ============================
+   ARRASTRAR MAPA (PAN)
+   ============================ */
+let dragging = false;
+let startX, startY, scrollLeft, scrollTop;
+
+container.addEventListener("mousedown", e => {
+    const permitir = document.getElementById("permitirMover");
+    if (permitir && permitir.checked) return;
+
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    scrollLeft = container.scrollLeft;
+    scrollTop = container.scrollTop;
+});
+
+container.addEventListener("mousemove", e => {
+    if (!dragging) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    container.scrollLeft = scrollLeft - dx;
+    container.scrollTop = scrollTop - dy;
+});
+
+container.addEventListener("mouseup", () => dragging = false);
+container.addEventListener("mouseleave", () => dragging = false);
+
+/* ============================
+   CENTRAR MARCADOR
+   ============================ */
 function centrarMarcador(animar = true) {
     if (xm === null || ym === null || baseW === null || baseH === null) return;
 
-    const markerX = xm * baseW * zoom;
-    const markerY = ym * baseH * zoom;
+    const scaledW = baseW * zoom;
+    const scaledH = baseH * zoom;
 
-    const targetLeft = markerX - container.clientWidth / 2;
-    const targetTop = markerY - container.clientHeight / 2;
+    const markerX = xm * scaledW;
+    const markerY = ym * scaledH;
 
     container.scrollTo({
-        left: targetLeft,
-        top: targetTop,
+        left: markerX - container.clientWidth / 2,
+        top: markerY - container.clientHeight / 2,
         behavior: animar ? "smooth" : "auto"
     });
 }
 
-// Guardar XM/YM
+/* ============================
+   GUARDAR UBICACIÓN
+   ============================ */
 function guardarXY() {
     if (xm === null || ym === null) {
         alert("Primero selecciona una ubicación en el mapa.");
