@@ -179,16 +179,16 @@ body {
     cursor: grabbing;
 }
 
-/* Contenedor interno que se escala completo */
+/* Contenedor interno */
 .mapa-inner {
     position: relative;
     display: inline-block;
-    transform-origin: center center;
 }
 
 .mapa {
     display: block;
     width: 100%;
+    height: auto;
 }
 
 /* MARCADOR */
@@ -379,15 +379,12 @@ let baseH = null;
 mapa.draggable = false;
 mapa.addEventListener("dragstart", e => e.preventDefault());
 
-/* ============================
-   POSICIONAR MARCADOR
-   ============================ */
+/* POSICIONAR MARCADOR */
 function posicionarMarcador() {
     if (xm === null || ym === null) return;
 
     const w = mapaInner.offsetWidth;
     const h = mapaInner.offsetHeight;
-
     if (!w || !h) return;
 
     const x = xm * w;
@@ -403,33 +400,25 @@ function posicionarMarcador() {
     radar.classList.add("visible");
 }
 
-/* ============================
-   CARGA DE IMAGEN
-   ============================ */
+/* CARGA DE IMAGEN: mapa completo (fit al ancho del contenedor) */
 mapa.onload = () => {
-    // tamaño REAL del JPG
-    baseW = mapa.naturalWidth;
-    baseH = mapa.naturalHeight;
+    // el mapa se ajusta al ancho del contenedor, vista completa
+    mapaInner.style.width = container.clientWidth + "px";
+    mapaInner.style.height = "auto";
 
-    // el contenedor interno inicia con el tamaño real
-    mapaInner.style.width = baseW + "px";
-    mapaInner.style.height = baseH + "px";
+    // baseW/baseH = tamaño inicial visible
+    baseW = mapaInner.offsetWidth;
+    baseH = mapaInner.offsetHeight;
 
-    // la imagen se ajusta al contenedor interno
-    mapa.style.width = "100%";
-    mapa.style.height = "auto";
+    zoom = 1;
 
-    // posicionar marcador
     if (xm !== null && ym !== null) {
         posicionarMarcador();
-        centrarMarcador(false);
+        // NO centramos al inicio, se ve el mapa completo
     }
 };
 
-
-/* ============================
-   MOVER PIN (solo admin)
-   ============================ */
+/* MOVER PIN (solo admin y checkbox activo) */
 mapa.addEventListener("click", function(e) {
     const permitir = document.getElementById("permitirMover");
     if (!permitir || !permitir.checked) return;
@@ -447,9 +436,7 @@ mapa.addEventListener("click", function(e) {
     posicionarMarcador();
 });
 
-/* ============================
-   TOOLTIP
-   ============================ */
+/* TOOLTIP */
 marcador.addEventListener("mouseenter", () => {
     if (!marcador.classList.contains("visible")) return;
 
@@ -467,12 +454,9 @@ marcador.addEventListener("mouseleave", () => {
     tooltip.style.display = "none";
 });
 
-/* ============================
-   ZOOM (redimensionando el contenedor, no solo transform)
-   ============================ */
+/* ZOOM: sobre tamaño base visible */
 container.addEventListener("wheel", function(e) {
     e.preventDefault();
-
     if (!baseW || !baseH) return;
 
     zoom += e.deltaY * -0.001;
@@ -484,15 +468,10 @@ container.addEventListener("wheel", function(e) {
     mapaInner.style.width = newW + "px";
     mapaInner.style.height = newH + "px";
 
-    mapa.style.width = "100%";
-    mapa.style.height = "auto";
-
     posicionarMarcador();
 });
 
-/* ============================
-   ARRASTRAR MAPA (PAN)
-   ============================ */
+/* ARRASTRAR MAPA (PAN) */
 let dragging = false;
 let startX, startY, scrollLeft, scrollTop;
 
@@ -500,7 +479,7 @@ container.addEventListener("mousedown", e => {
     if (e.button !== 0) return;
 
     const permitir = document.getElementById("permitirMover");
-    if (permitir && permitir.checked) return; // si se reasigna pin, no pan
+    if (permitir && permitir.checked) return;
 
     dragging = true;
     startX = e.clientX;
@@ -524,9 +503,7 @@ container.addEventListener("mousemove", e => {
 container.addEventListener("mouseup", () => dragging = false);
 container.addEventListener("mouseleave", () => dragging = false);
 
-/* ============================
-   CENTRAR MARCADOR (ahora sí sobre el pin real)
-   ============================ */
+/* CENTRAR MARCADOR (sobre el pin real) */
 function centrarMarcador(animar = true) {
     if (!marcador.classList.contains("visible")) return;
 
@@ -540,9 +517,7 @@ function centrarMarcador(animar = true) {
     });
 }
 
-/* ============================
-   GUARDAR UBICACIÓN
-   ============================ */
+/* GUARDAR UBICACIÓN */
 function guardarXY() {
     if (xm === null || ym === null) {
         alert("Primero selecciona una ubicación en el mapa.");
@@ -565,8 +540,6 @@ function guardarXY() {
     .catch(() => alert("Error al guardar la ubicación."));
 }
 </script>
-
-
 
 <script src="theme.js"></script>
 
