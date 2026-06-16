@@ -48,6 +48,7 @@ $ym = $coords['ym'] ?? null;
 <style>
 :root {
     --accent: #00AEEF;
+    --shadow: rgba(0,0,0,0.15);
 }
 
 /* MAPA */
@@ -62,17 +63,12 @@ $ym = $coords['ym'] ?? null;
     width: 100%;
     overflow: hidden;
     transform-origin: top left;
-    cursor: grab;
-}
-
-.mapa-container:active {
-    cursor: grabbing;
 }
 
 .mapa {
     width: 100%;
     border-radius: 10px;
-    transition: transform 0.2s ease-out;
+    box-shadow: 0 10px 25px var(--shadow);
 }
 
 /* MARCADOR SVG PREMIUM */
@@ -82,7 +78,7 @@ $ym = $coords['ym'] ?? null;
     height: 48px;
     transform: translate(-50%, -100%);
     pointer-events: none;
-    opacity: 0; /* ← FIX FIREFOX */
+    opacity: 0; /* FIX FIREFOX */
     z-index: 9999;
 }
 
@@ -102,7 +98,7 @@ $ym = $coords['ym'] ?? null;
     100% { transform: scale(1); }
 }
 
-/* EFECTO RADAR */
+/* RADAR */
 .radar {
     position: absolute;
     width: 140px;
@@ -137,6 +133,23 @@ $ym = $coords['ym'] ?? null;
     display: none;
     pointer-events: none;
     z-index: 99999;
+}
+
+/* BOTÓN CENTRAR */
+.btn-center {
+    margin-top: 15px;
+    padding: 10px 16px;
+    background: #2563eb;
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-center:hover {
+    background: #1d4ed8;
 }
 </style>
 
@@ -212,6 +225,11 @@ $ym = $coords['ym'] ?? null;
             <div id="tooltip" class="tooltip"></div>
         </div>
 
+        <!-- BOTÓN CENTRAR SOLO SI HAY XM/YM -->
+        <?php if ($xm !== null && $ym !== null): ?>
+        <button class="btn-center" onclick="centrarMarcador()">Centrar marcador</button>
+        <?php endif; ?>
+
         <?php if ($_SESSION['rol'] === 'administrador'): ?>
         <button onclick="guardarXY()" class="btn-guardar" style="margin-top:20px;">
             Guardar XM/YM en tabla ubicacion
@@ -234,8 +252,6 @@ const tooltip = document.getElementById("tooltip");
 const container = document.getElementById("mapaContainer");
 
 let zoom = 1;
-let isDragging = false;
-let startX, startY, offsetX = 0, offsetY = 0;
 
 // Mostrar marcador inicial
 mapa.onload = () => {
@@ -245,6 +261,7 @@ mapa.onload = () => {
 
         marcador.style.left = x + "px";
         marcador.style.top = y + "px";
+
         radar.style.left = x + "px";
         radar.style.top = y + "px";
 
@@ -253,7 +270,7 @@ mapa.onload = () => {
     }
 };
 
-// Capturar clic para nuevas coordenadas
+// Clic para mover marcador (solo admin)
 mapa.addEventListener("click", function(e) {
     <?php if ($_SESSION['rol'] !== 'administrador'): ?>
         return;
@@ -303,27 +320,19 @@ container.addEventListener("wheel", function(e) {
     zoom += e.deltaY * -0.001;
     zoom = Math.min(Math.max(zoom, 1), 3);
 
-    container.style.transform = `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`;
+    container.style.transform = `scale(${zoom})`;
 });
 
-// Pan (arrastrar)
-container.addEventListener("mousedown", e => {
-    isDragging = true;
-    startX = e.clientX - offsetX;
-    startY = e.clientY - offsetY;
-});
-
-container.addEventListener("mousemove", e => {
-    if (!isDragging) return;
-
-    offsetX = e.clientX - startX;
-    offsetY = e.clientY - startY;
-
-    container.style.transform = `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`;
-});
-
-container.addEventListener("mouseup", () => isDragging = false);
-container.addEventListener("mouseleave", () => isDragging = false);
+// CENTRAR MARCADOR
+function centrarMarcador() {
+    zoom = 1;
+    container.style.transform = "scale(1)";
+    container.scrollTo({
+        top: (ym * mapa.offsetHeight) - container.clientHeight / 2,
+        left: (xm * mapa.offsetWidth) - container.clientWidth / 2,
+        behavior: "smooth"
+    });
+}
 
 // Guardar XM/YM
 function guardarXY() {
