@@ -1,18 +1,13 @@
 <?php
-echo "<h1 style='color:red'>PRUEBA ACTIVIDADES</h1>";
+// ACTIVAR ERRORES (solo mientras desarrollamos)
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require "session_config.php";
 require "db.php";
 
-$id = $_SESSION['user_id'];
-
-// Obtener nombre real del usuario
-$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
-$stmt->execute([$id]);
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
+// NO VALIDAMOS ROL — módulo accesible para todos
+$esAdmin = true;
 
 // Obtener actividades con ingeniero y nombre de actividad
 $stmt = $pdo->query("
@@ -114,7 +109,7 @@ body {
 
 <?php require "sidebar.php"; ?>
 
-<div class="main">   <!-- ESTA LÍNEA ES CRÍTICA -->
+<div class="main">
 
 <?php require "topbar.php"; ?>
 
@@ -146,11 +141,10 @@ body {
             <td>
                 <a href="actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn-accion ver">Ver</a>
 
-                <?php if ($esAdmin): ?>
                 <a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn-accion editar">Editar</a>
+
                 <a href="actividades_extras_eliminar.php?id=<?= $row['idextra'] ?>" class="btn-accion eliminar"
                    onclick="return confirm('¿Eliminar actividad?')">Eliminar</a>
-                <?php endif; ?>
             </td>
         </tr>
         <?php endforeach; ?>
@@ -159,7 +153,7 @@ body {
 
 </div>
 
-</div> <!-- CIERRE REAL DE .main -->
+</div>
 
 <script src="theme.js"></script>
 
