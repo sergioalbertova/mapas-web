@@ -157,6 +157,13 @@ body {
 .editar { background: #059669; }
 .eliminar { background: #dc2626; }
 
+.tabla th:last-child,
+.tabla td:last-child {
+    width: 150px;        /* Espacio suficiente */
+    white-space: nowrap; /* Evita que los botones salten de línea */
+}
+
+
 </style>
 
 </head>
