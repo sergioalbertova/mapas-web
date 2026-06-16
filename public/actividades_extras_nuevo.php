@@ -187,7 +187,7 @@ textarea {
     <textarea name="comentarios" placeholder="Describe brevemente la actividad…"></textarea>
 
     <!-- EVIDENCIA -->
-    <label>Evidencia (texto por ahora)</label>
+    <label>Evidencia</label>
     <input type="text" name="evidencia" placeholder="URL, ticket, referencia, etc.">
 
     <!-- ESTATUS -->
