@@ -375,6 +375,10 @@ let zoom = 1;
 let baseW = null;
 let baseH = null;
 
+/* Evitar drag fantasma del <img> */
+mapa.draggable = false;
+mapa.addEventListener("dragstart", e => e.preventDefault());
+
 /* ============================
    POSICIONAR MARCADOR
    ============================ */
@@ -411,7 +415,6 @@ mapa.onload = () => {
    MOVER PIN (solo admin)
    ============================ */
 mapa.addEventListener("click", function(e) {
-
     const permitir = document.getElementById("permitirMover");
     if (!permitir || !permitir.checked) return;
 
@@ -467,7 +470,11 @@ let dragging = false;
 let startX, startY, scrollLeft, scrollTop;
 
 container.addEventListener("mousedown", e => {
+    // solo botón izquierdo
+    if (e.button !== 0) return;
+
     const permitir = document.getElementById("permitirMover");
+    // si está permitido mover pin, NO hacemos pan
     if (permitir && permitir.checked) return;
 
     dragging = true;
@@ -475,6 +482,8 @@ container.addEventListener("mousedown", e => {
     startY = e.clientY;
     scrollLeft = container.scrollLeft;
     scrollTop = container.scrollTop;
+
+    e.preventDefault(); // evita drag de imagen
 });
 
 container.addEventListener("mousemove", e => {
@@ -496,6 +505,7 @@ container.addEventListener("mouseleave", () => dragging = false);
 function centrarMarcador(animar = true) {
     if (xm === null || ym === null || baseW === null || baseH === null) return;
 
+    // tamaño real escalado
     const scaledW = baseW * zoom;
     const scaledH = baseH * zoom;
 
@@ -534,6 +544,7 @@ function guardarXY() {
     .catch(() => alert("Error al guardar la ubicación."));
 }
 </script>
+
 
 <script src="theme.js"></script>
 
