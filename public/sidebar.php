@@ -51,6 +51,19 @@
             </a>
         </li>
 
+
+        <li class="nav-item">
+            <a href="actividades_extras.php">
+                <svg viewBox="0 0 24 24">
+                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 
+                     2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0c.55 0 1 .45 1 1s-.45 
+                     1-1 1-1-.45-1-1 .45-1 1-1zm0 16H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V9h10v2z"/>
+                </svg>
+                <span class="nav-text">Actividades Extras</span>
+            </a>
+        </li>
+
+
         <li class="nav-item">
             <a href="cambiar_password.php">
                 <svg viewBox="0 0 24 24">
