@@ -47,88 +47,7 @@ $ym = $coords['ym'] ?? null;
 
 <style>
 :root {
-    --bg: #F4F7FA;
-    --text: #1F2933;
-    --card-bg: #FFFFFF;
     --accent: #00AEEF;
-    --shadow: rgba(0,0,0,0.08);
-}
-
-body.dark {
-    --bg: #0f172a;
-    --text: #E5E7EB;
-    --card-bg: #1f2937;
-    --shadow: rgba(0,0,0,0.45);
-}
-
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-}
-
-.main {
-    margin-left: 240px;
-    padding: 20px 40px;
-    width: calc(100% - 240px);
-}
-
-.contenedor {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.form-card {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 10px 25px var(--shadow);
-    max-width: 600px;
-    width: 100%;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    margin-bottom: 12px;
-}
-
-/* BOTONES */
-.btn-guardar,
-.btn-regresar {
-    display: inline-block;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    transition: 0.2s ease;
-}
-
-.btn-guardar {
-    background: var(--accent);
-    color: white;
-    border: none;
-}
-
-.btn-guardar:hover {
-    background: #008fcc;
-}
-
-.btn-regresar {
-    background: #6b7280;
-    color: white;
-    text-decoration: none;
-}
-
-.btn-regresar:hover {
-    background: #4b5563;
 }
 
 /* MAPA */
@@ -143,6 +62,11 @@ input {
     width: 100%;
     overflow: hidden;
     transform-origin: top left;
+    cursor: grab;
+}
+
+.mapa-container:active {
+    cursor: grabbing;
 }
 
 .mapa {
@@ -158,8 +82,12 @@ input {
     height: 48px;
     transform: translate(-50%, -100%);
     pointer-events: none;
-    display: none;
+    opacity: 0; /* ← FIX FIREFOX */
     z-index: 9999;
+}
+
+.marcador.visible {
+    opacity: 1;
 }
 
 .pin {
@@ -172,6 +100,28 @@ input {
     0% { transform: scale(1); }
     50% { transform: scale(1.25); }
     100% { transform: scale(1); }
+}
+
+/* EFECTO RADAR */
+.radar {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(0,174,239,0.25);
+    transform: translate(-50%, -50%);
+    animation: radarPulse 2s infinite ease-out;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.radar.visible {
+    opacity: 1;
+}
+
+@keyframes radarPulse {
+    0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
 }
 
 /* TOOLTIP */
@@ -202,9 +152,7 @@ input {
 <div class="contenedor">
 
     <div class="titulo">Editar usuario</div>
-    <div class="subtitulo">Modifica los datos del usuario seleccionado</div>
 
-    <!-- FORMULARIO -->
     <form action="activeuser_editar_guardar.php" method="POST" class="form-card">
 
         <input type="hidden" name="idu" value="<?= safe($user['idu']) ?>">
@@ -227,7 +175,6 @@ input {
         <label>Ubicación en mapa 2</label>
         <input type="number" name="ubimapa2" value="<?= safe($user['ubimapa2']) ?>">
 
-        <!-- XM / YM SOLO PARA ADMIN -->
         <?php if ($_SESSION['rol'] === 'administrador'): ?>
             <label>XM</label>
             <input type="text" id="xm" value="<?= safe($xm) ?>">
@@ -251,12 +198,17 @@ input {
         <div class="mapa-container" id="mapaContainer">
             <img id="mapa" src="piso<?= safe($user['piso']) ?>.jpg" class="mapa">
 
+            <!-- MARCADOR -->
             <div id="marcador" class="marcador">
                 <svg viewBox="0 0 24 24" width="48" height="48" class="pin">
                     <path fill="#00AEEF" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
                 </svg>
             </div>
 
+            <!-- RADAR -->
+            <div id="radar" class="radar"></div>
+
+            <!-- TOOLTIP -->
             <div id="tooltip" class="tooltip"></div>
         </div>
 
@@ -271,18 +223,19 @@ input {
 
 </div>
 
-<script src="theme.js"></script>
-
 <script>
 let xm = <?= $xm ? $xm : "null" ?>;
 let ym = <?= $ym ? $ym : "null" ?>;
 
 const mapa = document.getElementById("mapa");
 const marcador = document.getElementById("marcador");
+const radar = document.getElementById("radar");
 const tooltip = document.getElementById("tooltip");
 const container = document.getElementById("mapaContainer");
 
 let zoom = 1;
+let isDragging = false;
+let startX, startY, offsetX = 0, offsetY = 0;
 
 // Mostrar marcador inicial
 mapa.onload = () => {
@@ -292,7 +245,11 @@ mapa.onload = () => {
 
         marcador.style.left = x + "px";
         marcador.style.top = y + "px";
-        marcador.style.display = "block";
+        radar.style.left = x + "px";
+        radar.style.top = y + "px";
+
+        marcador.classList.add("visible");
+        radar.classList.add("visible");
     }
 };
 
@@ -315,7 +272,12 @@ mapa.addEventListener("click", function(e) {
 
     marcador.style.left = (xm * mapa.offsetWidth) + "px";
     marcador.style.top = (ym * mapa.offsetHeight) + "px";
-    marcador.style.display = "block";
+
+    radar.style.left = marcador.style.left;
+    radar.style.top = marcador.style.top;
+
+    marcador.classList.add("visible");
+    radar.classList.add("visible");
 });
 
 // Tooltip
@@ -341,8 +303,27 @@ container.addEventListener("wheel", function(e) {
     zoom += e.deltaY * -0.001;
     zoom = Math.min(Math.max(zoom, 1), 3);
 
-    container.style.transform = `scale(${zoom})`;
+    container.style.transform = `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`;
 });
+
+// Pan (arrastrar)
+container.addEventListener("mousedown", e => {
+    isDragging = true;
+    startX = e.clientX - offsetX;
+    startY = e.clientY - offsetY;
+});
+
+container.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+
+    offsetX = e.clientX - startX;
+    offsetY = e.clientY - startY;
+
+    container.style.transform = `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`;
+});
+
+container.addEventListener("mouseup", () => isDragging = false);
+container.addEventListener("mouseleave", () => isDragging = false);
 
 // Guardar XM/YM
 function guardarXY() {
