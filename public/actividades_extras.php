@@ -195,8 +195,7 @@ body {
         <td>
             <a href="actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn-accion ver">Ver</a>
             <a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn-accion editar">Editar</a>
-            <a href="actividades_extras_eliminar.php?id=<?= $row['idextra'] ?>" class="btn-accion eliminar"
-               onclick="return confirm('¿Eliminar actividad?')">Eliminar</a>
+            
         </td>
     </tr>
     <?php endforeach; ?>
