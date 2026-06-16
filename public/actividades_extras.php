@@ -6,7 +6,13 @@ error_reporting(E_ALL);
 require "session_config.php";
 require "db.php";
 
-$esAdmin = ($_SESSION['rol'] === 'administrador');
+$id = $_SESSION['user_id'];
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 
 // Obtener actividades con ingeniero y nombre de actividad
 $stmt = $pdo->query("
