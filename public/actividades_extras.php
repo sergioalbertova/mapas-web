@@ -193,7 +193,8 @@ body {
 
     <?php foreach ($lista as $row): ?>
     <tr>
-        <td><?= safe($row['fecha']) ?></td>
+        
+        <td><?= date("H:i:s", strtotime($row['fecha'])) ?></td>
         <td><?= safe($row['ingeniero']) ?></td>
         <td><?= safe($row['actividad']) ?></td>
         <td><?= safe($row['usuario_afectado']) ?></td>
