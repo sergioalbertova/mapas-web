@@ -36,9 +36,27 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
     --shadow: rgba(0,0,0,0.08);
 }
 
+body.dark {
+    --bg: #0f172a;
+    --text: #E5E7EB;
+
+    --topbar-bg: rgba(17,24,39,0.85);
+    --topbar-text: #E5E7EB;
+    --topbar-border: rgba(255,255,255,0.1);
+
+    --sidebar-bg: #020617;
+    --sidebar-text: #E5E7EB;
+    --sidebar-border: rgba(255,255,255,0.1);
+
+    --card-bg: #1f2937;
+    --card-text: #E5E7EB;
+
+    --shadow: rgba(0,0,0,0.45);
+}
+
 /* ============================
      ESTILOS BASE
-   ============================ */
+     ============================ */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
