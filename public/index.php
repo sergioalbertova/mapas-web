@@ -16,7 +16,6 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <meta charset="UTF-8">
 <title>Inicio</title>
 
-
 <style>
 :root {
     --bg: #F4F7FA;
@@ -37,27 +36,9 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
     --shadow: rgba(0,0,0,0.08);
 }
 
-body.dark {
-    --bg: #0f172a;
-    --text: #E5E7EB;
-
-    --topbar-bg: rgba(17,24,39,0.85);
-    --topbar-text: #E5E7EB;
-    --topbar-border: rgba(255,255,255,0.1);
-
-    --sidebar-bg: #020617;
-    --sidebar-text: #E5E7EB;
-    --sidebar-border: rgba(255,255,255,0.1);
-
-    --card-bg: #1f2937;
-    --card-text: #E5E7EB;
-
-    --shadow: rgba(0,0,0,0.45);
-}
-
 /* ============================
      ESTILOS BASE
-     ============================ */
+   ============================ */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
@@ -223,6 +204,19 @@ body {
             </div>
         </a>
 
+        <!-- ACTIVIDADES EXTRAS (NUEVO) -->
+        <a href="actividades_extras.php" class="card">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 
+                         2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0c.55 0 
+                         1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 16H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V9h10v2z"/>
+            </svg>
+            <div class="card-content">
+                <div class="card-title">Actividades Extras</div>
+                <div class="card-sub">Registro de actividades realizadas</div>
+            </div>
+        </a>
+
         <!-- CERRAR SESIÓN -->
         <a href="logout.php" class="card">
             <svg><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm2-10H8v2h10v14H8v2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
@@ -232,22 +226,8 @@ body {
             </div>
         </a>
 
-        <!-- TEMA OSCURO -->
-        <div class="card" onclick="toggleTheme()">
-            <svg viewBox="0 0 24 24">
-                <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79 9 9 0 0121 12.79z"/>
-            </svg>
-            <div class="card-content">
-                <div class="card-title">Tema oscuro</div>
-                <div class="card-sub">Cambiar apariencia</div>
-            </div>
-        </div>
-
     </div>
 </div>
-
-<!-- Scripts -->
-<script src="theme.js"></script>
 
 </body>
 </html>
