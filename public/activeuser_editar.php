@@ -87,8 +87,12 @@ body {
     width: calc(100% - 70px);
 }
 
+/* CENTRAR TODO */
 .contenedor {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .titulo {
@@ -142,19 +146,11 @@ body {
     border: none;
 }
 
-.btn-guardar:hover {
-    filter: brightness(0.95);
-}
-
 .btn-regresar {
     background: #6b7280;
     color: white;
     text-decoration: none;
     margin-left: 8px;
-}
-
-.btn-regresar:hover {
-    filter: brightness(0.95);
 }
 
 /* MAPA */
@@ -198,7 +194,7 @@ body {
     transform: translate(-50%, -100%);
     opacity: 0;
     z-index: 50;
-    pointer-events: auto; /* necesario para tooltip */
+    pointer-events: auto;
 }
 
 .marcador.visible {
@@ -267,10 +263,6 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
-
-.btn-center:hover {
-    filter: brightness(0.95);
-}
 </style>
 
 </head>
@@ -314,6 +306,11 @@ body {
 
             <label>YM</label>
             <input type="text" id="ym" value="<?= safe($ym) ?>">
+
+            <label style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="permitirMover" checked>
+                Permitir reasignar ubicación
+            </label>
         <?php else: ?>
             <input type="hidden" id="xm" value="<?= safe($xm) ?>">
             <input type="hidden" id="ym" value="<?= safe($ym) ?>">
@@ -397,15 +394,15 @@ mapa.onload = () => {
 
     if (xm !== null && ym !== null) {
         posicionarMarcador();
-        centrarMarcador(false); // centrar sin animación al inicio
+        centrarMarcador(false);
     }
 };
 
-// Clic para mover marcador (solo admin)
+// Clic para mover marcador (solo admin y si checkbox está activo)
 mapa.addEventListener("click", function(e) {
-    <?php if ($_SESSION['rol'] !== 'administrador'): ?>
-        return;
-    <?php endif; ?>
+
+    const permitir = document.getElementById("permitirMover");
+    if (!permitir || !permitir.checked) return;
 
     const rect = mapa.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / rect.width;
@@ -448,7 +445,7 @@ container.addEventListener("wheel", function(e) {
     mapaInner.style.transform = `scale(${zoom})`;
 });
 
-// Centrar marcador (opcionalmente animado)
+// Centrar marcador
 function centrarMarcador(animar = true) {
     if (xm === null || ym === null || baseW === null || baseH === null) return;
 
