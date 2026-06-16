@@ -62,13 +62,14 @@ $ym = $coords['ym'] ?? null;
     position: relative;
     width: 100%;
     overflow: hidden;
-    transform-origin: top left;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px var(--shadow);
 }
 
 .mapa {
     width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px var(--shadow);
+    transition: transform 0.25s ease-out;
+    transform-origin: center center;
 }
 
 /* MARCADOR SVG PREMIUM */
@@ -79,7 +80,7 @@ $ym = $coords['ym'] ?? null;
     transform: translate(-50%, -100%);
     pointer-events: none;
     opacity: 0; /* FIX FIREFOX */
-    z-index: 9999;
+    z-index: 50;
 }
 
 .marcador.visible {
@@ -109,6 +110,7 @@ $ym = $coords['ym'] ?? null;
     animation: radarPulse 2s infinite ease-out;
     pointer-events: none;
     opacity: 0;
+    z-index: 40;
 }
 
 .radar.visible {
@@ -132,7 +134,7 @@ $ym = $coords['ym'] ?? null;
     transform: translate(-50%, -140%);
     display: none;
     pointer-events: none;
-    z-index: 99999;
+    z-index: 999;
 }
 
 /* BOTÓN CENTRAR */
@@ -313,20 +315,20 @@ marcador.addEventListener("mouseleave", () => {
     tooltip.style.display = "none";
 });
 
-// Zoom con rueda
+// Zoom con rueda (solo imagen)
 container.addEventListener("wheel", function(e) {
     e.preventDefault();
 
     zoom += e.deltaY * -0.001;
     zoom = Math.min(Math.max(zoom, 1), 3);
 
-    container.style.transform = `scale(${zoom})`;
+    mapa.style.transform = `scale(${zoom})`;
 });
 
 // CENTRAR MARCADOR
 function centrarMarcador() {
     zoom = 1;
-    container.style.transform = "scale(1)";
+    mapa.style.transform = "scale(1)";
     container.scrollTo({
         top: (ym * mapa.offsetHeight) - container.clientHeight / 2,
         left: (xm * mapa.offsetWidth) - container.clientWidth / 2,
