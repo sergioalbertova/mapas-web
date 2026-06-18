@@ -2,7 +2,9 @@
 session_start();
 require "db.php";
 
-// Validar que vengan datos
+// ==========================
+// ✅ VALIDACIÓN DE DATOS
+// ==========================
 if (!isset($_POST['usuario'], $_POST['clave'])) {
     header("Location: login.php?error=1");
     exit;
@@ -11,54 +13,88 @@ if (!isset($_POST['usuario'], $_POST['clave'])) {
 $usuario = trim($_POST['usuario']);
 $clave   = trim($_POST['clave']);
 
-// Buscar usuario
-$stmt = $pdo->prepare("SELECT id, usuario, clave FROM usuarios WHERE usuario = ?");
-
+// ==========================
+// ✅ BUSCAR USUARIO
+// ==========================
 $stmt = $pdo->prepare("
-    SELECT id, usuario, clave, rol
+    SELECT id, usuario, clave, rol, nombre
     FROM usuarios 
     WHERE LOWER(usuario) = LOWER(:u)
 ");
+
 $stmt->execute([':u' => $usuario]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-// Validar usuario y contraseña
+// ==========================
+// ✅ VALIDAR CREDENCIALES
+// ==========================
 if (!$user || !password_verify($clave, $user['clave'])) {
     header("Location: login.php?error=1");
     exit;
 }
 
-// Crear sesión
+// ==========================
+// ✅ CREAR SESIÓN NORMAL
+// ==========================
 $_SESSION['user_id'] = $user['id'];
-$_SESSION['rol'] = $user['rol'];
+$_SESSION['rol']     = $user['rol'];
+$_SESSION['nombre']  = $user['nombre'] ?? null;
+$_SESSION['ultimo_movimiento'] = time();
 
+// ==========================
+// ✅ NUEVO SISTEMA PRO (user_sessions)
+// ==========================
 
-// ===============================
-//  REMEMBER ME (si está marcado)
-// ===============================
+// Token de sesión único (por dispositivo)
+$sessionToken = bin2hex(random_bytes(32));
+
+// Datos del cliente
+$ip = $_SERVER['REMOTE_ADDR'] ?? '';
+$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+// Expiración (7 días)
+$fechaExpira = date('Y-m-d H:i:s', time() + (86400 * 7));
+
+// Guardar en user_sessions
+$stmt = $pdo->prepare("
+    INSERT INTO user_sessions 
+    (user_id, token, ip, user_agent, fecha_expira)
+    VALUES (?, ?, ?, ?, ?)
+");
+
+$stmt->execute([
+    $user['id'],
+    $sessionToken,
+    $ip,
+    $userAgent,
+    $fechaExpira
+]);
+
+// ==========================
+// ✅ REMEMBER ME
+// ==========================
 if (!empty($_POST['remember'])) {
 
-    // Token seguro
-    $token = bin2hex(random_bytes(32));
-
-    // Guardarlo en BD
+    // 👉 Guardamos también en usuarios (compatibilidad)
     $stmt = $pdo->prepare("UPDATE usuarios SET remember_token = ? WHERE id = ?");
-    $stmt->execute([$token, $user['id']]);
+    $stmt->execute([$sessionToken, $user['id']]);
 
-    // Guardarlo en cookie (30 días)
+    // 👉 Cookie (7 días)
     setcookie(
         "remember_token",
-        $token,
-        time() + (86400 * 30),
+        $sessionToken,
+        time() + (86400 * 7),
         "/",
         "",
-        false,   // HTTPS true si tienes SSL
-        true     // HttpOnly
+        false, // true si usas HTTPS
+        true   // HttpOnly
     );
 }
 
-// Redirigir al panel
+// ==========================
+// ✅ REDIRECCIÓN FINAL
+// ==========================
 header("Location: index.php");
 exit;
 ?>
+``
