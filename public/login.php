@@ -242,7 +242,7 @@ body {
 
                 <!-- RECORDARME -->
                 <label style="display:flex; align-items:center; gap:6px; margin-top:10px; color:white;">
-                    <input type="checkbox" name="remember" value="1">
+                    <input type="checkbox" name="remember" value="1" checked>
                     Recordar Usuario
                 </label>
 
