@@ -120,6 +120,20 @@ body.dark .item:hover {
     background: rgba(255,255,255,0.08);
 }
 
+h2 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    opacity: 0.7;
+    margin-bottom: 30px;
+}
+
+
 </style>
 
 </head>

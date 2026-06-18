@@ -1,14 +1,10 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
-// Zona horaria correcta
 date_default_timezone_set('America/Mexico_City');
 
-// Fecha actual exacta
-$fecha = date("Y-m-d H:i:s");
-
-// Validar que venga el ingeniero
+// ✅ Validar ingeniero
 if (!isset($_POST['idingeniero'])) {
     header("Location: actividades_extras.php");
     exit;
@@ -20,28 +16,34 @@ $usuario_afectado  = trim($_POST['usuario_afectado'] ?? "");
 $equipo            = trim($_POST['equipo'] ?? "");
 $comentarios       = trim($_POST['comentarios'] ?? "");
 $evidencia         = trim($_POST['evidencia'] ?? "");
-$estatus           = $_POST['estatus'] ?? "completado";
+$estatus           = $_POST['estatus'] ?? "en proceso";
 
-// Usuario afectado puede quedar vacío
+// ✅ NUEVOS CAMPOS
+$fecha_inicio = $_POST['fecha_inicio'] ?? date("Y-m-d H:i:s");
+$fecha_fin    = ($estatus === "completado") ? date("Y-m-d H:i:s") : null;
+
+// limpiar usuario
 if ($usuario_afectado === "") {
     $usuario_afectado = null;
 }
 
-// Validación mínima
+// validar actividad
 if (!$idactividad) {
     header("Location: actividades_extras_nuevo.php?error=actividad");
     exit;
 }
 
-// Insertar en BD con fecha enviada desde PHP
+// ✅ INSERT CORRECTO CON NUEVOS CAMPOS
 $stmt = $pdo->prepare("
     INSERT INTO actividades_extras 
-    (fecha, idingeniero, idactividad, usuario_afectado, equipo, comentarios, evidencia, estatus)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    (fecha, fecha_inicio, fecha_fin, idingeniero, idactividad, usuario_afectado, equipo, comentarios, evidencia, estatus)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 
 $stmt->execute([
-    $fecha,
+    date("Y-m-d H:i:s"), // fecha general
+    $fecha_inicio,
+    $fecha_fin,
     $idingeniero,
     $idactividad,
     $usuario_afectado,
@@ -51,6 +53,5 @@ $stmt->execute([
     $estatus
 ]);
 
-// Redirigir al listado
 header("Location: actividades_extras.php?ok=1");
 exit;
