@@ -4,12 +4,6 @@ require "db.php";
 
 $id = $_SESSION['user_id'];
 
-// Obtener nombre real del usuario
-$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
-$stmt->execute([$id]);
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
-
 // Obtener actividades
 $stmt = $pdo->query("
     SELECT 
@@ -50,30 +44,9 @@ function safe($v) {
 
 <style>
 
-:root {
-    --bg: #F4F7FA;
-    --text: #1F2933;
-
-    --card-bg: #FFFFFF;
-    --accent: #00AEEF;
-    --shadow: rgba(0,0,0,0.08);
-    --border: rgba(0,0,0,0.1);
-}
-
-body.dark {
-    --bg: #0f172a;
-    --text: #E5E7EB;
-
-    --card-bg: #1f2937;
-    --border: rgba(255,255,255,0.1);
-    --shadow: rgba(0,0,0,0.45);
-}
-
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
     display: flex;
 }
 
@@ -84,68 +57,94 @@ body {
     width: calc(100% - 240px);
 }
 
-/* TITULO */
-.main h2 {
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.subtitle {
-    text-align: center;
-    opacity: 0.7;
-    margin-bottom: 30px;
-}
-
 /* TABLA */
 .tabla {
     width: 100%;
     border-collapse: collapse;
-    background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 10px 25px var(--shadow);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 .tabla th {
-    background: var(--accent);
+    background: linear-gradient(135deg, #00AEEF, #0284c7);
     color: white;
-    padding: 12px;
+    padding: 14px;
+    text-align: left;
+    font-size: 14px;
 }
 
 .tabla td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
+    padding: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    vertical-align: middle;
 }
 
-/* BOTÓN */
-.btn-nuevo {
-    padding: 12px 18px;
-    background: var(--accent);
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    margin-bottom: 20px;
-    display: inline-block;
+/* HOVER */
+.tabla tr:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+/* COLUMNAS CONTROLADAS */
+.tabla td:nth-child(1),
+.tabla td:nth-child(2),
+.tabla td:nth-child(3) {
+    width: 150px;
+}
+
+.tabla td:last-child {
+    width: 160px;
+    white-space: nowrap;
 }
 
 /* BADGES */
 .badge {
-    padding: 4px 8px;
-    border-radius: 6px;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
     font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .en-proceso {
-    background: orange;
+    background: #f59e0b;
     color: white;
 }
 
 .completo {
-    background: green;
+    background: #10b981;
     color: white;
 }
 
+/* BOTONES */
+.acciones {
+    display: flex;
+    gap: 6px;
+}
+
+.btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    text-decoration: none;
+    color: white;
+}
+
+.ver {
+    background: #2563eb;
+}
+
+.editar {
+    background: #059669;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -157,9 +156,10 @@ body {
 <?php require "topbar.php"; ?>
 
 <h2>Actividades Extras</h2>
-<div class="subtitle">Registro y control de tiempo de actividades</div>
 
-<a href="actividades_extras_nuevo.php" class="btn-nuevo">+ Nueva actividad</a>
+actividades_extras_nuevo.php" class="btn-nuevo">
+    + Nueva actividad
+</a>
 
 <table class="tabla">
 
@@ -183,17 +183,19 @@ body {
 </td>
 
 <td>
-    <?= $row['fecha_fin'] 
-        ? substr($row['fecha_fin'],0,19) 
-        : '<span class="badge en-proceso">En proceso</span>' ?>
+    <?php if ($row['fecha_fin']): ?>
+        <?= substr($row['fecha_fin'],0,19) ?>
+    <?php else: ?>
+        <span class="badge en-proceso">En proceso</span>
+    <?php endif; ?>
 </td>
 
 <td>
 <?php
 if ($row['fecha_fin']) {
-    echo round($row['duracion_min'],1) . " min";
+    echo "⏱ " . round($row['duracion_min'],1) . " min";
 } else {
-    echo "⏳";
+    echo '<span style="opacity:0.6">⏳</span>';
 }
 ?>
 </td>
@@ -204,15 +206,16 @@ if ($row['fecha_fin']) {
 <td><?= safe($row['equipo']) ?></td>
 
 <td>
-<?= $row['estatus'] === 'completado'
-    ? '<span class="badge completo">Completado</span>'
-    : '<span class="badge en-proceso">En proceso</span>'
-?>
+<?php if ($row['estatus'] === 'completado'): ?>
+    <span class="badge completo">Completado</span>
+<?php else: ?>
+    <span class="badge en-proceso">En proceso</span>
+<?php endif; ?>
 </td>
 
-<td>
-<a href="actividades_extras_ver.php?id=<?= $row['idextra'] ?>">Ver</a>
-<a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>">Editar</a>
+<td class="acciones">
+    actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn ver">Ver</a>
+    actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn editar">Editar</a>
 </td>
 
 </tr>
