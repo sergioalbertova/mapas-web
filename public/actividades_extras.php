@@ -3,27 +3,24 @@ require "auth.php";
 require "db.php";
 
 $id = $_SESSION['user_id'];
+$nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
 
 // Obtener actividades
 $stmt = $pdo->query("
     SELECT 
         ae.idextra,
-        ae.fecha,
         ae.fecha_inicio,
         ae.fecha_fin,
         ae.estatus,
         ae.equipo,
         ae.usuario_afectado,
-
         u.nombre AS ingeniero,
         ca.actividad,
-
         EXTRACT(EPOCH FROM (ae.fecha_fin - ae.fecha_inicio))/60 AS duracion_min
-
     FROM actividades_extras ae
     JOIN usuarios u ON u.id = ae.idingeniero
     JOIN catalogo_actividades ca ON ca.idactividad = ae.idactividad
-    ORDER BY ae.fecha DESC
+    ORDER BY ae.idextra DESC
 ");
 
 $lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -44,9 +41,27 @@ function safe($v) {
 
 <style>
 
+/* ✅ VARIABLES (IMPORTANTE para dark mode) */
+:root {
+    --bg: #F4F7FA;
+    --text: #1F2933;
+    --card-bg: #FFFFFF;
+    --border: #ddd;
+}
+
+body.dark {
+    --bg: #0f172a;
+    --text: #E5E7EB;
+    --card-bg: #1f2937;
+    --border: rgba(255,255,255,0.15);
+}
+
+/* BASE */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
     display: flex;
 }
 
@@ -61,9 +76,9 @@ body {
 .tabla {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 14px;
+    background: var(--card-bg);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 .tabla th {
@@ -71,39 +86,18 @@ body {
     color: white;
     padding: 14px;
     text-align: left;
-    font-size: 14px;
 }
 
 .tabla td {
-    padding: 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    vertical-align: middle;
-}
-
-/* HOVER */
-.tabla tr:hover {
-    background: rgba(255,255,255,0.03);
-}
-
-/* COLUMNAS CONTROLADAS */
-.tabla td:nth-child(1),
-.tabla td:nth-child(2),
-.tabla td:nth-child(3) {
-    width: 150px;
-}
-
-.tabla td:last-child {
-    width: 160px;
-    white-space: nowrap;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
 }
 
 /* BADGES */
 .badge {
-    display: inline-block;
-    padding: 6px 12px;
+    padding: 5px 10px;
     border-radius: 8px;
     font-size: 12px;
-    font-weight: 600;
     white-space: nowrap;
 }
 
@@ -124,23 +118,25 @@ body {
 }
 
 .btn {
-    padding: 6px 10px;
-    border-radius: 8px;
+    padding: 5px 8px;
+    border-radius: 6px;
     font-size: 12px;
     text-decoration: none;
     color: white;
 }
 
-.ver {
-    background: #2563eb;
-}
+.ver { background: #2563eb; }
+.editar { background: #059669; }
 
-.editar {
-    background: #059669;
-}
-
-.btn:hover {
-    opacity: 0.85;
+/* BOTÓN NUEVO */
+.btn-nuevo {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 10px 14px;
+    background: #00AEEF;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
 }
 
 </style>
@@ -157,7 +153,7 @@ body {
 
 <h2>Actividades Extras</h2>
 
-actividades_extras_nuevo.php" class="btn-nuevo">
+<a href="actividades_extras_nuevo.php" class="btn-nuevo">
     + Nueva actividad
 </a>
 
@@ -195,7 +191,7 @@ actividades_extras_nuevo.php" class="btn-nuevo">
 if ($row['fecha_fin']) {
     echo "⏱ " . round($row['duracion_min'],1) . " min";
 } else {
-    echo '<span style="opacity:0.6">⏳</span>';
+    echo "⏳";
 }
 ?>
 </td>
@@ -214,8 +210,8 @@ if ($row['fecha_fin']) {
 </td>
 
 <td class="acciones">
-    actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn ver">Ver</a>
-    actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn editar">Editar</a>
+    <a href="actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn ver">Ver</a>
+    <a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn editar">Editar</a>
 </td>
 
 </tr>
