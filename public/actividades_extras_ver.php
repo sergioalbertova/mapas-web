@@ -1,6 +1,8 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
+
+$nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
 
 if (!isset($_GET['id'])) {
     header("Location: actividades_extras.php");
@@ -9,17 +11,21 @@ if (!isset($_GET['id'])) {
 
 $idextra = $_GET['id'];
 
-// Obtener datos completos
+// ✅ Obtener datos completos
 $stmt = $pdo->prepare("
     SELECT ae.*, 
            u.nombre AS ingeniero,
-           ca.actividad
+           ca.actividad,
+
+           EXTRACT(EPOCH FROM (ae.fecha_fin - ae.fecha_inicio))/60 AS duracion_min
+           
     FROM actividades_extras ae
     JOIN usuarios u ON u.id = ae.idingeniero
     JOIN catalogo_actividades ca ON ca.idactividad = ae.idactividad
     WHERE ae.idextra = ?
 ");
 $stmt->execute([$idextra]);
+
 $extra = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$extra) {
@@ -27,9 +33,11 @@ if (!$extra) {
     exit;
 }
 
-// Formatear fecha
-$fecha = date("Y-m-d H:i:s", strtotime($extra['fecha']));
+// ✅ Formatos
+$inicio = $extra['fecha_inicio'] ? date("Y-m-d H:i:s", strtotime($extra['fecha_inicio'])) : "-";
+$fin = $extra['fecha_fin'] ? date("Y-m-d H:i:s", strtotime($extra['fecha_fin'])) : null;
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -41,21 +49,22 @@ $fecha = date("Y-m-d H:i:s", strtotime($extra['fecha']));
 
 <style>
 
+/* ✅ VARIABLES PARA DARK MODE */
 :root {
     --bg: #F4F7FA;
     --text: #1F2933;
     --card-bg: #FFFFFF;
-    --accent: #00AEEF;
-    --shadow: rgba(0,0,0,0.08);
+    --border: #ddd;
 }
 
 body.dark {
     --bg: #0f172a;
     --text: #E5E7EB;
     --card-bg: #1f2937;
-    --shadow: rgba(0,0,0,0.45);
+    --border: rgba(255,255,255,0.15);
 }
 
+/* BASE */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
@@ -71,23 +80,17 @@ body {
     width: calc(100% - 240px);
 }
 
-.sidebar.collapsed ~ .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
-}
-
+/* TITULOS */
 h2 {
     text-align: center;
     font-size: 28px;
-    margin-bottom: 8px;
-    font-weight: 600;
+    margin-bottom: 10px;
 }
 
 .subtitle {
     text-align: center;
     opacity: 0.7;
-    margin-bottom: 40px;
-    font-size: 15px;
+    margin-bottom: 30px;
 }
 
 /* CARD */
@@ -95,41 +98,56 @@ h2 {
     background: var(--card-bg);
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 10px 25px var(--shadow);
-    max-width: 650px;
+    max-width: 700px;
     margin: auto;
-    box-sizing: border-box;
+    border: 1px solid var(--border);
 }
 
+/* CAMPOS */
 .label {
-    font-weight: 700;
+    font-weight: 600;
     margin-top: 15px;
 }
 
 .valor {
-    background: var(--card-bg);
     padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+    border-radius: 8px;
+    border: 1px solid var(--border);
     margin-top: 5px;
-    margin-bottom: 15px;
 }
 
-/* BOTÓN VOLVER */
+/* BADGES */
+.badge {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.en-proceso {
+    background: #f59e0b;
+    color: white;
+}
+
+.completo {
+    background: #10b981;
+    color: white;
+}
+
+/* BOTÓN */
 .btn-volver {
+    display: inline-block;
     margin-top: 25px;
     padding: 12px 18px;
-    background: var(--accent);
+    background: #00AEEF;
     color: white;
-    border-radius: 10px;
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: 600;
-    display: inline-block;
 }
 
 </style>
-
 </head>
+
 <body>
 
 <?php require "sidebar.php"; ?>
@@ -139,12 +157,32 @@ h2 {
 <?php require "topbar.php"; ?>
 
 <h2>Detalle de Actividad</h2>
-<div class="subtitle">Información completa de la actividad registrada</div>
+<div class="subtitle">Información completa de la actividad</div>
 
 <div class="form-card">
 
-    <div class="label">Fecha</div>
-    <div class="valor"><?= $fecha ?></div>
+    <div class="label">Inicio</div>
+    <div class="valor"><?= $inicio ?></div>
+
+    <div class="label">Fin</div>
+    <div class="valor">
+        <?php if ($fin): ?>
+            <?= $fin ?>
+        <?php else: ?>
+            <span class="badge en-proceso">En proceso</span>
+        <?php endif; ?>
+    </div>
+
+    <div class="label">Duración</div>
+    <div class="valor">
+        <?php
+        if ($extra['fecha_fin']) {
+            echo "⏱ " . round($extra['duracion_min'],1) . " min";
+        } else {
+            echo "⏳ En curso";
+        }
+        ?>
+    </div>
 
     <div class="label">Ingeniero</div>
     <div class="valor"><?= htmlspecialchars($extra['ingeniero']) ?></div>
@@ -165,7 +203,13 @@ h2 {
     <div class="valor"><?= htmlspecialchars($extra['evidencia'] ?? "—") ?></div>
 
     <div class="label">Estatus</div>
-    <div class="valor"><?= htmlspecialchars($extra['estatus']) ?></div>
+    <div class="valor">
+        <?php if ($extra['estatus'] === 'completado'): ?>
+            <span class="badge completo">Completado</span>
+        <?php else: ?>
+            <span class="badge en-proceso">En proceso</span>
+        <?php endif; ?>
+    </div>
 
     <a href="actividades_extras.php" class="btn-volver">Volver</a>
 
