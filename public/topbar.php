@@ -11,11 +11,13 @@
     <div class="topbar-right">
         
         <div class="user-info">
-            <?= htmlspecialchars($nombreUsuario) ?>
+            <?= htmlspecialchars($nombreUsuario ?? 'Usuario') ?>
         </div>
 
-        <button onclick="toggleTheme()" class="top-icon">🌙</button>
+        <!-- Botón de tema -->
+        <button class="top-icon theme-toggle" onclick="toggleTheme()">🌙</button>
 
+        <!-- Logout -->
         <a href="logout.php" class="top-icon">⎋</a>
 
     </div>

@@ -243,7 +243,7 @@ body {
                 <!-- RECORDARME -->
                 <label style="display:flex; align-items:center; gap:6px; margin-top:10px; color:white;">
                     <input type="checkbox" name="remember" value="1">
-                    Recordar Usuario
+                    Recordarme
                 </label>
 
                 <button type="submit" class="btn">Entrar</button>

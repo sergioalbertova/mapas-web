@@ -2,6 +2,17 @@
 require "session_config.php";
 require "db.php";
 
+$id = $_SESSION['user_id'];
+
+/* ============================================================
+   OBTENER TÉCNICO LOGUEADO
+   ============================================================ */
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
+
+
 $hoy = date("Y-m-d");
 
 $fecha_inicio = $_GET['inicio'] ?? $hoy;
@@ -284,26 +295,168 @@ if (!empty($paramsURL)) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    
 <meta charset="UTF-8">
 <title>Dashboard de estadísticas</title>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 <link rel="stylesheet" href="itil_estadisticas.css">
+
+<style>
+/* ========================= */
+/* VARIABLES                 */
+/* ========================= */
+
+
+/* ========================= */
+/* TOPBAR GENERAL (PRIMERO) */
+/* ========================= */
+.topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 240px;
+    right: 0;
+    height: 55px;
+    z-index: 3000 !important;
+    background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+#sidebar.collapsed ~ .topbar {
+    left: 70px;
+}
+
+
+/* ========================= */
+/* TOPBAR ITIL (DEBAJO)     */
+/* ========================= */
+.itil-topbar {
+    position: fixed;
+    top: 60px !important; /* DEBAJO DEL TOPBAR GENERAL */
+    left: 240px;
+    right: 0;
+    height: 55px;
+    background: var(--sidebar-bg);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 0 25px;
+    box-shadow: 0 2px 8px var(--shadow);
+    z-index: 2500 !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.itil-topbar a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transition: 0.2s ease;
+    font-size: 15px;
+}
+
+.itil-topbar a:hover {
+    background: var(--sidebar-hover);
+    transform: translateY(-1px);
+}
+
+.itil-topbar svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    opacity: 0.85;
+}
+
+/* NAVEGACIÓN GLASS */
+.navegacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    background: rgba(255,255,255,0.4);
+}
+
+body.dark .navegacion {
+    background: rgba(0,0,0,0.25);
+}
+.itil-topbar {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(10px);
+}
+
+body.dark .itil-topbar {
+    background: rgba(36, 39, 44, 0.65) !important;
+}
+
+
+
+</style>
 </head>
 <body>
 
-<?php include "sidebar.php"; ?>
+<?php require "sidebar.php"; ?>
 
+<!-- === TOPBAR GENERAL (PRIMERO) === -->
+<?php require "topbar.php"; ?>
+
+<!-- === TOPBAR ITIL (DEBAJO DEL GENERAL) === -->
 <div class="itil-topbar">
-    <a href="itil_incidentes.php">Incidentes</a>
-    <a href="itil_incidente_nuevo.php">Nuevo</a>
-    <a href="itil_problemas.php">Problemas</a>
-    <a href="itil_catalogo.php">Catálogo Incidentes</a>
-    <a href="itil_solicitudes.php">Solicitudes</a>
-    <a href="itil_sla.php">SLA</a>
-    <a href="itil_estadisticas.php">Estadísticas</a>
+
+    <a href="itil_incidentes.php">
+        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
+        Incidentes
+    </a>
+
+    <a href="itil_incidente_nuevo.php">
+        <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Nuevo
+    </a>
+
+    <a href="itil_problemas.php">
+        <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Problemas
+    </a>
+
+    <a href="itil_catalogo.php">
+        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
+        Catálogo Incidentes
+    </a>
+
+    <a href="itil_solicitudes.php">
+        <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        En Proceso
+    </a>
+
+    <a href="itil_sla.php">
+        <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        SLA
+    </a>
+
+    <a href="itil_estadisticas.php">
+        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Estadísticas
+    </a>
+
 </div>
+<br/>
+<br/>
+<br/>
+<br/>
 
 <!-- FILTROS SUPERIORES -->
+
+
 <div class="filtro-bar">
 
     <!-- FILTRO POR FECHAS -->
@@ -793,6 +946,21 @@ function cargarDashboard() {
 /* Ejecutar al cargar */
 cargarDashboard();
 </script>
+<!-- === SCRIPTS === -->
+<script>
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+}
 
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+}
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

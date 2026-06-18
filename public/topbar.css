@@ -1,10 +1,14 @@
+/* =========================
+   TOPBAR TIHIL — TEMA DINÁMICO
+   ========================= */
+
 .topbar {
     height: 60px;
 
-    background: rgba(17, 24, 39, 0.75);
+    background: var(--topbar-bg);
     backdrop-filter: blur(10px);
 
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--topbar-border);
 
     display: flex;
     align-items: center;
@@ -14,7 +18,9 @@
 
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 3000;
+
+    transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 /* IZQUIERDA */
@@ -28,13 +34,19 @@
     background: transparent;
     border: none;
     font-size: 20px;
-    color: #9ca3af;
+    color: var(--topbar-text);
     cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.menu-btn:hover {
+    color: var(--accent);
 }
 
 .topbar-title {
     font-weight: 600;
-    color: #e5e7eb;
+    color: var(--topbar-text);
+    font-size: 18px;
 }
 
 /* DERECHA */
@@ -47,18 +59,39 @@
 /* USUARIO */
 .user-info {
     font-size: 14px;
-    color: #9ca3af;
+    color: var(--topbar-text);
+    opacity: 0.85;
 }
 
 /* ICONOS */
 .top-icon {
     background: transparent;
     border: none;
-    color: #9ca3af;
+    color: var(--topbar-text);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .top-icon:hover {
-    color: #00aaff;
+    color: var(--accent);
+    transform: scale(1.15);
+}
+
+/* Botón de tema */
+.theme-toggle {
+    font-size: 20px;
+}
+
+/* TOPBAR EFECTO VIDRIO */
+.topbar {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* MODO OSCURO */
+body.dark .topbar {
+    background: rgba(36, 39, 44, 0.65) !important;
+    backdrop-filter: blur(10px);
 }

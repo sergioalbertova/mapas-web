@@ -8,7 +8,15 @@ if (!isset($_SESSION['user_id'])) {
 date_default_timezone_set('America/Mexico_City');
 require "db.php";
 
-// Obtener mes y año desde la URL o usar actuales
+$id = $_SESSION['user_id'];
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
+
+// Obtener mes y año
 $mes = isset($_GET['mes']) ? intval($_GET['mes']) : date('n');
 $anio = isset($_GET['anio']) ? intval($_GET['anio']) : date('Y');
 
@@ -47,7 +55,6 @@ foreach ($guardias as $g) {
     ];
 }
 
-
 // Colores
 $colores = [
     "JUAN CARLOS" => "#1976D2",
@@ -56,23 +63,16 @@ $colores = [
     "ERIK"        => "#7B1FA2",
 ];
 
-// ✅ CONTADOR DE GUARDIAS (CORREGIDO)
+// Contador
 $conteo = [];
-foreach ($colores as $nombre => $c) {
-    $conteo[$nombre] = 0;
-}
-
+foreach ($colores as $nombre => $c) $conteo[$nombre] = 0;
 foreach ($guardias as $g) {
-    $tec = $g['tecnico'] ?? null;
-    if ($tec && isset($conteo[$tec])) {
-        $conteo[$tec]++;
-    }
+    if (isset($conteo[$g['tecnico']])) $conteo[$g['tecnico']]++;
 }
 
 // Día actual
 $hoy = date('Y-m-d');
-$tecnicoHoy = isset($mapa[$hoy]) ? ($mapa[$hoy]['tecnico'] ?? "Sin guardia") : "Sin guardia";
-
+$tecnicoHoy = $mapa[$hoy]['tecnico'] ?? "Sin guardia";
 $mostrarHoy = ($mes == date('n') && $anio == date('Y'));
 
 $meses = [
@@ -89,205 +89,166 @@ $nombreMes = $meses[$mes] . " " . $anio;
 <meta charset="UTF-8">
 <title>Calendario de Guardias</title>
 
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
+
 <style>
-/* ============================
-   PALETA CORPORATIVA
-   ============================ */
+/* VARIABLES TIHIL */
 :root {
     --bg: #F4F7FA;
-    --sidebar-bg: #FFFFFF;
-    --sidebar-hover: #E8EEF5;
-    --card-bg: #FFFFFF;
     --text: #1F2933;
+    --card-bg: #FFFFFF;
     --subtext: #6B7280;
     --primary: #0054A6;
     --primary-hover: #003F7D;
-    --accent-cyan: #00AEEF;
-    --accent-red: #EF3E42;
-    --shadow: rgba(0,0,0,0.08);
+    --shadow: rgba(0,0,0,0.12);
+    --border: rgba(0,0,0,0.18);
 }
 
-/* ============================
-   TEMA OSCURO
-   ============================ */
 body.dark {
-    --bg: #1A1D21;
-    --sidebar-bg: #24272C;
-    --sidebar-hover: #2F3338;
-    --card-bg: #2C2F34;
+    --bg: #0f172a;
     --text: #E5E7EB;
+    --card-bg: #1f2937;
     --subtext: #9CA3AF;
     --primary: #00AEEF;
     --primary-hover: #0088C0;
     --shadow: rgba(0,0,0,0.45);
+    --border: rgba(255,255,255,0.15);
 }
 
-/* ============================
-   ESTILOS GENERALES
-   ============================ */
+/* LAYOUT */
 body {
     margin: 0;
     font-family: "Segoe UI", Arial;
     background: var(--bg);
     color: var(--text);
+    display: flex;
     transition: 0.3s;
-    display: flex;
 }
 
-/* ============================
-   SIDEBAR
-   ============================ */
-.sidebar {
-    width: 240px;
-    background: var(--sidebar-bg);
-    height: 100vh;
-    box-shadow: 4px 0 20px var(--shadow);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    transition: width 0.25s ease;
-    overflow: visible;
-    z-index: 2000;
-}
-.sidebar.collapsed { width: 70px; }
-
-.sidebar h2 {
-    margin: 0 0 20px;
-    font-size: 20px;
-    color: var(--primary);
-    transition: opacity 0.25s ease;
-}
-.sidebar.collapsed h2 { opacity: 0; }
-
-.nav-item {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-}
-.nav-item:hover { background: var(--sidebar-hover); }
-
-.nav-item a {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:inherit;
-    text-decoration:none;
-}
-
-.nav-item svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-.sidebar.collapsed .nav-text { display: none; }
-
-.tooltip {
-    position: absolute;
-    left: 80px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--sidebar-bg);
-    padding: 6px 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px var(--shadow);
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, left 0.2s ease;
-    z-index: 99999;
-}
-.sidebar.collapsed .nav-item:hover .tooltip {
-    opacity: 1;
-    left: 75px;
-}
-
-/* ============================
-   CONTENIDO PRINCIPAL (SIN TOPBAR)
-   ============================ */
 .main {
     margin-left: 240px;
     padding: 30px;
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease, width 0.25s ease;
-    display: flex;
-    justify-content: center;
+    transition: margin-left 0.25s ease;
 }
 
-.sidebar.collapsed + .main {
+.sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
 
-/* ============================
-   CALENDARIO
-   ============================ */
+/* CONTENEDOR PREMIUM */
 .contenedor {
-    max-width: 900px;
-    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px var(--shadow);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px var(--shadow);
+    animation: fadeIn 0.4s ease;
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* TÍTULO DEL MES */
 h1 {
     text-align: center;
-    margin-bottom: 5px;
-    font-size: 28px;
+    margin-bottom: 15px;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -1px;
     color: var(--primary);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
 }
 
+/* INFO HOY */
+.info-hoy {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    background: rgba(0, 174, 239, 0.12);
+    padding: 12px 18px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+}
+
+/* NAVEGACIÓN GLASS */
 .navegacion {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    padding: 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    background: rgba(255,255,255,0.4);
+}
+
+body.dark .navegacion {
+    background: rgba(0,0,0,0.25);
 }
 
 .boton {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
     text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s ease;
 }
 
 .boton:hover {
     background: var(--primary-hover);
 }
 
+/* SELECTORES */
+.selector {
+    display: flex;
+    gap: 10px;
+}
+
+.selector select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 15px;
+}
+
+/* CALENDARIO */
 .tabla-calendario {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
+    table-layout: fixed; /* 🔥 MISMO ANCHO PARA TODAS LAS COLUMNAS */
 }
 
 .tabla-calendario th {
     background: var(--primary);
     color: white;
-    padding: 10px;
+    padding: 12px;
+    font-size: 15px;
 }
 
 .tabla-calendario td {
-    height: 90px;
-    padding: 5px;
-    border: 1px solid #ddd;
-    font-size: 14px;
+    height: 100px;
+    padding: 6px;
+    border: 1px solid var(--border);
     background: var(--card-bg);
+    transition: 0.2s ease;
+}
+
+.tabla-calendario td:hover {
+    background: rgba(0, 174, 239, 0.12);
+    cursor: pointer;
 }
 
 .dia-numero {
@@ -298,31 +259,24 @@ h1 {
     gap: 6px;
 }
 
-.icono-hoy {
-    width: 10px;
-    height: 10px;
-    background: var(--primary);
-    border-radius: 50%;
-}
-
+/* DÍA ACTUAL PREMIUM */
 .hoy {
     border: 3px solid var(--primary);
+    background: rgba(0,174,239,0.15) !important;
+    box-shadow: 0 0 12px rgba(0,174,239,0.5);
 }
 
-/* puedes tener clases festivo, sabado, domingo si las usas en tu CSS original */
-
+/* TECNICOS */
 .tecnico {
     margin-top: 4px;
-    padding: 3px;
+    padding: 4px;
     border-radius: 4px;
     color: white;
-    font-size: 13px;
+    font-size: 14px;
     display: inline-block;
 }
 
-/* ============================
-   ESTILO CUMPLEAÑOS
-   ============================ */
+/* CUMPLEAÑOS */
 .cumple-dia {
     background: #E3F2FD !important;
 }
@@ -334,77 +288,100 @@ h1 {
     margin-bottom: 4px;
 }
 
-.icono-cumple {
-    width: 18px;
-    height: 18px;
-}
-
 .cumpleanero {
     font-weight: bold;
     color: #ff4081;
-    font-size: 13px;
-}
-/* ============================ TU CSS ORIGINAL ============================ */
-/* (NO SE MODIFICÓ NADA ARRIBA) */
-
-
-/* ===== ✅ AGREGADO SEGURO ===== */
-.leyenda {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 10px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
-.item-leyenda {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: var(--subtext);
-}
-
-.color {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
-}
-
-/* ✅ mejora visual SIN romper */
-.hoy {
-    border: 3px solid var(--primary);
-    background: #33526b !important;
-    box-shadow: inset 0 0 0 2px #1565C0;
-}
-
-/* ===== RESUMEN DE GUARDIAS ===== */
-.resumen {
+/* LEYENDA Y RESUMEN */
+.leyenda, .resumen {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 15px;
+    gap: 20px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
-.item-resumen {
-    font-size: 13px;
-    color: var(--text);
+.item-leyenda, .item-resumen {
+    font-size: 14px;
+    color: var(--subtext);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
 
-/* ===== FINES DE SEMANA (FORZADO) ===== */
-
-.tabla-calendario td.sabado {
-    background: #9ea0a1 !important;
+.color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
 }
 
-.tabla-calendario td.domingo {
-    background: #838788 !important;
+/* FINES DE SEMANA */
+.sabado { background: #9ea0a1 !important; }
+.domingo { background: #838788 !important; }
+
+.icono-futbol {
+    width: 20px;
+    height: 20px;
+    fill: #00aaff;
+    margin-right: 6px;
+
+    display: inline-block;
+    transform-box: fill-box;
+    transform-origin: center;
 }
 
+.icono-futbol:hover {
+    transform: none !important;
+}
+.cumple-wrapper {
+    transform: none !important;
+}
+
+
+.rebote {
+    animation: reboteFutbol 0.8s ease-in-out infinite;
+}
+
+@keyframes reboteFutbol {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(-6px); }
+    50%  { transform: translateY(0); }
+    70%  { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
+
+/* MODO OSCURO */
+body.dark .icono-futbol {
+    fill: #4fc3ff;
+}
+
+.icono-guardia {
+    width: 18px;
+    height: 18px;
+    color: #00AEEF !important; /* azul TIHIL */
+    margin-right: 6px;
+    display: inline-block;
+}
+
+body.dark .icono-guardia {
+    color: #4fc3ff !important; /* azul claro en modo oscuro */
+}
+
+/* Animación */
+.rebote {
+    animation: reboteGuardia 0.8s ease-in-out infinite;
+}
+
+@keyframes reboteGuardia {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(-5px); }
+    50%  { transform: translateY(0); }
+    70%  { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
 
 
 
@@ -412,40 +389,56 @@ h1 {
 
 </head>
 <body>
+
 <?php require "sidebar.php"; ?>
 
 <div class="main">
+
+<?php require "topbar.php"; ?>
+
 <div class="contenedor">
 
 <h1><?= $nombreMes ?></h1>
 
 <div class="navegacion">
 
-<a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
+    <a href="?mes=<?= $mesAnterior ?>&anio=<?= $anioAnterior ?>" class="boton">◀</a>
+
+    <div class="selector">
+        <form method="GET">
+            <select name="mes" onchange="this.form.submit()">
+                <?php foreach ($meses as $num => $nombre): ?>
+                    <option value="<?= $num ?>" <?= $num == $mes ? 'selected' : '' ?>>
+                        <?= $nombre ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <select name="anio" onchange="this.form.submit()">
+                <?php for ($y = date('Y') - 5; $y <= date('Y') + 5; $y++): ?>
+                    <option value="<?= $y ?>" <?= $y == $anio ? 'selected' : '' ?>>
+                        <?= $y ?>
+                    </option>
+                <?php endfor; ?>
+            </select>
+        </form>
+    </div>
+
+    <a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
+
+    <a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
+
+</div>
 
 <?php if ($mostrarHoy): ?>
 <div class="info-hoy">
-<strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia: <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
+    <strong>Hoy:</strong> <?= date("d/m/Y") ?> — Guardia:
+    <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
 </div>
 <?php endif; ?>
 
-<a href="exportar_pdf.php?mes=<?= $mes ?>&anio=<?= $anio ?>" class="boton">📄 PDF</a>
 
-<button class="boton" onclick="toggleTheme()">🌙 Tema</button>
 
-<a href="?mes=<?= $mesSiguiente ?>&anio=<?= $anioSiguiente ?>" class="boton">▶</a>
-
-</div>
-
-<!-- ✅ AGREGADO: LEYENDA -->
-<div class="leyenda">
-<?php foreach ($colores as $nombre => $color): ?>
-    <div class="item-leyenda">
-        <span class="color" style="background: <?= $color ?>"></span>
-        <?= htmlspecialchars($nombre) ?>
-    </div>
-<?php endforeach; ?>
-</div>
 
 <div class="resumen">
 <?php foreach ($conteo as $nombre => $total): ?>
@@ -479,22 +472,18 @@ while ($dia <= $diasMes) {
 
     $clases = [];
     if ($fecha == $hoy) $clases[] = "hoy";
-    if ($tecnico === "FESTIVO") $clases[] = "festivo";
+
     if ($dow == 6) $clases[] = "sabado";
     if ($dow == 7) $clases[] = "domingo";
     if ($cumple) $clases[] = "cumple-dia";
 
     echo "<td class='".implode(' ', $clases)."'>";
-    echo "<div class='celda'>";
-
-    echo "<div class='dia-numero'>";
-    if ($fecha == $hoy) echo "<span class='icono-hoy'></span>";
-    echo "$dia</div>";
+    echo "<div class='dia-numero'>$dia</div>";
 
     if ($cumple) {
         echo "<div class='cumple-wrapper'>
-                <svg class='icono-cumple' width='18' height='18' viewBox='0 0 24 24'>
-                    <path fill='#ff4081' d='M12 2c.6 0 1 .4 1 1v2h-2V3c0-.6.4-1 1-1zm-4 4h8c1.1 0 2 .9 2 2v3H6V8c0-1.1.9-2 2-2zm-3 7h14c1.1 0 2 .9 2 2v5H3v-5c0-1.1.9-2 2-2zm2 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z'/>
+                <svg class='icono-futbol rebote' viewBox='0 0 24 24' style='overflow: visible;'>
+                    <path d='M12 2a10 10 0 100 20 10 10 0 000-20zm5.93 6.36l-2.12-.3-1.06-1.88 1.3-1.8a8.03 8.03 0 012.88 3.98zM9.25 4.18l1.3 1.8-1.06 1.88-2.12.3a8.03 8.03 0 012.88-3.98zM4.07 14.36a8.03 8.03 0 01-.02-4.72l1.8 1.3.3 2.12-1.88 1.06zm3.18 5.46l-.3-2.12 1.88-1.06 1.8 1.3a8.03 8.03 0 01-3.38.88zm6.5-.88l1.8-1.3 1.88 1.06-.3 2.12a8.03 8.03 0 01-3.38-.88zm5.18-4.58l-1.88-1.06.3-2.12 1.8-1.3a8.03 8.03 0 01-.22 4.48zM12 14.5l-2.12-1.06-.3-2.12L12 10l2.42 1.32-.3 2.12L12 14.5z'/>
                 </svg>
                 <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
               </div>";
@@ -502,10 +491,20 @@ while ($dia <= $diasMes) {
 
     if ($tecnico) {
         $color = $colores[$tecnico] ?? "#333";
-        echo "<div class='tecnico' style='background:$color'>" . htmlspecialchars($tecnico) . "</div>";
+
+        echo "<div class='tecnico' style='background:$color'>";
+
+        // SOLO HOY aparece el ícono animado de guardia
+        if ($fecha == $hoy) {
+            echo "<svg class='icono-guardia rebote' viewBox='0 0 24 24' fill='currentColor' style='overflow: visible;'>
+                    <path d='M12 2l8 4v6c0 5-3.5 9.7-8 10-4.5-.3-8-5-8-10V6l8-4zm-1 13l5-5-1.4-1.4L11 12.2l-1.6-1.6L8 12l3 3z'/>
+                  </svg>";
+        }
+
+        echo htmlspecialchars($tecnico) . "</div>";
     }
 
-    echo "</div></td>";
+    echo "</td>";
 
     if ($dow == 7) echo "</tr><tr>";
 
@@ -518,16 +517,9 @@ while ($dia <= $diasMes) {
 </div>
 </div>
 
-<script>
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-}
-
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-}
-</script>
+<script src="theme.js"></script>
 
 </body>
+
+
 </html>
