@@ -1,7 +1,5 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-require "session_config.php";
+require "auth.php";
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
