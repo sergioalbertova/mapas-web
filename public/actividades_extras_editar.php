@@ -11,16 +11,12 @@ if (!isset($_GET['id'])) {
 
 $idextra = $_GET['id'];
 
-// ✅ Obtener datos
+// ✅ Obtener datos actuales
 $stmt = $pdo->prepare("
-    SELECT ae.*, 
-           u.nombre AS ingeniero,
-           ca.actividad,
-           EXTRACT(EPOCH FROM (ae.fecha_fin - ae.fecha_inicio))/60 AS duracion_min
-    FROM actividades_extras ae
-    JOIN usuarios u ON u.id = ae.idingeniero
-    JOIN catalogo_actividades ca ON ca.idactividad = ae.idactividad
-    WHERE ae.idextra = ?
+    SELECT *,
+    EXTRACT(EPOCH FROM (fecha_fin - fecha_inicio))/60 AS duracion_min
+    FROM actividades_extras 
+    WHERE idextra = ?
 ");
 $stmt->execute([$idextra]);
 
@@ -31,20 +27,24 @@ if (!$extra) {
     exit;
 }
 
-// ✅ Formato de fechas
-$inicio = $extra['fecha_inicio'] ? date("Y-m-d H:i:s", strtotime($extra['fecha_inicio'])) : "-";
-$fin    = $extra['fecha_fin'] ? date("Y-m-d H:i:s", strtotime($extra['fecha_fin'])) : null;
+// ✅ Catálogo
+$stmt = $pdo->query("
+    SELECT idactividad, actividad 
+    FROM catalogo_actividades 
+    ORDER BY actividad ASC
+");
+$actividades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-function safe($v){
-    return htmlspecialchars($v ?? "", ENT_QUOTES, 'UTF-8');
-}
+// ✅ Formatos
+$inicio = $extra['fecha_inicio'] ? substr($extra['fecha_inicio'],0,19) : "-";
+$fin = $extra['fecha_fin'] ? substr($extra['fecha_fin'],0,19) : null;
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Ver Actividad Extra</title>
+<title>Editar Actividad Extra</title>
 
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
@@ -81,10 +81,9 @@ body {
     width: calc(100% - 240px);
 }
 
-/* TITULOS */
+/* TITULO */
 h2 {
     text-align: center;
-    font-size: 28px;
     margin-bottom: 10px;
 }
 
@@ -99,27 +98,34 @@ h2 {
     background: var(--card-bg);
     padding: 30px;
     border-radius: 12px;
-    max-width: 700px;
+    max-width: 650px;
     margin: auto;
     border: 1px solid var(--border);
 }
 
-/* CAMPOS */
-.label {
+/* INPUTS */
+label {
     font-weight: 600;
     margin-top: 15px;
+    display: block;
 }
 
-.valor {
+input, select, textarea {
+    width: 100%;
     padding: 12px;
     border-radius: 8px;
     border: 1px solid var(--border);
     margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+textarea {
+    height: 120px;
 }
 
 /* BADGES */
 .badge {
-    padding: 5px 10px;
+    padding: 6px 10px;
     border-radius: 8px;
     font-size: 12px;
     white-space: nowrap;
@@ -135,15 +141,24 @@ h2 {
     color: white;
 }
 
-/* BOTÓN */
-.btn-volver {
-    display: inline-block;
-    margin-top: 25px;
-    padding: 12px 18px;
+/* INFO TIEMPO */
+.info-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* BOTON */
+.btn-guardar {
+    margin-top: 20px;
+    padding: 12px;
     background: #00AEEF;
     color: white;
     border-radius: 8px;
-    text-decoration: none;
+    border: none;
+    cursor: pointer;
 }
 
 </style>
@@ -158,63 +173,78 @@ h2 {
 
 <?php require "topbar.php"; ?>
 
-<h2>Detalle de Actividad</h2>
-<div class="subtitle">Información completa de la actividad</div>
+<h2>Editar Actividad Extra</h2>
+<div class="subtitle">Modifica la actividad y su tiempo</div>
 
 <div class="form-card">
 
-    <div class="label">Inicio</div>
-    <div class="valor"><?= $inicio ?></div>
+<!-- 🔥 INFO DE TIEMPO -->
+<div class="info-box">
+    <strong>Inicio:</strong> <?= $inicio ?><br>
 
-    <div class="label">Fin</div>
-    <div class="valor">
-        <?php if ($fin): ?>
-            <?= $fin ?>
-        <?php else: ?>
-            <span class="badge en-proceso">En proceso</span>
-        <?php endif; ?>
-    </div>
+    <strong>Fin:</strong>
+    <?php if ($fin): ?>
+        <?= $fin ?>
+    <?php else: ?>
+        <span class="badge en-proceso">En proceso</span>
+    <?php endif; ?>
+    <br>
 
-    <div class="label">Duración</div>
-    <div class="valor">
-        <?php
-        if ($extra['fecha_fin']) {
-            echo "⏱ " . round($extra['duracion_min'],1) . " min";
-        } else {
-            echo "⏳ En curso";
-        }
-        ?>
-    </div>
+    <strong>Duración:</strong>
+    <?php
+    if ($extra['fecha_fin']) {
+        echo "⏱ " . round($extra['duracion_min'],1) . " min";
+    } else {
+        echo "⏳ En curso";
+    }
+    ?>
+</div>
 
-    <div class="label">Ingeniero</div>
-    <div class="valor"><?= safe($extra['ingeniero']) ?></div>
+<form action="actividades_extras_editar_guardar.php" method="POST">
 
-    <div class="label">Actividad</div>
-    <div class="valor"><?= safe($extra['actividad']) ?></div>
+<input type="hidden" name="idextra" value="<?= $extra['idextra'] ?>">
 
-    <div class="label">Usuario afectado</div>
-    <div class="valor"><?= safe($extra['usuario_afectado'] ?? "—") ?></div>
+<!-- ACTIVIDAD -->
+<label>Actividad</label>
+<select name="idactividad" required>
+    <?php foreach ($actividades as $a): ?>
+        <option value="<?= $a['idactividad'] ?>"
+            <?= ($a['idactividad'] == $extra['idactividad']) ? 'selected' : '' ?>>
+            <?= htmlspecialchars($a['actividad']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
 
-    <div class="label">Equipo</div>
-    <div class="valor"><?= safe($extra['equipo'] ?? "—") ?></div>
+<!-- USUARIO -->
+<label>Usuario afectado</label>
+<input type="text" name="usuario_afectado"
+       value="<?= htmlspecialchars($extra['usuario_afectado']) ?>">
 
-    <div class="label">Comentarios</div>
-    <div class="valor"><?= nl2br(safe($extra['comentarios'] ?? "—")) ?></div>
+<!-- EQUIPO -->
+<label>Equipo</label>
+<input type="text" name="equipo"
+       value="<?= htmlspecialchars($extra['equipo']) ?>">
 
-    <div class="label">Evidencia</div>
-    <div class="valor"><?= safe($extra['evidencia'] ?? "—") ?></div>
+<!-- COMENTARIOS -->
+<label>Comentarios</label>
+<textarea name="comentarios"><?= htmlspecialchars($extra['comentarios']) ?></textarea>
 
-    <div class="label">Estatus</div>
-    <div class="valor">
-        <?php if ($extra['estatus'] === 'completado'): ?>
-            <span class="badge completo">Completado</span>
-        <?php else: ?>
-            <span class="badge en-proceso">En proceso</span>
-        <?php endif; ?>
-    </div>
+<!-- EVIDENCIA -->
+<label>Evidencia</label>
+<input type="text" name="evidencia"
+       value="<?= htmlspecialchars($extra['evidencia']) ?>">
 
-    <!-- ✅ BOTÓN CORRECTO -->
-    <a href="actividades_extras.php" class="btn-volver">Volver</a>
+<!-- ESTATUS -->
+<label>Estatus</label>
+<select name="estatus">
+    <option value="en proceso" <?= $extra['estatus']=='en proceso' ? 'selected' : '' ?>>En proceso</option>
+    <option value="completado" <?= $extra['estatus']=='completado' ? 'selected' : '' ?>>Completado</option>
+    <option value="cancelado" <?= $extra['estatus']=='cancelado' ? 'selected' : '' ?>>Cancelado</option>
+</select>
+
+<button class="btn-guardar">Guardar cambios</button>
+
+</form>
 
 </div>
 
@@ -224,3 +254,4 @@ h2 {
 
 </body>
 </html>
+``
