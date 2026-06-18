@@ -209,10 +209,20 @@ if ($row['fecha_fin']) {
 <?php endif; ?>
 </td>
 
+
 <td class="acciones">
+
     <a href="actividades_extras_ver.php?id=<?= $row['idextra'] ?>" class="btn ver">Ver</a>
+
+   <?php if ($row['estatus'] !== 'completado'): ?>
     <a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn editar">Editar</a>
+<?php else: ?>
+    <span style="opacity:0.5;font-size:12px;">🔒 Cerrado</span>
+<?php endif; ?>
+
+
 </td>
+
 
 </tr>
 <?php endforeach; ?>
