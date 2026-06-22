@@ -1,0 +1,57 @@
+body {font-family:"Segoe UI";}
+
+.main {
+    margin-left:240px;
+    padding:20px;
+}
+
+.header {
+    display:flex;
+    justify-content:space-between;
+}
+
+/* TABS */
+.tabs {display:flex; gap:10px;}
+.tab {
+    padding:8px 14px;
+    background:#ddd;
+    border-radius:8px;
+    text-decoration:none;
+}
+.tab.active {
+    background:#00AEEF;
+    color:#fff;
+}
+
+/* KPI */
+.kpis {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-top:15px;
+}
+
+.card {
+    background:#fff;
+    padding:15px;
+    border-radius:10px;
+}
+
+.card strong {
+    font-size:24px;
+}
+
+/* GRID */
+.grid-2 {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+/* BOX */
+.box {
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    margin-top:20px;
+}
