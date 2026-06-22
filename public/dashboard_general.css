@@ -55,3 +55,18 @@ body {font-family:"Segoe UI";}
     border-radius:12px;
     margin-top:20px;
 }
+.card {
+    background: linear-gradient(135deg, #ffffff, #f1f5f9);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.kpi-total { color: #00AEEF; }
+.kpi-comp { color: #10b981; }
+.kpi-proc { color: #f59e0b; }
+
+/* DARK MODE */
+body.dark .card {
+    background: linear-gradient(135deg, #1f2937, #111827);
+}
