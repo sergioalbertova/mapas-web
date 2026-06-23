@@ -2,11 +2,12 @@
 require "auth.php";
 require "db.php";
 
-$modulo = $_GET['modulo'] ?? 'itil';
-
-$inicio = $_GET['inicio'] ?? date("Y-m-d");
-$fin    = $_GET['fin'] ?? date("Y-m-d");
-
+/* =========================
+   PARÁMETROS
+=========================*/
+$modulo  = $_GET['modulo'] ?? 'itil';
+$inicio  = $_GET['inicio'] ?? date("Y-m-d");
+$fin     = $_GET['fin'] ?? date("Y-m-d");
 $tecnico = $_GET['tecnico'] ?? null;
 
 $params = [
@@ -14,112 +15,147 @@ $params = [
     ':fin'    => $fin . " 23:59:59"
 ];
 
-$filtroTec = "";
+/* =========================
+   FILTRO TÉCNICO DINÁMICO
+=========================*/
+$filtroTecITIL = "";
+$filtroTecACT  = "";
+
 if ($tecnico) {
-    $filtroTec = " AND idingeniero = :tec";
+    $filtroTecITIL = " AND i.tecnico_asignado = :tec";
+    $filtroTecACT  = " AND ae.idingeniero = :tec";
     $params[':tec'] = $tecnico;
 }
 
-/* ================= ACTIVIDADES ================= */
-if ($modulo == 'actividades') {
+/* ======================================================
+   ACTIVIDADES EXTRA
+======================================================*/
+if ($modulo === 'actividades') {
 
-    $total = $pdo->prepare("
-        SELECT COUNT(*) FROM actividades_extras
-        WHERE fecha_inicio BETWEEN :inicio AND :fin $filtroTec
+    // TOTAL
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM actividades_extras ae
+        WHERE fecha_inicio BETWEEN :inicio AND :fin $filtroTecACT
     ");
-    $total->execute($params);
-    $total = $total->fetchColumn();
+    $stmt->execute($params);
+    $total = $stmt->fetchColumn();
 
-    $comp = $pdo->prepare("
-        SELECT COUNT(*) FROM actividades_extras
-        WHERE estatus='completado'
-        AND fecha_inicio BETWEEN :inicio AND :fin $filtroTec
+    // COMPLETADAS
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM actividades_extras ae
+        WHERE estatus = 'completado'
+        AND fecha_inicio BETWEEN :inicio AND :fin $filtroTecACT
     ");
-    $comp->execute($params);
-    $comp = $comp->fetchColumn();
+    $stmt->execute($params);
+    $completadas = $stmt->fetchColumn();
 
-    $proc = $pdo->prepare("
-        SELECT COUNT(*) FROM actividades_extras
-        WHERE estatus='en proceso'
-        AND fecha_inicio BETWEEN :inicio AND :fin $filtroTec
+    // EN PROCESO
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM actividades_extras ae
+        WHERE estatus = 'en proceso'
+        AND fecha_inicio BETWEEN :inicio AND :fin $filtroTecACT
     ");
-    $proc->execute($params);
-    $proc = $proc->fetchColumn();
+    $stmt->execute($params);
+    $proceso = $stmt->fetchColumn();
 
-    $tec = $pdo->prepare("
+    // TÉCNICOS (CORREGIDO ✅)
+    $stmt = $pdo->prepare("
         SELECT u.id, u.nombre, COUNT(*) total
         FROM actividades_extras ae
         JOIN usuarios u ON u.id = ae.idingeniero
         WHERE fecha_inicio BETWEEN :inicio AND :fin
+        $filtroTecACT
         GROUP BY u.id, u.nombre
+        ORDER BY total DESC
     ");
-    $tec->execute($params);
-    $tec = $tec->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute($params);
+    $tec = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $estado = $pdo->prepare("
+    // ESTATUS
+    $stmt = $pdo->prepare("
         SELECT estatus, COUNT(*) total
-        FROM actividades_extras
-        WHERE fecha_inicio BETWEEN :inicio AND :fin $filtroTec
+        FROM actividades_extras ae
+        WHERE fecha_inicio BETWEEN :inicio AND :fin $filtroTecACT
         GROUP BY estatus
     ");
-    $estado->execute($params);
-    $estado = $estado->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute($params);
+    $estado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-} else {
+}
 
-    /* ================= ITIL ================= */
+/* ======================================================
+   ITIL
+======================================================*/
+else {
 
-    $total = $pdo->prepare("
-        SELECT COUNT(*) FROM itil_incidentes
-        WHERE fecha_reporte BETWEEN :inicio AND :fin
+    // TOTAL
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM itil_incidentes i
+        WHERE fecha_reporte BETWEEN :inicio AND :fin $filtroTecITIL
     ");
-    $total->execute($params);
-    $total = $total->fetchColumn();
+    $stmt->execute($params);
+    $total = $stmt->fetchColumn();
 
-    $comp = $pdo->prepare("
-        SELECT COUNT(*) FROM itil_incidentes
-        WHERE estado='Cerrado'
-        AND fecha_reporte BETWEEN :inicio AND :fin
+    // COMPLETADAS
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM itil_incidentes i
+        WHERE estado = 'Cerrado'
+        AND fecha_reporte BETWEEN :inicio AND :fin $filtroTecITIL
     ");
-    $comp->execute($params);
-    $comp = $comp->fetchColumn();
+    $stmt->execute($params);
+    $completadas = $stmt->fetchColumn();
 
-    $proc = $pdo->prepare("
-        SELECT COUNT(*) FROM itil_incidentes
-        WHERE estado!='Cerrado'
-        AND fecha_reporte BETWEEN :inicio AND :fin
+    // EN PROCESO
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM itil_incidentes i
+        WHERE estado != 'Cerrado'
+        AND fecha_reporte BETWEEN :inicio AND :fin $filtroTecITIL
     ");
-    $proc->execute($params);
-    $proc = $proc->fetchColumn();
+    $stmt->execute($params);
+    $proceso = $stmt->fetchColumn();
 
-    $tec = $pdo->query("
+    // TÉCNICOS (CORREGIDO ✅)
+    $stmt = $pdo->prepare("
         SELECT u.id, u.nombre, COUNT(*) total
         FROM itil_incidentes i
         JOIN usuarios u ON u.id = i.tecnico_asignado
-        GROUP BY u.id, u.nombre
-    ")->fetchAll(PDO::FETCH_ASSOC);
-
-    $estado = $pdo->prepare("
-        SELECT estado, COUNT(*) total
-        FROM itil_incidentes
         WHERE fecha_reporte BETWEEN :inicio AND :fin
+        $filtroTecITIL
+        GROUP BY u.id, u.nombre
+        ORDER BY total DESC
+    ");
+    $stmt->execute($params);
+    $tec = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // ESTADO
+    $stmt = $pdo->prepare("
+        SELECT estado, COUNT(*) total
+        FROM itil_incidentes i
+        WHERE fecha_reporte BETWEEN :inicio AND :fin $filtroTecITIL
         GROUP BY estado
     ");
-    $estado->execute($params);
-    $estado = $estado->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute($params);
+    $estado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-/* RESPONSE */
-
+/* ======================================================
+   RESPUESTA JSON
+======================================================*/
 echo json_encode([
-    "total"=>$total,
-    "completadas"=>$comp,
-    "proceso"=>$proc,
+    "total"        => (int)$total,
+    "completadas"  => (int)$completadas,
+    "proceso"      => (int)$proceso,
 
-    "tecIDs"=>array_column($tec,'id'),
-    "tecLabels"=>array_column($tec,'nombre'),
-    "tecData"=>array_column($tec,'total'),
+    "tecIDs"       => array_column($tec, 'id'),
+    "tecLabels"    => array_column($tec, 'nombre'),
+    "tecData"      => array_map('intval', array_column($tec, 'total')),
 
-    "estadoLabels"=>array_map(fn($x)=>$x['estado'] ?? $x['estatus'],$estado),
-    "estadoData"=>array_column($estado,'total')
+    "estadoLabels" => array_map(fn($x)=>$x['estado'] ?? $x['estatus'], $estado),
+    "estadoData"   => array_map('intval', array_column($estado, 'total'))
 ]);
