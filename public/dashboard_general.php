@@ -2,9 +2,6 @@
 require "auth.php";
 require "db.php";
 
-/* =========================
-   PARÁMETROS
-=========================*/
 $modulo = $_GET['modulo'] ?? 'itil';
 
 $hoy = date("Y-m-d");
@@ -13,9 +10,7 @@ $fin    = $_GET['fin'] ?? $hoy;
 
 $tecnico = $_GET['tecnico'] ?? "";
 
-/* =========================
-   FILTROS RÁPIDOS
-=========================*/
+/* ===== FILTROS RÁPIDOS ===== */
 if (isset($_GET['rango'])) {
 
     if ($_GET['rango'] == 'hoy') {
@@ -33,9 +28,8 @@ if (isset($_GET['rango'])) {
     }
 }
 
-/* URL base para conservar parámetros */
-function buildUrl($params){
-    return '?' . http_build_query(array_merge($_GET, $params));
+function url($params){
+    return '?' . http_build_query(array_merge($_GET,$params));
 }
 ?>
 
@@ -50,7 +44,6 @@ function buildUrl($params){
 <link rel="stylesheet" href="dashboard_general.css">
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
 </head>
 
 <body>
@@ -65,8 +58,15 @@ function buildUrl($params){
     <h2>Dashboard Power BI</h2>
 
     <div class="tabs">
-        <a href="<?= buildUrl(['modulo'=>'itil']) ?>" class="tab <?= $modulo=='itil'?'active':'' ?>">📊 ITIL</a>
-        <a href="<?= buildUrl(['modulo'=>'actividades']) ?>" class="tab <?= $modulo=='actividades'?'active':'' ?>">⚙ Actividades</a>
+        <a href="<?php echo url(['modulo'=>'itil']); ?>"
+           class="tab <?= $modulo=='itil'?'active':'' ?>">
+           📊 ITIL
+        </a>
+
+        <a href="<?php echo url(['modulo'=>'actividades']); ?>"
+           class="tab <?= $modulo=='actividades'?'active':'' ?>">
+           ⚙ Actividades
+        </a>
     </div>
 </div>
 
@@ -87,9 +87,11 @@ function buildUrl($params){
 </form>
 
 <div class="rapidos">
-    <a href="<?= buildUrl(['rango'=>'hoy']) ?>">Hoy</a>
-    <a href="<?= buildUrl(['rango'=>'7']) ?>">7 días</a>
-    <a href="<?= buildUrl(['rango'=>'mes']) ?>">Mes</a>
+
+    <a href="<?php echo url(['rango'=>'hoy']); ?>">Hoy</a>
+    <a href="<?php echo url(['rango'=>'7']); ?>">7 días</a>
+    <a href="<?php echo url(['rango'=>'mes']); ?>">Mes</a>
+
 </div>
 
 </div>
@@ -133,60 +135,49 @@ function buildUrl($params){
 
 <script>
 
-/* =========================
-   DARK MODE
-=========================*/
+/* ===== DARK MODE ===== */
 if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark");
 }
 
-/* =========================
-   VARIABLES
-=========================*/
+/* ===== VARIABLES ===== */
 const modulo = "<?= $modulo ?>";
 const inicio = "<?= $inicio ?>";
 const fin    = "<?= $fin ?>";
 const tecnico = "<?= $tecnico ?>";
 
-/* =========================
-   CHARTS
-=========================*/
-
+/* ===== CHARTS ===== */
 let chartTec = new ApexCharts(document.querySelector("#chartTec"), {
-    chart: { type: 'bar', height: 280 },
-    series: [{ data: [] }],
-    xaxis: { categories: [] }
+    chart:{ type:'bar', height:280 },
+    series:[{ data:[] }],
+    xaxis:{ categories:[] }
 });
 chartTec.render();
 
 let chartEstado = new ApexCharts(document.querySelector("#chartEstado"), {
-    chart: { type: 'bar', height: 280 },
-    series: [{ data: [] }],
-    xaxis: { categories: [] }
+    chart:{ type:'bar', height:280 },
+    series:[{ data:[] }],
+    xaxis:{ categories:[] }
 });
 chartEstado.render();
 
-/* =========================
-   CARGA DATOS
-=========================*/
+/* ===== CARGA ===== */
 function cargar(){
 
 fetch(`api_dashboard.php?modulo=${modulo}&inicio=${inicio}&fin=${fin}&tecnico=${tecnico}`)
 .then(r=>r.json())
-.then(data=>{
+.then(d=>{
 
-    // KPIs
-    document.querySelector(".kpi-total").textContent = data.total;
-    document.querySelector(".kpi-comp").textContent  = data.completadas;
-    document.querySelector(".kpi-proc").textContent  = data.proceso;
+    document.querySelector(".kpi-total").textContent = d.total;
+    document.querySelector(".kpi-comp").textContent  = d.completadas;
+    document.querySelector(".kpi-proc").textContent  = d.proceso;
 
-    // GRÁFICA TÉCNICO
     chartTec.updateOptions({
-        xaxis: { categories: data.tecLabels },
-        chart: {
-            events: {
-                dataPointSelection: function(event, ctx, config){
-                    let id = data.tecIDs[config.dataPointIndex];
+        xaxis:{ categories: d.tecLabels },
+        chart:{
+            events:{
+                dataPointSelection:function(e,ctx,cfg){
+                    let id = d.tecIDs[cfg.dataPointIndex];
                     let url = new URL(window.location);
                     url.searchParams.set("tecnico", id);
                     window.location = url;
@@ -195,17 +186,15 @@ fetch(`api_dashboard.php?modulo=${modulo}&inicio=${inicio}&fin=${fin}&tecnico=${
         }
     });
 
-    chartTec.updateSeries([{ data: data.tecData }]);
+    chartTec.updateSeries([{ data:d.tecData }]);
 
-    // GRÁFICA ESTADO
     chartEstado.updateOptions({
-        xaxis: { categories: data.estadoLabels }
+        xaxis:{ categories:d.estadoLabels }
     });
 
-    chartEstado.updateSeries([{ data: data.estadoData }]);
+    chartEstado.updateSeries([{ data:d.estadoData }]);
 
-})
-.catch(err => console.error("Error:", err));
+});
 
 }
 
@@ -217,3 +206,4 @@ cargar();
 
 </body>
 </html>
+``
