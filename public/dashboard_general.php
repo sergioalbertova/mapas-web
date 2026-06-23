@@ -42,7 +42,7 @@ if (isset($_GET['rango'])) {
 
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
-<link rel="stylesheet" href="dashboard_general.css">
+dashboard_general.css
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
@@ -60,8 +60,8 @@ if (isset($_GET['rango'])) {
     <h2>Dashboard Power BI</h2>
 
     <div class="tabs">
-        <a href="?modulo=itil" class="tab <?= $modulo=='itil'?'active':'' ?>">📊 ITIL</a>
-        <a href="?modulo=actividades" class="tab <?= $modulo=='actividades'?'active':'' ?>">🛠 Actividades</a>
+        ?modulo=itil📊 ITIL</a>
+        ?modulo=actividades🛠 Actividades</a>
     </div>
 </div>
 
@@ -84,9 +84,9 @@ if (isset($_GET['rango'])) {
 <!-- BOTONES RÁPIDOS -->
 <div class="rapidos">
 
-    <a href="?modulo=<?= $modulo ?>&rango=hoy">Hoy</a>
-    <a href="?modulo=<?= $modulo ?>&rango=7">7 días</a>
-    <a href="?modulo=<?= $modulo ?>&rango=mes">Mes</a>
+    oy">Hoy</a>
+    ?modulo=<?= $modulo ?>&rango=7
+    mes">Mes</a>
 
 </div>
 
