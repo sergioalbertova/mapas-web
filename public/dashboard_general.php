@@ -7,21 +7,17 @@ $modulo = $_GET['modulo'] ?? 'itil';
 $hoy = date("Y-m-d");
 $inicio = $_GET['inicio'] ?? $hoy;
 $fin    = $_GET['fin'] ?? $hoy;
-
 $tecnico = $_GET['tecnico'] ?? "";
 
-/* ===== FILTROS RÁPIDOS ===== */
+/* FILTROS RÁPIDOS */
 if (isset($_GET['rango'])) {
-
     if ($_GET['rango'] == 'hoy') {
         $inicio = $fin = $hoy;
     }
-
     if ($_GET['rango'] == '7') {
         $inicio = date("Y-m-d", strtotime("-6 days"));
         $fin = $hoy;
     }
-
     if ($_GET['rango'] == 'mes') {
         $inicio = date("Y-m-01");
         $fin = $hoy;
@@ -37,7 +33,7 @@ function url($params){
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard General</title>
+<title>Dashboard</title>
 
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
@@ -58,15 +54,8 @@ function url($params){
     <h2>Dashboard Power BI</h2>
 
     <div class="tabs">
-        <a href="<?php echo url(['modulo'=>'itil']); ?>"
-           class="tab <?= $modulo=='itil'?'active':'' ?>">
-           📊 ITIL
-        </a>
-
-        <a href="<?php echo url(['modulo'=>'actividades']); ?>"
-           class="tab <?= $modulo=='actividades'?'active':'' ?>">
-           ⚙ Actividades
-        </a>
+        <a href="<?= url(['modulo'=>'itil']) ?>" class="tab <?= $modulo=='itil'?'active':'' ?>">📊 ITIL</a>
+        <a href="<?= url(['modulo'=>'actividades']) ?>" class="tab <?= $modulo=='actividades'?'active':'' ?>">⚙ Actividades</a>
     </div>
 </div>
 
@@ -87,33 +76,32 @@ function url($params){
 </form>
 
 <div class="rapidos">
-
-    <a href="<?php echo url(['rango'=>'hoy']); ?>">Hoy</a>
-    <a href="<?php echo url(['rango'=>'7']); ?>">7 días</a>
-    <a href="<?php echo url(['rango'=>'mes']); ?>">Mes</a>
-
+    <a href="<?= url(['rango'=>'hoy']) ?>">Hoy</a>
+    <a href="<?= url(['rango'=>'7']) ?>">7 días</a>
+    <a href="<?= url(['rango'=>'mes']) ?>">Mes</a>
 </div>
 
 </div>
+
+<!-- FILTRO ACTIVO -->
+<?php if($tecnico): ?>
+<div class="filtro-activo">
+    Filtrando por técnico:
+    <strong>
+        <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id=$tecnico")->fetchColumn()) ?>
+    </strong>
+
+    <a href="?modulo=<?= $modulo ?>&inicio=<?= $inicio ?>&fin=<?= $fin ?>">
+        Quitar filtro
+    </a>
+</div>
+<?php endif; ?>
 
 <!-- KPIs -->
 <div class="kpis">
-
-<div class="card">
-    <span>Total</span>
-    <strong class="kpi-total">0</strong>
-</div>
-
-<div class="card">
-    <span>Completadas</span>
-    <strong class="kpi-comp">0</strong>
-</div>
-
-<div class="card">
-    <span>En proceso</span>
-    <strong class="kpi-proc">0</strong>
-</div>
-
+    <div class="card"><span>Total</span><strong class="kpi-total">0</strong></div>
+    <div class="card"><span>Completadas</span><strong class="kpi-comp">0</strong></div>
+    <div class="card"><span>En proceso</span><strong class="kpi-proc">0</strong></div>
 </div>
 
 <!-- GRÁFICAS -->
@@ -135,18 +123,18 @@ function url($params){
 
 <script>
 
-/* ===== DARK MODE ===== */
+/* DARK MODE */
 if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark");
 }
 
-/* ===== VARIABLES ===== */
+/* VARIABLES */
 const modulo = "<?= $modulo ?>";
 const inicio = "<?= $inicio ?>";
 const fin    = "<?= $fin ?>";
 const tecnico = "<?= $tecnico ?>";
 
-/* ===== CHARTS ===== */
+/* CHARTS */
 let chartTec = new ApexCharts(document.querySelector("#chartTec"), {
     chart:{ type:'bar', height:280 },
     series:[{ data:[] }],
@@ -161,7 +149,7 @@ let chartEstado = new ApexCharts(document.querySelector("#chartEstado"), {
 });
 chartEstado.render();
 
-/* ===== CARGA ===== */
+/* CARGA */
 function cargar(){
 
 fetch(`api_dashboard.php?modulo=${modulo}&inicio=${inicio}&fin=${fin}&tecnico=${tecnico}`)
@@ -173,7 +161,7 @@ fetch(`api_dashboard.php?modulo=${modulo}&inicio=${inicio}&fin=${fin}&tecnico=${
     document.querySelector(".kpi-proc").textContent  = d.proceso;
 
     chartTec.updateOptions({
-        xaxis:{ categories: d.tecLabels },
+        xaxis:{ categories:d.tecLabels },
         chart:{
             events:{
                 dataPointSelection:function(e,ctx,cfg){
@@ -202,8 +190,5 @@ cargar();
 
 </script>
 
-<script src="theme.js"></script>
-
 </body>
 </html>
-``
