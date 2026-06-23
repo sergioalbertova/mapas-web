@@ -39,7 +39,7 @@ if (isset($_GET['rango'])) {
 <head>
 <meta charset="UTF-8">
 <title>Dashboard General</title>
-
+<link rel="stylesheet" href="dashboard_general.css">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 dashboard_general.css
