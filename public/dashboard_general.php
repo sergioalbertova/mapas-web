@@ -287,7 +287,7 @@ $chartUbicacionData   = array_column($porUbicacion, 'total');
 /* URL SIN TÉCNICO */
 $paramsURL = $_GET;
 unset($paramsURL['tecnico']);
-$urlSinTecnico = "itil_estadisticas.php";
+$urlSinTecnico = "dashboard_general.php";
 if (!empty($paramsURL)) {
     $urlSinTecnico .= "?" . http_build_query($paramsURL);
 }
@@ -459,10 +459,6 @@ body.dark .itil-topbar {
 <?php require "topbar.php"; ?>
 
 
-<br/>
-<br/>
-<br/>
-<br/>
 
 <!-- FILTROS SUPERIORES -->
 
@@ -705,7 +701,7 @@ let chartTecnico = new ApexCharts(document.querySelector("#chartTecnico"), {
                 let tecnicoID = chartTecnicoIDs[config.dataPointIndex];
                 const params = new URLSearchParams(window.location.search);
                 params.set("tecnico", tecnicoID);
-                window.location.href = "itil_estadisticas.php?" + params.toString();
+                window.location.href = "dashboard_general.php?" + params.toString();
             }
         }
     },
