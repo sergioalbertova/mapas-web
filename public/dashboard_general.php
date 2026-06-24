@@ -331,49 +331,7 @@ if (!empty($paramsURL)) {
 }
 
 
-/* ========================= */
-/* TOPBAR ITIL (DEBAJO)     */
-/* ========================= */
-.itil-topbar {
-    position: fixed;
-    top: 60px !important; /* DEBAJO DEL TOPBAR GENERAL */
-    left: 240px;
-    right: 0;
-    height: 55px;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 0 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2500 !important;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-}
 
-.itil-topbar a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 8px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    transition: 0.2s ease;
-    font-size: 15px;
-}
-
-.itil-topbar a:hover {
-    background: var(--sidebar-hover);
-    transform: translateY(-1px);
-}
-
-.itil-topbar svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-    opacity: 0.85;
-}
 
 /* NAVEGACIÓN GLASS */
 .navegacion {
@@ -477,17 +435,27 @@ body.dark .itil-topbar {
     background:#dc2626;
 }
 
+.main{
+    margin-left:240px;
+    padding:140px 40px 40px 40px; /* 🔥 espacio real topbars */
+    width:calc(100% - 240px);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center; /* 🔥 centra TODO */
+}
+
 .filtro-bar{
+    width:100%;
+    max-width:600px;
+
     display:flex;
     flex-direction:column;
     align-items:center;
     gap:12px;
 
-    /* 🔥 ESTO LO SOLUCIONA */
-    max-width:700px;
-    margin:20px auto; /* centra horizontal */
+    margin-bottom:25px;
 }
-
 
 </style>
 </head>
@@ -498,45 +466,7 @@ body.dark .itil-topbar {
 <!-- === TOPBAR GENERAL (PRIMERO) === -->
 <?php require "topbar.php"; ?>
 
-<!-- === TOPBAR ITIL (DEBAJO DEL GENERAL) === -->
-<div class="itil-topbar">
 
-    <a href="itil_incidentes.php">
-        <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
-        Incidentes
-    </a>
-
-    <a href="itil_incidente_nuevo.php">
-        <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Nuevo
-    </a>
-
-    <a href="itil_problemas.php">
-        <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Problemas
-    </a>
-
-    <a href="itil_catalogo.php">
-        <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
-        Catálogo Incidentes
-    </a>
-
-    <a href="itil_solicitudes.php">
-        <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        En Proceso
-    </a>
-
-    <a href="itil_sla.php">
-        <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        SLA
-    </a>
-
-    <a href="itil_estadisticas.php">
-        <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        Estadísticas
-    </a>
-
-</div>
 <br/>
 <br/>
 <br/>
