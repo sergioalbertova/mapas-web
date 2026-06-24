@@ -7,28 +7,23 @@ $id = $_SESSION['user_id'];
 /* USUARIO */
 $stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id=?");
 $stmt->execute([$id]);
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-$nombreUsuario = $usuario['nombre'] ?? "Usuario";
+$nombreUsuario = $stmt->fetchColumn() ?? "Usuario";
 
-/* FILTROS */
+/* PARAMETROS */
 $modulo = $_GET['modulo'] ?? 'itil';
-$hoy = date("Y-m-d");
 
+$hoy = date("Y-m-d");
 $inicio = $_GET['inicio'] ?? $hoy;
 $fin    = $_GET['fin'] ?? $hoy;
 $tecnico = $_GET['tecnico'] ?? null;
 
-/* TECNICOS FILTRADOS (solo 4) */
-$tecnicos = $pdo->query("
-SELECT id,nombre FROM usuarios 
-WHERE nombre IN (
-'ANTONIETA RODRIGUEZ',
-'SERGIO VALENZUELA',
-'ERICK ARIAS RAMIREZ',
-'JUAN CARLOS ARAUJO SANCHEZ'
-)
-ORDER BY nombre
-")->fetchAll(PDO::FETCH_ASSOC);
+/* TECNICOS - SOLO LOS 4 */
+$tecnicos = [
+['id'=>29,'nombre'=>'ERICK ARIAS RAMIREZ'],
+['id'=>2,'nombre'=>'SERGIO VALENZUELA'],
+['id'=>4,'nombre'=>'ANTONIETA RODRIGUEZ'],
+['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ']
+];
 
 ?>
 
@@ -41,9 +36,11 @@ ORDER BY nombre
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 <style>
 
-/* ================= BASE (igual index) ================= */
+/* USA EL MISMO SISTEMA */
 body{
     margin:0;
     font-family:"Segoe UI", Arial;
@@ -55,56 +52,52 @@ body{
 /* MAIN */
 .main{
     margin-left:240px;
-    width:calc(100% - 240px);
     padding:20px 40px;
+    width:calc(100% - 240px);
 }
 
 /* TITULO */
 .main h2{
     text-align:center;
-    margin-bottom:20px;
 }
 
-/* TECNICOS */
-.tecnicos{
-    margin:15px 0;
+/* FILTRO */
+.filtro{
     text-align:center;
+    margin:15px 0;
 }
 
+/* BOTONES TECNICOS */
+.tecnicos{
+    text-align:center;
+    margin:15px 0;
+}
 .tecnicos a{
-    display:inline-block;
-    padding:8px 12px;
+    padding:8px 14px;
     margin:5px;
+    display:inline-block;
     border-radius:10px;
     background:var(--card-bg);
     color:var(--text);
     text-decoration:none;
-    box-shadow:0 5px 10px var(--shadow);
-    transition:.2s;
+    box-shadow:0 5px 15px var(--shadow);
 }
-
-.tecnicos a:hover{
-    transform:translateY(-2px);
-}
-
 .tecnicos a.active{
     background:var(--accent);
     color:white;
 }
 
-/* KPIs */
+/* KPI */
 .kpis{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:20px;
 }
-
 .card{
     background:var(--card-bg);
     padding:20px;
-    border-radius:15px;
+    border-radius:14px;
     box-shadow:0 10px 20px var(--shadow);
-    font-size:18px;
 }
 
 /* GRID */
@@ -112,19 +105,17 @@ body{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:20px;
-    margin-top:25px;
+    margin-top:20px;
 }
 
 .box{
     background:var(--card-bg);
     padding:20px;
-    border-radius:15px;
+    border-radius:14px;
     box-shadow:0 10px 20px var(--shadow);
 }
 
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 </head>
 
@@ -136,9 +127,10 @@ body{
 
 <?php require "topbar.php"; ?>
 
-<h2>Dashboard Power BI</h2>
+<h2>Dashboard</h2>
 
 <!-- FILTRO -->
+<div class="filtro">
 <form method="GET">
 <input type="hidden" name="modulo" value="<?= $modulo ?>">
 
@@ -151,22 +143,23 @@ body{
 
 <button>Filtrar</button>
 </form>
+</div>
 
 <!-- TECNICOS -->
 <div class="tecnicos">
 <?php foreach($tecnicos as $t): ?>
-    <a href="?tecnico=<?= $t['id'] ?>"
+    <a href="?modulo=<?= $modulo ?>&tecnico=<?= $t['id'] ?>"
        class="<?= ($tecnico==$t['id'])?'active':'' ?>">
-       <?= htmlspecialchars($t['nombre']) ?>
+       <?= $t['nombre'] ?>
     </a>
 <?php endforeach; ?>
 </div>
 
-<!-- KPIs -->
+<!-- KPIS -->
 <div class="kpis">
-    <div class="card">Total: <span class="kpi-total">0</span></div>
-    <div class="card">Completadas: <span class="kpi-comp">0</span></div>
-    <div class="card">Proceso: <span class="kpi-proc">0</span></div>
+<div class="card">Total: <span class="kpi-total">0</span></div>
+<div class="card">Completadas: <span class="kpi-comp">0</span></div>
+<div class="card">Proceso: <span class="kpi-proc">0</span></div>
 </div>
 
 <!-- GRAFICAS -->
@@ -188,37 +181,47 @@ body{
 
 <script>
 
+/* 🔥 DARK MODE */
 if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark");
 }
 
-let chartTec=new ApexCharts(document.querySelector("#chartTec"),{
-    chart:{type:'bar',height:250},
-    series:[{data:[]}],
-    xaxis:{categories:[]}
-});chartTec.render();
+/* 🔥 SIDEBAR */
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("collapsed");
+}
 
-let chartEstado=new ApexCharts(document.querySelector("#chartEstado"),{
-    chart:{type:'bar',height:250},
-    series:[{data:[]}],
-    xaxis:{categories:[]}
-});chartEstado.render();
+/* DATA */
+const params = new URLSearchParams(window.location.search);
 
-fetch(`api_dashboard.php`)
+fetch("api_dashboard.php?" + params.toString())
 .then(r=>r.json())
 .then(d=>{
-    document.querySelector(".kpi-total").textContent=d.total;
-    document.querySelector(".kpi-comp").textContent=d.completadas;
-    document.querySelector(".kpi-proc").textContent=d.proceso;
 
-    chartTec.updateOptions({xaxis:{categories:d.tecLabels}});
-    chartTec.updateSeries([{data:d.tecData}]);
+document.querySelector(".kpi-total").textContent=d.total;
+document.querySelector(".kpi-comp").textContent=d.completadas;
+document.querySelector(".kpi-proc").textContent=d.proceso;
 
-    chartEstado.updateOptions({xaxis:{categories:d.estadoLabels}});
-    chartEstado.updateSeries([{data:d.estadoData}]);
+/* CHART */
+let c1=new ApexCharts(document.querySelector("#chartTec"),{
+chart:{type:'bar',height:250},
+series:[{data:d.tecData}],
+xaxis:{categories:d.tecLabels}
+});
+c1.render();
+
+let c2=new ApexCharts(document.querySelector("#chartEstado"),{
+chart:{type:'bar',height:250},
+series:[{data:d.estadoData}],
+xaxis:{categories:d.estadoLabels}
+});
+c2.render();
+
 });
 
 </script>
+
+<script src="theme.js"></script>
 
 </body>
 </html>
