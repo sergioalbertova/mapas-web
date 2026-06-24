@@ -8,39 +8,22 @@ $stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id=?");
 $stmt->execute([$id]);
 $nombreUsuario = $stmt->fetchColumn() ?? "Usuario";
 
-/* PARAMETROS */
-$modulo = $_GET['modulo'] ?? 'itil';
-
-$hoy = date("Y-m-d");
-$inicio = $_GET['inicio'] ?? $hoy;
-$fin    = $_GET['fin'] ?? $hoy;
+/* PARAMS */
+$modulo  = $_GET['modulo'] ?? 'itil';
+$inicio  = $_GET['inicio'] ?? date("Y-m-d");
+$fin     = $_GET['fin'] ?? date("Y-m-d");
 $tecnico = $_GET['tecnico'] ?? null;
-
-/* FILTROS RAPIDOS */
-if(isset($_GET['rango'])){
-    if($_GET['rango']=='hoy'){
-        $inicio = $fin = $hoy;
-    }
-    if($_GET['rango']=='7'){
-        $inicio = date("Y-m-d", strtotime("-6 days"));
-        $fin = $hoy;
-    }
-    if($_GET['rango']=='mes'){
-        $inicio = date("Y-m-01");
-        $fin = $hoy;
-    }
-}
 
 /* TECNICOS */
 $tecnicos = [
 ['id'=>2,'nombre'=>'SERGIO VALENZUELA'],
 ['id'=>4,'nombre'=>'ANTONIETA RODRIGUEZ'],
 ['id'=>29,'nombre'=>'ERICK ARIAS RAMIREZ'],
-['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ'],
+['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ']
 ];
 
-function url($p){
-    return '?' . http_build_query(array_merge($_GET, $p));
+function url($params){
+    return '?' . http_build_query(array_merge($_GET,$params));
 }
 ?>
 
@@ -56,17 +39,16 @@ function url($p){
 
 <style>
 
-/* ===== EXACTAMENTE COMO INDEX ===== */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
+/* BASE IGUAL A INDEX */
+body{
+    margin:0;
+    font-family:"Segoe UI", Arial;
+    background:var(--bg);
+    color:var(--text);
     display:flex;
 }
 
-/* MAIN */
-.main {
+.main{
     margin-left:240px;
     width:calc(100% - 240px);
     padding:20px 40px;
@@ -83,31 +65,29 @@ body {
 .switch a{
     padding:10px 15px;
     border-radius:10px;
-    background:var(--sidebar-bg);
-    color:var(--text);
+    background:var(--card-bg);
     text-decoration:none;
     margin-left:10px;
 }
 .switch .active{
     background:var(--accent);
-    color:#fff;
+    color:white;
 }
 
-/* FILTROS */
+/* FILTRO */
 .filtro{
     text-align:center;
     margin:20px 0;
 }
-
-.filtro-rapidos a{
-    margin:5px;
+.rapidos a{
+    margin:0 5px;
     padding:6px 10px;
     background:var(--card-bg);
-    border-radius:8px;
+    border-radius:6px;
     text-decoration:none;
 }
 
-/* TECNICOS */
+/* TECNICOS BOTONES */
 .tecnicos{
     text-align:center;
     margin:15px 0;
@@ -115,12 +95,13 @@ body {
 .tecnicos a{
     display:inline-block;
     padding:10px 14px;
-    margin:6px;
+    margin:5px;
     border-radius:12px;
     background:var(--card-bg);
     color:var(--text);
     text-decoration:none;
     box-shadow:0 5px 15px var(--shadow);
+    transition:all .2s;
 }
 .tecnicos a.active{
     background:var(--accent);
@@ -147,11 +128,22 @@ body {
     gap:20px;
     margin-top:20px;
 }
-
 .box{
     background:var(--card-bg);
     padding:20px;
     border-radius:15px;
+}
+
+/* DARK MODE FIX */
+body.dark{
+    background:#0f172a;
+}
+
+body.dark .card,
+body.dark .box,
+body.dark .tecnicos a{
+    background:#1f2937;
+    color:#e5e7eb;
 }
 
 </style>
@@ -169,15 +161,15 @@ body {
 <h2>Dashboard</h2>
 
 <div class="switch">
-    il" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
-    idades" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
+    <a href="<?= url(['modulo'=>'itil']) ?>" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
+    <a href="<?= url(['modulo'=>'actividades']) ?>" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
 </div>
 </div>
 
 <!-- FILTRO -->
 <div class="filtro">
-
 <form method="GET">
+
 <input type="hidden" name="modulo" value="<?= $modulo ?>">
 
 <input type="date" name="inicio" value="<?= $inicio ?>">
@@ -190,42 +182,45 @@ body {
 <button>Filtrar</button>
 </form>
 
-<div class="filtro-rapidos">
-oy']) ?>">Hoy</a>
-7']) ?>">Últimos 7 días</a>
-']) ?>">Mes</a>
+<div class="rapidos">
+<a href="<?= url(['rango'=>'hoy']) ?>">Hoy</a>
+<a href="<?= url(['rango'=>'7']) ?>">7 días</a>
+<a href="<?= url(['rango'=>'mes']) ?>">Mes</a>
 </div>
-
 </div>
 
 <!-- TECNICOS -->
 <div class="tecnicos">
 <?php foreach($tecnicos as $t): ?>
-    cnico=<?= $t['id'] ?>&modulo=<?= $modulo ?>"
-       class="<?= ($tecnico==$t['id'])?'active':'' ?>">
-       <?= $t['nombre'] ?>
-    </a>
+<a href="<?= url(['tecnico'=>$t['id']]) ?>"
+   class="<?= ($tecnico==$t['id']) ? 'active' : '' ?>">
+   <?= $t['nombre'] ?>
+</a>
 <?php endforeach; ?>
 </div>
 
 <!-- FILTRO ACTIVO -->
 <?php if($tecnico): ?>
 <div class="card">
-Filtrando por técnico:
+Filtrando por:
 <strong>
-<?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id=$tecnico")->fetchColumn()) ?>
+<?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id=$tecnico")->fetchColumn() ?? '') ?>
 </strong>
-inicio=<?= $inicio ?>&fin=<?= $fin ?>&modulo=<?= $modulo ?>">
-Quitar filtro
-</a>
+<a href="<?= url(['tecnico'=>null]) ?>">Quitar filtro</a>
 </div>
 <?php endif; ?>
 
-<!-- KPIS -->
+<!-- KPIs COMPLETOS -->
 <div class="kpis">
+
 <div class="card">Total <div class="kpi-total">0</div></div>
 <div class="card">Completadas <div class="kpi-comp">0</div></div>
 <div class="card">En proceso <div class="kpi-proc">0</div></div>
+
+<div class="card">MTTR <div class="kpi-mttr">0h</div></div>
+<div class="card">SLA <div class="kpi-sla">0%</div></div>
+<div class="card">Backlog <div class="kpi-backlog">0</div></div>
+
 </div>
 
 <!-- GRAFICAS -->
@@ -239,13 +234,8 @@ Quitar filtro
 <script>
 
 /* DARK MODE */
-if(localStorage.getItem("theme") === "dark"){
+if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark");
-}
-
-/* SIDEBAR */
-function toggleSidebar(){
-    document.getElementById("sidebar").classList.toggle("collapsed");
 }
 
 /* DATA */
@@ -256,6 +246,7 @@ fetch("api_dashboard.php?"+window.location.search.replace("?",""))
 document.querySelector(".kpi-total").textContent=d.total;
 document.querySelector(".kpi-comp").textContent=d.completadas;
 document.querySelector(".kpi-proc").textContent=d.proceso;
+document.querySelector(".kpi-backlog").textContent=d.proceso;
 
 new ApexCharts(document.querySelector("#chartTec"),{
 chart:{type:'bar'},
