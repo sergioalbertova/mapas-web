@@ -435,15 +435,6 @@ body.dark .itil-topbar {
     background:#dc2626;
 }
 
-.main{
-    margin-left:240px;
-    padding:140px 40px 40px 40px; /* 🔥 espacio real topbars */
-    width:calc(100% - 240px);
-
-    display:flex;
-    flex-direction:column;
-    align-items:center; /* 🔥 centra TODO */
-}
 
 .filtro-bar{
     width:100%;
@@ -474,7 +465,7 @@ body.dark .itil-topbar {
 
 <!-- FILTROS SUPERIORES -->
 
-
+<center> 
 <div class="filtro-bar">
 
     <form method="GET" class="filtro-row">
@@ -518,7 +509,7 @@ body.dark .itil-topbar {
     </div>
 
 </div>
-
+</center>  
 <!-- BANNER DE FILTRO POR TÉCNICO -->
 <?php if ($tecnicoFiltro): ?>
 <div class="filtro-filtro-activo">
