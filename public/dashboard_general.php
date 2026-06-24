@@ -34,7 +34,7 @@ $tecnicos = [
 ['id'=>2,'nombre'=>'SERGIO VALENZUELA'],
 ['id'=>4,'nombre'=>'ANTONIETA RODRIGUEZ'],
 ['id'=>29,'nombre'=>'ERICK ARIAS RAMIREZ'],
-['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ'],
+['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ']
 ];
 
 function url($params){
@@ -50,7 +50,6 @@ function url($params){
 
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
-
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <style>
@@ -85,6 +84,10 @@ body{
     text-decoration:none;
     color:var(--text);
     margin-left:10px;
+    transition:.2s;
+}
+.switch a:hover{
+    transform:translateY(-2px);
 }
 .switch .active{
     background:var(--accent);
@@ -97,7 +100,7 @@ body{
     margin:20px 0;
 }
 
-/* ===== BOTONES GENERALES ===== */
+/* ===== BOTONES ===== */
 .boton{
     display:inline-block;
     padding:8px 12px;
@@ -150,10 +153,16 @@ body{
     padding:20px;
     border-radius:15px;
     box-shadow:0 10px 25px var(--shadow);
+    transition:.2s;
 }
 
 .card:hover{
     transform:translateY(-4px);
+}
+
+/* ===== ESPACIADO FILTRO ACTIVO ===== */
+.filtro-activo{
+    margin-bottom:20px;
 }
 
 /* ===== GRAFICAS ===== */
@@ -170,23 +179,30 @@ body{
     border-radius:15px;
 }
 
-/* ===== DARK MODE REAL ===== */
+/* ===== DARK MODE CORRECTO ===== */
 body.dark{
-    background:#0f172a !important;
+    background:#0f172a;
+    color:#E5E7EB;
 }
 
 body.dark .main{
-    background:#0f172a !important;
+    background:#0f172a;
 }
 
 body.dark .card,
 body.dark .box{
-    background:#1f2937 !important;
-    color:#E5E7EB !important;
+    background:#1f2937;
 }
 
+body.dark h2,
+body.dark h3,
+body.dark h4{
+    color:#E5E7EB;
+}
+
+/* SOLO DASHBOARD, NO SIDEBAR */
 body.dark .tec-card{
-    background:#1e293b;
+    background:#1f2937;
     color:#E5E7EB;
 }
 
@@ -194,8 +210,9 @@ body.dark .tec-card.active{
     background:#00AEEF;
 }
 
-body.dark a{
-    color:#60A5FA !important;
+/* NO TOCAR SIDEBAR */
+body.dark .sidebar{
+    background:var(--sidebar-bg);
 }
 
 </style>
@@ -211,14 +228,12 @@ body.dark a{
 
 <!-- HEADER -->
 <div class="header">
-
 <h2>Dashboard</h2>
 
 <div class="switch">
-    <a href="<?= url(['modulo'=>'itil']) ?>" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
-    <a href="<?= url(['modulo'=>'actividades']) ?>" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
+<a href="<?= url(['modulo'=>'itil']) ?>" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
+<a href="<?= url(['modulo'=>'actividades']) ?>" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
 </div>
-
 </div>
 
 <!-- FILTRO -->
@@ -234,9 +249,9 @@ body.dark a{
 </form>
 
 <div>
-    <a class="boton" href="<?= url(['rango'=>'hoy']) ?>">Hoy</a>
-    <a class="boton" href="<?= url(['rango'=>'7']) ?>">7 días</a>
-    <a class="boton" href="<?= url(['rango'=>'mes']) ?>">Mes</a>
+<a href="<?= url(['rango'=>'hoy']) ?>" class="boton">Hoy</a>
+<a href="<?= url(['rango'=>'7']) ?>" class="boton">7 días</a>
+<a href="<?= url(['rango'=>'mes']) ?>" class="boton">Mes</a>
 </div>
 
 </div>
@@ -253,7 +268,7 @@ body.dark a{
 
 <!-- FILTRO ACTIVO -->
 <?php if($tecnico): ?>
-<div class="card">
+<div class="card filtro-activo">
 Filtrando por:
 <strong>
 <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id=$tecnico")->fetchColumn() ?? '') ?>
@@ -267,7 +282,6 @@ Filtrando por:
 <div class="card">Total <div class="kpi-total">0</div></div>
 <div class="card">Completadas <div class="kpi-comp">0</div></div>
 <div class="card">En proceso <div class="kpi-proc">0</div></div>
-
 <div class="card">MTTR <div class="kpi-mttr">0h</div></div>
 <div class="card">SLA <div class="kpi-sla">0%</div></div>
 <div class="card">Backlog <div class="kpi-backlog">0</div></div>
@@ -282,13 +296,10 @@ Filtrando por:
 </div>
 
 <script>
-
-/* DARK MODE */
 if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark");
 }
 
-/* DATA */
 fetch("api_dashboard.php?"+window.location.search.replace("?",""))
 .then(r=>r.json())
 .then(d=>{
@@ -299,15 +310,15 @@ document.querySelector(".kpi-proc").textContent=d.proceso;
 document.querySelector(".kpi-backlog").textContent=d.proceso;
 
 new ApexCharts(document.querySelector("#chartTec"),{
-    chart:{type:'bar'},
-    series:[{data:d.tecData}],
-    xaxis:{categories:d.tecLabels}
+chart:{type:'bar'},
+series:[{data:d.tecData}],
+xaxis:{categories:d.tecLabels}
 }).render();
 
 new ApexCharts(document.querySelector("#chartEstado"),{
-    chart:{type:'bar'},
-    series:[{data:d.estadoData}],
-    xaxis:{categories:d.estadoLabels}
+chart:{type:'bar'},
+series:[{data:d.estadoData}],
+xaxis:{categories:d.estadoLabels}
 }).render();
 
 });
