@@ -2,19 +2,19 @@
 require "auth.php";
 require "db.php";
 
-/* USUARIO */
+/* ===== USUARIO ===== */
 $id = $_SESSION['user_id'];
 $stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id=?");
 $stmt->execute([$id]);
 $nombreUsuario = $stmt->fetchColumn() ?? "Usuario";
 
-/* PARAMETROS */
+/* ===== PARAMETROS ===== */
 $modulo  = $_GET['modulo'] ?? 'itil';
 $inicio  = $_GET['inicio'] ?? date("Y-m-d");
 $fin     = $_GET['fin'] ?? date("Y-m-d");
 $tecnico = $_GET['tecnico'] ?? null;
 
-/* FILTROS RAPIDOS */
+/* ===== FILTROS RAPIDOS ===== */
 if(isset($_GET['rango'])){
     if($_GET['rango']=='hoy'){
         $inicio = $fin = date("Y-m-d");
@@ -29,16 +29,16 @@ if(isset($_GET['rango'])){
     }
 }
 
-/* TECNICOS */
+/* ===== TECNICOS ===== */
 $tecnicos = [
 ['id'=>2,'nombre'=>'SERGIO VALENZUELA'],
 ['id'=>4,'nombre'=>'ANTONIETA RODRIGUEZ'],
 ['id'=>29,'nombre'=>'ERICK ARIAS RAMIREZ'],
-['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ']
+['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ'],
 ];
 
 function url($params){
-    return '?' . http_build_query(array_merge($_GET, $params));
+    return '?' . http_build_query(array_merge($_GET,$params));
 }
 ?>
 
@@ -50,11 +50,12 @@ function url($params){
 
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
+
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <style>
 
-/* ================== BASE ================== */
+/* ===== BASE ===== */
 body{
     margin:0;
     font-family:"Segoe UI", Arial;
@@ -69,14 +70,14 @@ body{
     padding:20px 40px;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .header{
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
-/* SWITCH */
+/* ===== SWITCH ===== */
 .switch a{
     padding:10px 15px;
     border-radius:10px;
@@ -90,13 +91,13 @@ body{
     color:white;
 }
 
-/* FILTROS */
+/* ===== FILTRO ===== */
 .filtro{
     text-align:center;
     margin:20px 0;
 }
 
-/* BOTONES GENERALES */
+/* ===== BOTONES GENERALES ===== */
 .boton{
     display:inline-block;
     padding:8px 12px;
@@ -108,32 +109,42 @@ body{
     color:var(--text);
 }
 
-/* TECNICOS */
-.tecnicos{
-    text-align:center;
-    margin:15px 0;
+/* ===== TECNICOS PRO ===== */
+.tecnicos-grid{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin:20px 0;
 }
-.tecnicos a{
-    display:inline-block;
-    padding:10px 14px;
-    margin:5px;
-    border-radius:12px;
-    background:var(--card-bg);
-    color:var(--text);
-    box-shadow:0 5px 15px var(--shadow);
+
+.tec-card{
+    padding:10px 18px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#ffffff,#e2e8f0);
+    color:#1f2937;
+    font-weight:600;
     text-decoration:none;
+    transition:.2s;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-.tecnicos a.active{
-    background:var(--accent);
+
+.tec-card:hover{
+    transform:translateY(-3px);
+}
+
+.tec-card.active{
+    background:linear-gradient(135deg,#00AEEF,#0077b6);
     color:white;
 }
 
-/* KPI */
+/* ===== KPI ===== */
 .kpis{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:20px;
 }
+
 .card{
     background:var(--card-bg);
     padding:20px;
@@ -141,23 +152,46 @@ body{
     box-shadow:0 10px 25px var(--shadow);
 }
 
-/* GRID */
+.card:hover{
+    transform:translateY(-4px);
+}
+
+/* ===== GRAFICAS ===== */
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:20px;
     margin-top:20px;
 }
+
 .box{
     background:var(--card-bg);
     padding:20px;
     border-radius:15px;
 }
 
-/* ================= DARK MODE FIX ================= */
-body.dark,
-body.dark *{
+/* ===== DARK MODE REAL ===== */
+body.dark{
+    background:#0f172a !important;
+}
+
+body.dark .main{
+    background:#0f172a !important;
+}
+
+body.dark .card,
+body.dark .box{
+    background:#1f2937 !important;
     color:#E5E7EB !important;
+}
+
+body.dark .tec-card{
+    background:#1e293b;
+    color:#E5E7EB;
+}
+
+body.dark .tec-card.active{
+    background:#00AEEF;
 }
 
 body.dark a{
@@ -177,43 +211,41 @@ body.dark a{
 
 <!-- HEADER -->
 <div class="header">
+
 <h2>Dashboard</h2>
 
 <div class="switch">
-<a href="<?= url(['modulo'=>'itil']) ?>" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
-<a href="<?= url(['modulo'=>'actividades']) ?>" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
+    <a href="<?= url(['modulo'=>'itil']) ?>" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
+    <a href="<?= url(['modulo'=>'actividades']) ?>" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
 </div>
+
 </div>
 
 <!-- FILTRO -->
 <div class="filtro">
+
 <form method="GET">
 <input type="hidden" name="modulo" value="<?= $modulo ?>">
 
 <input type="date" name="inicio" value="<?= $inicio ?>">
 <input type="date" name="fin" value="<?= $fin ?>">
 
-<?php if($tecnico): ?>
-<input type="hidden" name="tecnico" value="<?= $tecnico ?>">
-<?php endif; ?>
-
 <button class="boton">Filtrar</button>
 </form>
 
-<!-- FILTROS RAPIDOS -->
 <div>
-<a class="boton" href="<?= url(['rango'=>'hoy']) ?>">Hoy</a>
-<a class="boton" href="<?= url(['rango'=>'7']) ?>">7 días</a>
-<a class="boton" href="<?= url(['rango'=>'mes']) ?>">Mes</a>
+    <a class="boton" href="<?= url(['rango'=>'hoy']) ?>">Hoy</a>
+    <a class="boton" href="<?= url(['rango'=>'7']) ?>">7 días</a>
+    <a class="boton" href="<?= url(['rango'=>'mes']) ?>">Mes</a>
 </div>
 
 </div>
 
 <!-- TECNICOS -->
-<div class="tecnicos">
+<div class="tecnicos-grid">
 <?php foreach($tecnicos as $t): ?>
 <a href="<?= url(['tecnico'=>$t['id']]) ?>"
-   class="<?= ($tecnico==$t['id'])?'active':'' ?>">
+   class="tec-card <?= ($tecnico==$t['id'])?'active':'' ?>">
    <?= $t['nombre'] ?>
 </a>
 <?php endforeach; ?>
@@ -226,14 +258,12 @@ Filtrando por:
 <strong>
 <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id=$tecnico")->fetchColumn() ?? '') ?>
 </strong>
-|
-<a href="<?= url(['tecnico'=>null]) ?>">Quitar filtro</a>
+| <a href="<?= url(['tecnico'=>null]) ?>">Quitar filtro</a>
 </div>
 <?php endif; ?>
 
 <!-- KPIS -->
 <div class="kpis">
-
 <div class="card">Total <div class="kpi-total">0</div></div>
 <div class="card">Completadas <div class="kpi-comp">0</div></div>
 <div class="card">En proceso <div class="kpi-proc">0</div></div>
@@ -241,7 +271,6 @@ Filtrando por:
 <div class="card">MTTR <div class="kpi-mttr">0h</div></div>
 <div class="card">SLA <div class="kpi-sla">0%</div></div>
 <div class="card">Backlog <div class="kpi-backlog">0</div></div>
-
 </div>
 
 <!-- GRAFICAS -->
@@ -254,7 +283,7 @@ Filtrando por:
 
 <script>
 
-/* DARK MODE REAL */
+/* DARK MODE */
 if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark");
 }
@@ -267,23 +296,21 @@ fetch("api_dashboard.php?"+window.location.search.replace("?",""))
 document.querySelector(".kpi-total").textContent=d.total;
 document.querySelector(".kpi-comp").textContent=d.completadas;
 document.querySelector(".kpi-proc").textContent=d.proceso;
-
 document.querySelector(".kpi-backlog").textContent=d.proceso;
 
 new ApexCharts(document.querySelector("#chartTec"),{
-chart:{type:'bar'},
-series:[{data:d.tecData}],
-xaxis:{categories:d.tecLabels}
+    chart:{type:'bar'},
+    series:[{data:d.tecData}],
+    xaxis:{categories:d.tecLabels}
 }).render();
 
 new ApexCharts(document.querySelector("#chartEstado"),{
-chart:{type:'bar'},
-series:[{data:d.estadoData}],
-xaxis:{categories:d.estadoLabels}
+    chart:{type:'bar'},
+    series:[{data:d.estadoData}],
+    xaxis:{categories:d.estadoLabels}
 }).render();
 
 });
-
 </script>
 
 <script src="theme.js"></script>
