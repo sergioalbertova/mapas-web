@@ -477,6 +477,17 @@ body.dark .itil-topbar {
     background:#dc2626;
 }
 
+.filtro-bar{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+
+    /* 🔥 ESTO LO SOLUCIONA */
+    max-width:700px;
+    margin:20px auto; /* centra horizontal */
+}
+
 
 </style>
 </head>
