@@ -9,13 +9,18 @@ $inicio = $_GET['inicio'] ?? $hoy;
 $fin    = $_GET['fin'] ?? $hoy;
 $tecnico = $_GET['tecnico'] ?? null;
 
-/* SOLO 4 TECNICOS */
+/* TECNICOS FIJOS */
 $tecnicos = [
 ['id'=>29,'nombre'=>'ERICK ARIAS RAMIREZ'],
 ['id'=>2,'nombre'=>'SERGIO VALENZUELA'],
 ['id'=>4,'nombre'=>'ANTONIETA RODRIGUEZ'],
 ['id'=>26,'nombre'=>'JUAN CARLOS ARAUJO SANCHEZ']
 ];
+
+/* FUNCION URL */
+function url($params){
+    return '?' . http_build_query(array_merge($_GET, $params));
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +36,6 @@ $tecnicos = [
 
 <style>
 
-/* ================= BASE GLOBAL ================= */
 body{
     margin:0;
     font-family:"Segoe UI", Arial;
@@ -40,92 +44,95 @@ body{
     display:flex;
 }
 
-/* MAIN */
 .main{
     margin-left:240px;
     width:calc(100% - 240px);
     padding:20px 40px;
 }
 
-/* HEADER */
 .header{
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
-/* SWITCH MODULO */
+/* MODULO SWITCH */
 .switch a{
     padding:10px 15px;
     border-radius:10px;
-    margin-left:10px;
     background:var(--card-bg);
     text-decoration:none;
+    margin-left:10px;
 }
+
 .switch .active{
     background:var(--accent);
     color:white;
 }
 
-/* FILTRO */
+/* FILTROS */
 .filtro{
     text-align:center;
-    margin:20px 0;
+    margin:15px 0;
 }
 
-/* TECNICOS BOTONES */
+.rapidos a{
+    margin:0 8px;
+    font-weight:600;
+}
+
+/* TECNICOS */
 .tecnicos{
     text-align:center;
+    margin:15px 0;
 }
+
 .tecnicos a{
-    padding:10px 14px;
-    margin:6px;
+    display:inline-block;
+    padding:8px 14px;
+    margin:5px;
     border-radius:12px;
     background:var(--card-bg);
-    display:inline-block;
-    text-decoration:none;
     color:var(--text);
-    box-shadow:0 6px 15px var(--shadow);
-    transition:.2s;
+    text-decoration:none;
+    box-shadow:0 5px 15px var(--shadow);
 }
-.tecnicos a:hover{
-    transform:translateY(-3px);
-}
+
 .tecnicos a.active{
     background:var(--accent);
     color:white;
 }
 
-/* KPIs */
+/* KPIS */
 .kpis{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:20px;
-    margin-top:20px;
 }
+
 .card{
     background:var(--card-bg);
     padding:20px;
-    border-radius:16px;
-    box-shadow:0 10px 25px var(--shadow);
+    border-radius:12px;
+    box-shadow:0 10px 20px var(--shadow);
 }
 
-/* GRID */
+/* GRAFICAS */
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:20px;
-    margin-top:30px;
+    margin-top:20px;
 }
 
 .box{
     background:var(--card-bg);
     padding:20px;
-    border-radius:16px;
-    box-shadow:0 10px 25px var(--shadow);
+    border-radius:12px;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -136,75 +143,59 @@ body{
 
 <?php require "topbar.php"; ?>
 
-<!-- HEADER -->
 <div class="header">
 <h2>Dashboard</h2>
 
 <div class="switch">
-    il" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
-    idades" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
+    <a href="?modulo=itil" class="<?= $modulo=='itil'?'active':'' ?>">ITIL</a>
+    <a href="?modulo=actividades" class="<?= $modulo=='actividades'?'active':'' ?>">Actividades</a>
 </div>
 </div>
 
-<!-- FILTRO -->
+<!-- FILTROS -->
 <div class="filtro">
+
 <form method="GET">
 <input type="hidden" name="modulo" value="<?= $modulo ?>">
 
 <input type="date" name="inicio" value="<?= $inicio ?>">
 <input type="date" name="fin" value="<?= $fin ?>">
 
+<?php if($tecnico): ?>
+<input type="hidden" name="tecnico" value="<?= $tecnico ?>">
+<?php endif; ?>
+
 <button>Filtrar</button>
 </form>
+
+<div class="rapidos">
+    <a href="<?= url(['rango'=>'hoy']) ?>">Hoy</a>
+    <a href="<?= url(['rango'=>'7']) ?>">Últimos 7 días</a>
+    <a href="<?= url(['rango'=>'mes']) ?>">Mes</a>
+</div>
+
 </div>
 
 <!-- TECNICOS -->
 <div class="tecnicos">
 <?php foreach($tecnicos as $t): ?>
-    cnico=<?= $t['id'] ?>&modulo=<?= $modulo ?>"
-       class="<?= ($tecnico==$t['id'])?'active':'' ?>">
-       <?= $t['nombre'] ?>
-    </a>
+<a href="?tecnico=<?= $t['id'] ?>&modulo=<?= $modulo ?>"
+   class="<?= ($tecnico==$t['id'])?'active':'' ?>">
+   <?= $t['nombre'] ?>
+</a>
 <?php endforeach; ?>
 </div>
 
-<!-- KPIs -->
+<!-- KPIS -->
 <div class="kpis">
-
-<div class="card">
-    <h4>Total</h4>
-    <div class="kpi-total">0</div>
-</div>
-
-<div class="card">
-    <h4>Completadas</h4>
-    <div class="kpi-comp">0</div>
-</div>
-
-<div class="card">
-    <h4>En proceso</h4>
-    <div class="kpi-proc">0</div>
-</div>
-
-<div class="card">
-    <h4>MTTR</h4>
-    <div class="kpi-mttr">0h</div>
-</div>
-
-<div class="card">
-    <h4>SLA</h4>
-    <div class="kpi-sla">0%</div>
-</div>
-
-<div class="card">
-    <h4>Backlog</h4>
-    <div class="kpi-backlog">0</div>
-</div>
-
+<div class="card">Total: <span class="kpi-total">0</span></div>
+<div class="card">Completadas: <span class="kpi-comp">0</span></div>
+<div class="card">Proceso: <span class="kpi-proc">0</span></div>
 </div>
 
 <!-- GRAFICAS -->
 <div class="grid">
+
 <div class="box">
 <h3>Técnicos</h3>
 <div id="chartTec"></div>
@@ -214,13 +205,14 @@ body{
 <h3>Estado</h3>
 <div id="chartEstado"></div>
 </div>
+
 </div>
 
 </div>
 
 <script>
 
-/* DARK MODE REAL */
+/* DARK MODE */
 if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark");
 }
@@ -231,18 +223,14 @@ function toggleSidebar(){
 }
 
 /* DATA */
-const params = new URLSearchParams(window.location.search);
-
-fetch("api_dashboard.php?"+params.toString())
+fetch("api_dashboard.php?"+window.location.search.replace('?',''))
 .then(r=>r.json())
 .then(d=>{
 
 document.querySelector(".kpi-total").textContent=d.total;
 document.querySelector(".kpi-comp").textContent=d.completadas;
 document.querySelector(".kpi-proc").textContent=d.proceso;
-document.querySelector(".kpi-backlog").textContent=d.proceso;
 
-/* GRAFICAS */
 new ApexCharts(document.querySelector("#chartTec"),{
 chart:{type:'bar'},
 series:[{data:d.tecData}],
