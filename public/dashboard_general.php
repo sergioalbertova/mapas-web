@@ -215,6 +215,21 @@ body.dark .sidebar{
     background:var(--sidebar-bg);
 }
 
+.btn-clear {.btn-clear-block;
+    margin-left:10px;
+    padding:6px 10px;
+    border-radius:8px;
+    background:#ef4444;
+    color:white !important;
+    text-decoration:none;
+    font-size:12px;
+}
+
+.btn-clear:hover{
+    background:#dc2626;
+}
+
+
 </style>
 </head>
 
@@ -273,7 +288,9 @@ Filtrando por:
 <strong>
 <?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id=$tecnico")->fetchColumn() ?? '') ?>
 </strong>
-| <a href="<?= url(['tecnico'=>null]) ?>">Quitar filtro</a>
+| <a href="<?= url(['tecnico'=>null]) ?>" class="btn-clear">
+    Quitar filtro
+</a>
 </div>
 <?php endif; ?>
 
@@ -310,15 +327,44 @@ document.querySelector(".kpi-proc").textContent=d.proceso;
 document.querySelector(".kpi-backlog").textContent=d.proceso;
 
 new ApexCharts(document.querySelector("#chartTec"),{
-chart:{type:'bar'},
-series:[{data:d.tecData}],
-xaxis:{categories:d.tecLabels}
+    chart:{type:'bar'},
+    series:[{data:d.tecData}],
+    xaxis:{ 
+        categories:d.tecLabels,
+        labels: {
+            style: {
+                colors: '#E5E7EB'
+            }
+        }
+    },
+    yaxis: {
+        labels: {
+            style: {
+                colors: '#E5E7EB'
+            }
+        }
+    }
 }).render();
 
+
 new ApexCharts(document.querySelector("#chartEstado"),{
-chart:{type:'bar'},
-series:[{data:d.estadoData}],
-xaxis:{categories:d.estadoLabels}
+    chart:{type:'bar'},
+    series:[{data:d.estadoData}],
+    xaxis:{ 
+        categories:d.estadoLabels,
+        labels: {
+            style: {
+                colors: '#E5E7EB'
+            }
+        }
+    },
+    yaxis: {
+        labels: {
+            style: {
+                colors: '#E5E7EB'
+            }
+        }
+    }
 }).render();
 
 });
