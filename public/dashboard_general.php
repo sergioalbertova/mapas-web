@@ -2,6 +2,15 @@
 require "auth.php";
 require "db.php";
 
+$id = $_SESSION['user_id'];
+
+/* USUARIO */
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id=?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario['nombre'] ?? "Usuario";
+
+/* FILTROS */
 $modulo = $_GET['modulo'] ?? 'itil';
 $hoy = date("Y-m-d");
 
@@ -9,27 +18,18 @@ $inicio = $_GET['inicio'] ?? $hoy;
 $fin    = $_GET['fin'] ?? $hoy;
 $tecnico = $_GET['tecnico'] ?? null;
 
-/* FILTROS */
-if(isset($_GET['rango'])){
-    if($_GET['rango']=='hoy'){
-        $inicio = $fin = $hoy;
-    }
-    if($_GET['rango']=='7'){
-        $inicio = date("Y-m-d",strtotime("-6 days"));
-        $fin = $hoy;
-    }
-    if($_GET['rango']=='mes'){
-        $inicio = date("Y-m-01");
-        $fin = $hoy;
-    }
-}
+/* TECNICOS FILTRADOS (solo 4) */
+$tecnicos = $pdo->query("
+SELECT id,nombre FROM usuarios 
+WHERE nombre IN (
+'ANTONIETA RODRIGUEZ',
+'SERGIO VALENZUELA',
+'ERICK ARIAS RAMIREZ',
+'JUAN CARLOS ARAUJO SANCHEZ'
+)
+ORDER BY nombre
+")->fetchAll(PDO::FETCH_ASSOC);
 
-/* TECNICOS */
-$tecnicos = $pdo->query("SELECT id, nombre FROM usuarios ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
-
-function buildUrl($params){
-    return '?' . http_build_query(array_merge($_GET,$params));
-}
 ?>
 
 <!DOCTYPE html>
@@ -41,52 +41,70 @@ function buildUrl($params){
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
 <style>
 
-/* USA TU SISTEMA */
+/* ================= BASE (igual index) ================= */
+body{
+    margin:0;
+    font-family:"Segoe UI", Arial;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+}
+
+/* MAIN */
 .main{
     margin-left:240px;
+    width:calc(100% - 240px);
     padding:20px 40px;
 }
 
 /* TITULO */
-h2{ text-align:center; }
+.main h2{
+    text-align:center;
+    margin-bottom:20px;
+}
 
-/* TECNICOS BOTONES */
+/* TECNICOS */
 .tecnicos{
-    margin-top:10px;
+    margin:15px 0;
+    text-align:center;
 }
 
 .tecnicos a{
     display:inline-block;
-    padding:6px 10px;
-    margin:4px;
-    border-radius:8px;
+    padding:8px 12px;
+    margin:5px;
+    border-radius:10px;
     background:var(--card-bg);
-    text-decoration:none;
     color:var(--text);
+    text-decoration:none;
+    box-shadow:0 5px 10px var(--shadow);
+    transition:.2s;
+}
+
+.tecnicos a:hover{
+    transform:translateY(-2px);
 }
 
 .tecnicos a.active{
     background:var(--accent);
-    color:#fff;
+    color:white;
 }
 
-/* KPI */
+/* KPIs */
 .kpis{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:20px;
-    margin-top:20px;
 }
 
 .card{
     background:var(--card-bg);
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 6px 15px var(--shadow);
+    border-radius:15px;
+    box-shadow:0 10px 20px var(--shadow);
+    font-size:18px;
 }
 
 /* GRID */
@@ -94,76 +112,61 @@ h2{ text-align:center; }
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:20px;
-    margin-top:20px;
+    margin-top:25px;
 }
 
 .box{
     background:var(--card-bg);
     padding:20px;
-    border-radius:12px;
+    border-radius:15px;
+    box-shadow:0 10px 20px var(--shadow);
 }
 
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 </head>
 
 <body>
 
 <?php require "sidebar.php"; ?>
-<?php require "topbar.php"; ?>
 
 <div class="main">
+
+<?php require "topbar.php"; ?>
 
 <h2>Dashboard Power BI</h2>
 
 <!-- FILTRO -->
 <form method="GET">
-<input type="hidden" name="modulo" value="<?= htmlspecialchars($modulo ?? '') ?>">
+<input type="hidden" name="modulo" value="<?= $modulo ?>">
 
-<input type="date" name="inicio" value="<?= htmlspecialchars($inicio ?? '') ?>">
-<input type="date" name="fin" value="<?= htmlspecialchars($fin ?? '') ?>">
+<input type="date" name="inicio" value="<?= $inicio ?>">
+<input type="date" name="fin" value="<?= $fin ?>">
 
 <?php if($tecnico): ?>
-<input type="hidden" name="tecnico" value="<?= htmlspecialchars($tecnico) ?>">
+<input type="hidden" name="tecnico" value="<?= $tecnico ?>">
 <?php endif; ?>
 
 <button>Filtrar</button>
 </form>
 
-<!-- RAPIDOS -->
-<div style="margin-top:10px;">
-<a href="<?= buildUrl(['rango'=>'hoy']) ?>">Hoy</a> |
-<a href="<?= buildUrl(['rango'=>'7']) ?>">7 días</a> |
-<a href="<?= buildUrl(['rango'=>'mes']) ?>">Mes</a>
-</div>
-
 <!-- TECNICOS -->
 <div class="tecnicos">
 <?php foreach($tecnicos as $t): ?>
-    <a href="<?= buildUrl(['tecnico'=>$t['id']]) ?>"
-       class="<?= ($tecnico==$t['id']) ? 'active' : '' ?>">
-       <?= htmlspecialchars($t['nombre'] ?? '') ?>
+    <a href="?tecnico=<?= $t['id'] ?>"
+       class="<?= ($tecnico==$t['id'])?'active':'' ?>">
+       <?= htmlspecialchars($t['nombre']) ?>
     </a>
 <?php endforeach; ?>
 </div>
 
-<!-- FILTRO ACTIVO -->
-<?php if($tecnico): ?>
-<div class="card">
-Filtro:
-<strong>
-<?= htmlspecialchars($pdo->query("SELECT nombre FROM usuarios WHERE id=$tecnico")->fetchColumn() ?? '') ?>
-</strong>
-
-<a href="<?= buildUrl(['tecnico'=>null]) ?>">Quitar</a>
-</div>
-<?php endif; ?>
-
 <!-- KPIs -->
 <div class="kpis">
-<div class="card">Total: <span class="kpi-total">0</span></div>
-<div class="card">Completadas: <span class="kpi-comp">0</span></div>
-<div class="card">Proceso: <span class="kpi-proc">0</span></div>
+    <div class="card">Total: <span class="kpi-total">0</span></div>
+    <div class="card">Completadas: <span class="kpi-comp">0</span></div>
+    <div class="card">Proceso: <span class="kpi-proc">0</span></div>
 </div>
 
 <!-- GRAFICAS -->
@@ -185,39 +188,34 @@ Filtro:
 
 <script>
 
-const modulo="<?= $modulo ?>";
-const inicio="<?= $inicio ?>";
-const fin="<?= $fin ?>";
-const tecnico="<?= $tecnico ?? '' ?>";
+if(localStorage.getItem("theme")==="dark"){
+    document.body.classList.add("dark");
+}
 
-/* CHARTS */
 let chartTec=new ApexCharts(document.querySelector("#chartTec"),{
-chart:{type:'bar',height:250},
-series:[{data:[]}],
-xaxis:{categories:[]}
+    chart:{type:'bar',height:250},
+    series:[{data:[]}],
+    xaxis:{categories:[]}
 });chartTec.render();
 
 let chartEstado=new ApexCharts(document.querySelector("#chartEstado"),{
-chart:{type:'bar',height:250},
-series:[{data:[]}],
-xaxis:{categories:[]}
+    chart:{type:'bar',height:250},
+    series:[{data:[]}],
+    xaxis:{categories:[]}
 });chartEstado.render();
 
-/* DATA */
-fetch(`api_dashboard.php?modulo=${modulo}&inicio=${inicio}&fin=${fin}&tecnico=${tecnico}`)
+fetch(`api_dashboard.php`)
 .then(r=>r.json())
 .then(d=>{
+    document.querySelector(".kpi-total").textContent=d.total;
+    document.querySelector(".kpi-comp").textContent=d.completadas;
+    document.querySelector(".kpi-proc").textContent=d.proceso;
 
-document.querySelector(".kpi-total").textContent=d.total;
-document.querySelector(".kpi-comp").textContent=d.completadas;
-document.querySelector(".kpi-proc").textContent=d.proceso;
+    chartTec.updateOptions({xaxis:{categories:d.tecLabels}});
+    chartTec.updateSeries([{data:d.tecData}]);
 
-chartTec.updateOptions({xaxis:{categories:d.tecLabels}});
-chartTec.updateSeries([{data:d.tecData}]);
-
-chartEstado.updateOptions({xaxis:{categories:d.estadoLabels}});
-chartEstado.updateSeries([{data:d.estadoData}]);
-
+    chartEstado.updateOptions({xaxis:{categories:d.estadoLabels}});
+    chartEstado.updateSeries([{data:d.estadoData}]);
 });
 
 </script>
