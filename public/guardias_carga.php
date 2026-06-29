@@ -10,7 +10,7 @@ $mes = $_GET['mes'] ?? date('Y-m');
 $inicioMes = date('Y-m-01', strtotime($mes));
 $finMes = date('Y-m-t', strtotime($mes));
 
-/* ===== GENERAR FECHAS ===== */
+/* ===== FECHAS ===== */
 $fechas = [];
 $current = strtotime($inicioMes);
 $end = strtotime($finMes);
@@ -20,7 +20,7 @@ while ($current <= $end) {
     $current = strtotime('+1 day', $current);
 }
 
-/* ===== GUARDIAS BD ===== */
+/* ===== GUARDIAS ===== */
 $stmt = $pdo->prepare("
     SELECT fecha, tecnico 
     FROM guardias 
@@ -29,20 +29,20 @@ $stmt = $pdo->prepare("
 $stmt->execute([$inicioMes, $finMes]);
 $guardias = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-/* ===== ULTIMO DEL MES ANTERIOR ===== */
+/* ===== ULTIMO MES ===== */
 $mesAnteriorFin = date('Y-m-t', strtotime('-1 month', strtotime($mes)));
 
 $stmt = $pdo->prepare("SELECT tecnico FROM guardias WHERE fecha = ?");
 $stmt->execute([$mesAnteriorFin]);
 $ultimo = $stmt->fetchColumn();
 
-/* ===== POSICION ROTACION ===== */
+/* ===== ROTACION INDEX ===== */
 $index = 0;
 if ($ultimo && in_array($ultimo, $rotacion)) {
     $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
 }
 
-/* ===== AUTO GENERADO (SIN GUARDAR) ===== */
+/* ===== AUTO ===== */
 $autoGenerado = [];
 
 if (isset($_GET['auto'])) {
@@ -68,34 +68,38 @@ if (isset($_GET['auto'])) {
     $autoGenerado = $guardias;
 }
 
-/* ===== GUARDAR ===== */
+/* ===== GUARDAR (FIX ID) ===== */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     foreach ($_POST['guardias'] as $fecha => $data) {
 
         $tecnico = $data['tecnico'] ?? null;
 
+        // 🔥 GENERAR ID MANUAL
+        $stmtID = $pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM guardias");
+        $newId = $stmtID->fetchColumn();
+
         $stmt = $pdo->prepare("
-            INSERT INTO guardias (fecha, tecnico, cumple, cumpleanero)
-            VALUES (?, ?, FALSE, NULL)
+            INSERT INTO guardias (id, fecha, tecnico, cumple, cumpleanero)
+            VALUES (?, ?, ?, FALSE, NULL)
             ON CONFLICT (fecha) DO UPDATE
             SET tecnico = EXCLUDED.tecnico,
                 updated_at = NOW()
         ");
 
-        $stmt->execute([$fecha, $tecnico]);
+        $stmt->execute([$newId, $fecha, $tecnico]);
     }
 
     header("Location: guardias_carga.php?mes=$mes");
     exit;
 }
 
-/* ===== CALENDARIO (ALINEADO) ===== */
+/* ===== CALENDARIO ===== */
 $primerDiaSemana = date('N', strtotime($inicioMes));
 
 $calendario = [];
 
-/* ESPACIOS VACIOS */
+/* ESPACIOS */
 for ($i = 1; $i < $primerDiaSemana; $i++) {
     $calendario[] = null;
 }
@@ -113,15 +117,10 @@ foreach ($fechas as $f) {
 <title>Guardias</title>
 
 <style>
-body{
-    font-family:"Segoe UI";
-    background:#0f172a;
-    color:#E5E7EB;
-    padding:20px;
-}
+body{font-family:"Segoe UI";background:#0f172a;color:#E5E7EB;padding:20px}
+.top{text-align:center}
 
-.top{text-align:center;}
-
+/* BOTONES */
 .btn{
     padding:8px 14px;
     border-radius:10px;
@@ -132,7 +131,7 @@ body{
     margin:5px;
 }
 
-/* HEADER DIAS */
+/* HEADER */
 .header-grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
@@ -141,12 +140,11 @@ body{
     font-weight:bold;
 }
 
-/* GRID CALENDARIO */
+/* GRID */
 .grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
     gap:10px;
-    margin-top:10px;
 }
 
 /* CARD */
@@ -156,13 +154,12 @@ body{
     border-radius:10px;
 }
 
-/* FIN SEMANA */
+/* WEEKEND */
 .weekend{
     background:#111827;
-    opacity:0.5;
+    opacity:.5;
 }
 
-/* SELECT */
 select{
     width:100%;
     padding:6px;
@@ -171,7 +168,6 @@ select{
     color:white;
 }
 </style>
-
 </head>
 
 <body>
@@ -189,25 +185,12 @@ select{
 Auto-generar guardias
 </a>
 
-<?php if(isset($_GET['auto'])): ?>
-<div style="color:#22c55e;margin-top:10px;">
-✅ Vista generada (no guardada)
-</div>
-<?php endif; ?>
-
 </div>
 
 <form method="POST">
 
-<!-- ENCABEZADO DIAS -->
 <div class="header-grid">
-<div>Lun</div>
-<div>Mar</div>
-<div>Mié</div>
-<div>Jue</div>
-<div>Vie</div>
-<div>Sáb</div>
-<div>Dom</div>
+<div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
 </div>
 
 <div class="grid">
@@ -215,7 +198,7 @@ Auto-generar guardias
 <?php foreach($calendario as $f): ?>
 
 <?php if($f === null): ?>
-    <div></div>
+<div></div>
 <?php else: ?>
 
 <?php
