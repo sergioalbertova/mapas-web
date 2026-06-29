@@ -42,43 +42,33 @@ if ($ultimo && in_array($ultimo, $rotacion)) {
     $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
 }
 
-/* ===== AUTO GENERADO (FIX DEFINITIVO) ===== */
+/* ===== AUTO GENERADO (LÓGICA SIMPLE Y CORRECTA) ===== */
 $autoGenerado = [];
 
 if (isset($_GET['auto'])) {
 
-    $ultimoAsignado = $ultimo; // viene del mes anterior
+    // 🔥 CALCULAR SOLO UNA VEZ EL INICIO
+    if ($ultimo && in_array($ultimo, $rotacion)) {
+        $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
+    } else {
+        $index = 0;
+    }
 
     foreach ($fechas as $f) {
 
         $diaSemana = date('N', strtotime($f));
 
-        // FIN DE SEMANA → no asignar
+        // FIN DE SEMANA → NO asignar y NO avanzar
         if ($diaSemana >= 6) {
             $autoGenerado[$f] = '';
             continue;
         }
 
-        // SI YA EXISTE EN BD
-        if (isset($guardias[$f]) && $guardias[$f] != '') {
+        // 🔥 ASIGNACIÓN DIRECTA (SIN CONDICIONES RARAS)
+        $autoGenerado[$f] = $rotacion[$index];
 
-            $autoGenerado[$f] = $guardias[$f];
-            $ultimoAsignado = $guardias[$f]; // 🔥 IMPORTANTÍSIMO
-
-        } else {
-
-            // OBTENER SIGUIENTE EN ROTACIÓN
-            if ($ultimoAsignado && in_array($ultimoAsignado, $rotacion)) {
-                $pos = array_search($ultimoAsignado, $rotacion);
-                $nuevo = $rotacion[($pos + 1) % count($rotacion)];
-            } else {
-                // inicio si no hay referencia
-                $nuevo = $rotacion[0];
-            }
-
-            $autoGenerado[$f] = $nuevo;
-            $ultimoAsignado = $nuevo; // 🔥 guardas el último real
-        }
+        // 🔥 AVANZA SIEMPRE LINEAL
+        $index = ($index + 1) % count($rotacion);
     }
 
 } else {
