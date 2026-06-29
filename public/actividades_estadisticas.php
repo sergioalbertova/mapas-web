@@ -311,7 +311,8 @@ $tecnicos = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 <title>Dashboard Actividades Extras</title>
 
 <link rel="stylesheet" href="itil_estadisticas.css">
-
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <style>
