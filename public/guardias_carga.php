@@ -160,7 +160,7 @@ select{
 <button class="btn">Cambiar</button>
 </form>
 
-auto=1">
+<a href="guardias_carga.php?mes=<?= $mes ?>&auto=1">
 <button class="btn">Auto-generar guardias</button>
 </a>
 
