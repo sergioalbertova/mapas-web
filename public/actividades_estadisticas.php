@@ -373,6 +373,13 @@ body.dark td{
     border-color:rgba(255,255,255,.08);
 }
 
+.main {
+    margin-left: 240px;
+    margin-top: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
 </style>
 </head>
 
@@ -381,7 +388,7 @@ body.dark td{
 <?php require "sidebar.php"; ?>
 <?php require "topbar.php"; ?>
 
-<br><br><br><br>
+<br>
 
 <div class="filtro-bar">
 
