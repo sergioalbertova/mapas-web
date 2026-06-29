@@ -29,29 +29,35 @@ $stmt = $pdo->prepare("
 $stmt->execute([$inicioMes, $finMes]);
 $guardias = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-/* ===== DETECTAR ULTIMO MES ANTERIOR ===== */
+/* ===== ULTIMO MES ANTERIOR ===== */
 $mesAnteriorFin = date('Y-m-t', strtotime('-1 month', strtotime($mes)));
 
 $stmt = $pdo->prepare("
-    SELECT tecnico 
-    FROM guardias 
-    WHERE fecha = ?
+    SELECT tecnico FROM guardias WHERE fecha = ?
 ");
 $stmt->execute([$mesAnteriorFin]);
 $ultimo = $stmt->fetchColumn();
 
-/* ===== POSICION ROTACION ===== */
+/* ===== POSICION ===== */
 $index = 0;
 if ($ultimo && in_array($ultimo, $rotacion)) {
     $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
 }
 
-/* ===== AUTO GENERADO (SOLO INTERFAZ) ===== */
+/* ===== AUTO GENERADO ===== */
 $autoGenerado = [];
 
 if (isset($_GET['auto'])) {
 
     foreach ($fechas as $f) {
+
+        $diaSemana = date('N', strtotime($f));
+
+        if ($diaSemana >= 6) {
+            // FIN DE SEMANA
+            $autoGenerado[$f] = '';
+            continue;
+        }
 
         if (!isset($guardias[$f])) {
             $autoGenerado[$f] = $rotacion[$index];
@@ -102,19 +108,8 @@ body{
     padding:20px;
 }
 
-/* HEADER */
-.top{
-    text-align:center;
-    margin-bottom:15px;
-}
+.top{text-align:center;}
 
-input{
-    padding:8px;
-    border-radius:8px;
-    border:none;
-}
-
-/* BOTONES */
 .btn{
     padding:8px 14px;
     border-radius:10px;
@@ -122,10 +117,9 @@ input{
     color:white;
     border:none;
     cursor:pointer;
-    margin-top:5px;
+    margin:5px;
 }
 
-/* GRID */
 .grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
@@ -133,14 +127,18 @@ input{
     margin-top:20px;
 }
 
-/* CARD */
 .card{
     background:#1f2937;
     padding:10px;
     border-radius:10px;
 }
 
-/* SELECT */
+/* FIN DE SEMANA VISUAL */
+.weekend{
+    opacity:0.5;
+    background:#111827;
+}
+
 select{
     width:100%;
     padding:6px;
@@ -148,21 +146,13 @@ select{
     background:#0f172a;
     color:white;
 }
-
-/* INDICADOR AUTO */
-.auto-msg{
-    text-align:center;
-    margin-top:10px;
-    color:#22c55e;
-    font-size:14px;
-}
 </style>
-
 </head>
 
 <body>
 
 <div class="top">
+
 <h2>Guardias <?= date('F Y', strtotime($mes)) ?></h2>
 
 <form method="GET">
@@ -170,14 +160,9 @@ select{
 <button class="btn">Cambiar</button>
 </form>
 
-<!-- BOTON AUTO -->
-<a href="?mes=<?= $mes ?>&auto=1">
+auto=1">
 <button class="btn">Auto-generar guardias</button>
 </a>
-
-<?php if(isset($_GET['auto'])): ?>
-<div class="auto-msg">✅ Vista generada automáticamente (no guardada)</div>
-<?php endif; ?>
 
 </div>
 
@@ -187,13 +172,15 @@ select{
 
 <?php foreach($fechas as $f): 
 $valor = $autoGenerado[$f] ?? '';
+$diaSemana = date('N', strtotime($f));
 ?>
 
-<div class="card">
+<div class="card <?= ($diaSemana >= 6) ? 'weekend' : '' ?>">
 
 <strong><?= date('d M', strtotime($f)) ?></strong>
 
 <select name="guardias[<?= $f ?>][tecnico]">
+
 <option value="">-- Seleccionar --</option>
 
 <?php foreach($rotacion as $t): ?>
