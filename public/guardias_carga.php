@@ -20,7 +20,7 @@ while ($current <= $end) {
     $current = strtotime('+1 day', $current);
 }
 
-/* ===== GUARDIAS ===== */
+/* ===== GUARDIAS BD ===== */
 $stmt = $pdo->prepare("
     SELECT fecha, tecnico 
     FROM guardias 
@@ -29,20 +29,20 @@ $stmt = $pdo->prepare("
 $stmt->execute([$inicioMes, $finMes]);
 $guardias = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-/* ===== ULTIMO MES ===== */
+/* ===== ULTIMO MES ANTERIOR ===== */
 $mesAnteriorFin = date('Y-m-t', strtotime('-1 month', strtotime($mes)));
 
 $stmt = $pdo->prepare("SELECT tecnico FROM guardias WHERE fecha = ?");
 $stmt->execute([$mesAnteriorFin]);
 $ultimo = $stmt->fetchColumn();
 
-/* ===== ROTACION INDEX ===== */
+/* ===== INDEX ROTACION ===== */
 $index = 0;
 if ($ultimo && in_array($ultimo, $rotacion)) {
     $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
 }
 
-/* ===== AUTO ===== */
+/* ===== AUTO GENERADO (FIX SECUENCIA) ===== */
 $autoGenerado = [];
 
 if (isset($_GET['auto'])) {
@@ -51,16 +51,27 @@ if (isset($_GET['auto'])) {
 
         $diaSemana = date('N', strtotime($f));
 
+        // FIN DE SEMANA: no asignar ni avanzar
         if ($diaSemana >= 6) {
             $autoGenerado[$f] = '';
             continue;
         }
 
-        if (!isset($guardias[$f])) {
+        // SI YA EXISTE EN BD: respetar y sincronizar rotación
+        if (isset($guardias[$f])) {
+
+            $autoGenerado[$f] = $guardias[$f];
+
+            $pos = array_search($guardias[$f], $rotacion);
+            if ($pos !== false) {
+                $index = ($pos + 1) % count($rotacion);
+            }
+
+        } else {
+
+            // ASIGNACIÓN NORMAL
             $autoGenerado[$f] = $rotacion[$index];
             $index = ($index + 1) % count($rotacion);
-        } else {
-            $autoGenerado[$f] = $guardias[$f];
         }
     }
 
@@ -95,7 +106,7 @@ $primerDiaSemana = date('N', strtotime($inicioMes));
 
 $calendario = [];
 
-/* ESPACIOS */
+/* ESPACIOS VACIOS */
 for ($i = 1; $i < $primerDiaSemana; $i++) {
     $calendario[] = null;
 }
@@ -113,7 +124,13 @@ foreach ($fechas as $f) {
 <title>Guardias</title>
 
 <style>
-body{font-family:"Segoe UI";background:#0f172a;color:#E5E7EB;padding:20px}
+body{
+    font-family:"Segoe UI";
+    background:#0f172a;
+    color:#E5E7EB;
+    padding:20px;
+}
+
 .top{text-align:center}
 
 /* BOTONES */
@@ -127,7 +144,7 @@ body{font-family:"Segoe UI";background:#0f172a;color:#E5E7EB;padding:20px}
     margin:5px;
 }
 
-/* HEADER */
+/* HEADER DIAS */
 .header-grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
@@ -143,19 +160,20 @@ body{font-family:"Segoe UI";background:#0f172a;color:#E5E7EB;padding:20px}
     gap:10px;
 }
 
-/* CARD */
+/* CARDS */
 .card{
     background:#1f2937;
     padding:10px;
     border-radius:10px;
 }
 
-/* WEEKEND */
+/* FIN DE SEMANA */
 .weekend{
     background:#111827;
-    opacity:.5;
+    opacity:0.5;
 }
 
+/* SELECT */
 select{
     width:100%;
     padding:6px;
@@ -164,6 +182,7 @@ select{
     color:white;
 }
 </style>
+
 </head>
 
 <body>
@@ -181,12 +200,24 @@ select{
 Auto-generar guardias
 </a>
 
+<?php if(isset($_GET['auto'])): ?>
+<div style="color:#22c55e;margin-top:10px;">
+✅ Vista generada (sin guardar)
+</div>
+<?php endif; ?>
+
 </div>
 
 <form method="POST">
 
 <div class="header-grid">
-<div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+<div>Lun</div>
+<div>Mar</div>
+<div>Mié</div>
+<div>Jue</div>
+<div>Vie</div>
+<div>Sáb</div>
+<div>Dom</div>
 </div>
 
 <div class="grid">
