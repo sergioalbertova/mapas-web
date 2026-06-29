@@ -2,20 +2,76 @@
 require "session_config.php";
 require "db.php";
 
+/* ===== TECNICOS EN ORDEN ===== */
+$rotacion = ['ERIK', 'JUAN CARLOS', 'SERGIO', 'ANTONIETA'];
+
 /* ===== MES ===== */
 $mes = $_GET['mes'] ?? date('Y-m');
 $inicioMes = date('Y-m-01', strtotime($mes));
 $finMes = date('Y-m-t', strtotime($mes));
 
-/* ===== TECNICOS ===== */
-$tecnicos = [
-    'ERIK',
-    'JUAN CARLOS',
-    'ANTONIETA',
-    'SERGIO'
-];
+/* ===== FECHAS ===== */
+$fechas = [];
+$current = strtotime($inicioMes);
+$end = strtotime($finMes);
 
-/* ===== GUARDAR ===== */
+while ($current <= $end) {
+    $fechas[] = date('Y-m-d', $current);
+    $current = strtotime('+1 day', $current);
+}
+
+/* ===== OBTENER GUARDIAS EXISTENTES ===== */
+$stmt = $pdo->prepare("
+    SELECT fecha, tecnico 
+    FROM guardias 
+    WHERE fecha BETWEEN ? AND ?
+");
+$stmt->execute([$inicioMes, $finMes]);
+$guardias = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+/* ===== DETECTAR ULTIMO DEL MES ANTERIOR ===== */
+$mesAnteriorFin = date('Y-m-t', strtotime('-1 month', strtotime($mes)));
+
+$stmt = $pdo->prepare("
+    SELECT tecnico 
+    FROM guardias 
+    WHERE fecha = ?
+");
+$stmt->execute([$mesAnteriorFin]);
+$ultimo = $stmt->fetchColumn();
+
+/* ===== CALCULAR POSICION EN ROTACION ===== */
+$index = 0;
+if ($ultimo && in_array($ultimo, $rotacion)) {
+    $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
+}
+
+/* ===== AUTO GENERAR ===== */
+if (isset($_GET['auto'])) {
+
+    foreach ($fechas as $f) {
+
+        if (!isset($guardias[$f])) {
+
+            $tecnico = $rotacion[$index];
+
+            $stmt = $pdo->prepare("
+                INSERT INTO guardias (fecha, tecnico, cumple, cumpleanero)
+                VALUES (?, ?, FALSE, NULL)
+                ON CONFLICT (fecha) DO NOTHING
+            ");
+
+            $stmt->execute([$f, $tecnico]);
+
+            $index = ($index + 1) % count($rotacion);
+        }
+    }
+
+    header("Location: guardias_carga.php?mes=$mes");
+    exit;
+}
+
+/* ===== GUARDADO MANUAL ===== */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     foreach ($_POST['guardias'] as $fecha => $data) {
@@ -27,8 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             VALUES (?, ?, FALSE, NULL)
             ON CONFLICT (fecha) DO UPDATE
             SET tecnico = EXCLUDED.tecnico,
-                cumple = FALSE,
-                cumpleanero = NULL,
                 updated_at = NOW()
         ");
 
@@ -38,128 +92,118 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header("Location: guardias_carga.php?mes=$mes");
     exit;
 }
-
-/* ===== GENERAR DIAS ===== */
-$fechas = [];
-$current = strtotime($inicioMes);
-$end = strtotime($finMes);
-
-while ($current <= $end) {
-    $fechas[] = date('Y-m-d', $current);
-    $current = strtotime('+1 day', $current);
-}
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Guardias</title>
 
 <style>
-
 body{
-    font-family:"Segoe UI", Arial;
+    font-family:"Segoe UI";
     background:#0f172a;
-    color:#e5e7eb;
+    color:#E5E7EB;
     padding:20px;
 }
 
-h2{
+/* HEADER */
+.top{
     text-align:center;
+    margin-bottom:15px;
 }
 
-/* SELECT MES */
-.filtro-mes{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-.filtro-mes input{
+input{
     padding:8px;
     border-radius:8px;
     border:none;
 }
 
+/* BOTONES */
+.btn{
+    padding:8px 14px;
+    border-radius:10px;
+    background:#00AEEF;
+    color:white;
+    border:none;
+    cursor:pointer;
+    margin-top:5px;
+}
+
 /* GRID */
 .grid{
     display:grid;
-    grid-template-columns: repeat(7,1fr);
-    gap:12px;
+    grid-template-columns:repeat(7,1fr);
+    gap:10px;
+    margin-top:20px;
 }
 
-/* CARD DIA */
+/* CARD */
 .card{
     background:#1f2937;
     padding:10px;
-    border-radius:12px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.3);
-}
-
-/* FECHA */
-.fecha{
-    font-size:13px;
-    font-weight:bold;
-    margin-bottom:5px;
+    border-radius:10px;
 }
 
 /* SELECT */
 select{
     width:100%;
     padding:6px;
-    border-radius:8px;
-    border:none;
+    border-radius:6px;
     background:#0f172a;
-    color:#e5e7eb;
+    color:white;
 }
 
-/* BOTON */
-.btn-save{
-    display:block;
-    margin:25px auto;
-    padding:10px 20px;
-    background:#00AEEF;
-    border:none;
-    border-radius:12px;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
+/* STATUS AUTO */
+.auto{
+    text-align:center;
+    margin-top:10px;
+    color:#22c55e;
     font-size:14px;
 }
-
-.btn-save:hover{
-    background:#008FCC;
-}
-
 </style>
+
 </head>
 
 <body>
 
-<h2>Guardias - <?= date('F Y', strtotime($mes)) ?></h2>
+<div class="top">
+<h2>Guardias <?= date('F Y', strtotime($mes)) ?></h2>
 
-<!-- CAMBIAR MES -->
-<form method="GET" class="filtro-mes">
-    <input type="month" name="mes" value="<?= $mes ?>">
-    <button class="btn-save" style="margin-top:10px;">Cambiar</button>
+<form method="GET">
+<input type="month" name="mes" value="<?= $mes ?>">
+<button class="btn">Cambiar</button>
 </form>
+
+<a href="guardias_carga.php?mes=<?= $mes ?>&auto=1">
+<button class="btn">Auto-generar guardias</button>
+</a>
+
+</div>
 
 <form method="POST">
 
 <div class="grid">
 
-<?php foreach($fechas as $f): ?>
+<?php foreach($fechas as $f): 
+$valor = $guardias[$f] ?? '';
+?>
 
 <div class="card">
 
-    <div class="fecha"><?= date('d M', strtotime($f)) ?></div>
+<strong><?= date('d M', strtotime($f)) ?></strong>
 
-    <select name="guardias[<?= $f ?>][tecnico]">
-        <option value="">-- Seleccionar --</option>
-        <?php foreach($tecnicos as $t): ?>
-            <option value="<?= $t ?>"><?= $t ?></option>
-        <?php endforeach; ?>
-    </select>
+<select name="guardias[<?= $f ?>][tecnico]">
+<option value="">-- Seleccionar --</option>
+
+<?php foreach($rotacion as $t): ?>
+<option value="<?= $t ?>" <?= ($valor == $t) ? 'selected' : '' ?>>
+<?= $t ?>
+</option>
+<?php endforeach; ?>
+
+</select>
 
 </div>
 
@@ -167,9 +211,10 @@ select{
 
 </div>
 
-<button class="btn-save">Guardar Guardias</button>
+<button class="btn">Guardar cambios</button>
 
 </form>
 
 </body>
 </html>
+``
