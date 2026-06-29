@@ -36,18 +36,12 @@ $stmt = $pdo->prepare("SELECT tecnico FROM guardias WHERE fecha = ?");
 $stmt->execute([$mesAnteriorFin]);
 $ultimo = $stmt->fetchColumn();
 
-/* ===== INDEX ROTACION ===== */
-$index = 0;
-if ($ultimo && in_array($ultimo, $rotacion)) {
-    $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
-}
-
-/* ===== AUTO GENERADO (LÓGICA SIMPLE Y CORRECTA) ===== */
+/* ===== AUTO GENERADO ===== */
 $autoGenerado = [];
 
 if (isset($_GET['auto'])) {
 
-    // 🔥 CALCULAR SOLO UNA VEZ EL INICIO
+    // 🔥 calcular inicio UNA VEZ
     if ($ultimo && in_array($ultimo, $rotacion)) {
         $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
     } else {
@@ -58,23 +52,20 @@ if (isset($_GET['auto'])) {
 
         $diaSemana = date('N', strtotime($f));
 
-        // FIN DE SEMANA → NO asignar y NO avanzar
         if ($diaSemana >= 6) {
             $autoGenerado[$f] = '';
             continue;
         }
 
-        // 🔥 ASIGNACIÓN DIRECTA (SIN CONDICIONES RARAS)
+        // 🔥 IGNORA BD (auto desde cero)
         $autoGenerado[$f] = $rotacion[$index];
-
-        // 🔥 AVANZA SIEMPRE LINEAL
         $index = ($index + 1) % count($rotacion);
     }
 
 } else {
+    // botón cambiar o normal
     $autoGenerado = $guardias;
 }
-
 
 /* ===== GUARDAR ===== */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -103,12 +94,10 @@ $primerDiaSemana = date('N', strtotime($inicioMes));
 
 $calendario = [];
 
-/* ESPACIOS VACIOS */
 for ($i = 1; $i < $primerDiaSemana; $i++) {
     $calendario[] = null;
 }
 
-/* DIAS */
 foreach ($fechas as $f) {
     $calendario[] = $f;
 }
@@ -121,14 +110,18 @@ foreach ($fechas as $f) {
 <title>Guardias</title>
 
 <style>
+
 body{
-    font-family:"Segoe UI";
+    font-family:"Segoe UI", Arial;
     background:#0f172a;
     color:#E5E7EB;
     padding:20px;
 }
 
-.top{text-align:center}
+.top{
+    text-align:center;
+    margin-bottom:20px;
+}
 
 /* BOTONES */
 .btn{
@@ -141,23 +134,32 @@ body{
     margin:5px;
 }
 
-/* HEADER DIAS */
+/* CONTENEDOR ACCIONES */
+.actions{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+/* DIAS HEADER */
 .header-grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
-    margin-top:20px;
     text-align:center;
+    margin-top:20px;
     font-weight:bold;
 }
 
-/* GRID */
+/* GRID CALENDARIO */
 .grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
     gap:10px;
+    margin-top:10px;
 }
 
-/* CARDS */
+/* CARD */
 .card{
     background:#1f2937;
     padding:10px;
@@ -178,6 +180,7 @@ select{
     background:#0f172a;
     color:white;
 }
+
 </style>
 
 </head>
@@ -190,16 +193,24 @@ select{
 
 <form method="GET">
 <input type="month" name="mes" value="<?= $mes ?>">
-<button class="btn">Cambiar</button>
+</form>
+
+<div class="actions">
+
+<form method="GET">
+    <input type="hidden" name="mes" value="<?= $mes ?>">
+    <button class="btn">Cambiar</button>
 </form>
 
 <a href="?mes=<?= $mes ?>&auto=1" class="btn">
 Auto-generar guardias
 </a>
 
+</div>
+
 <?php if(isset($_GET['auto'])): ?>
-<div style="color:#22c55e;margin-top:10px;">
-✅ Vista generada (sin guardar)
+<div style="color:#22c55e;text-align:center;margin-top:10px;">
+✅ Generado desde cero (sin guardar)
 </div>
 <?php endif; ?>
 
@@ -208,13 +219,7 @@ Auto-generar guardias
 <form method="POST">
 
 <div class="header-grid">
-<div>Lun</div>
-<div>Mar</div>
-<div>Mié</div>
-<div>Jue</div>
-<div>Vie</div>
-<div>Sáb</div>
-<div>Dom</div>
+<div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
 </div>
 
 <div class="grid">
