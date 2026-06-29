@@ -2,7 +2,7 @@
 require "session_config.php";
 require "db.php";
 
-/* ===== TECNICOS EN ORDEN ===== */
+/* ===== ROTACION ===== */
 $rotacion = ['ERIK', 'JUAN CARLOS', 'SERGIO', 'ANTONIETA'];
 
 /* ===== MES ===== */
@@ -10,7 +10,7 @@ $mes = $_GET['mes'] ?? date('Y-m');
 $inicioMes = date('Y-m-01', strtotime($mes));
 $finMes = date('Y-m-t', strtotime($mes));
 
-/* ===== FECHAS ===== */
+/* ===== GENERAR DIAS ===== */
 $fechas = [];
 $current = strtotime($inicioMes);
 $end = strtotime($finMes);
@@ -20,7 +20,7 @@ while ($current <= $end) {
     $current = strtotime('+1 day', $current);
 }
 
-/* ===== OBTENER GUARDIAS EXISTENTES ===== */
+/* ===== GUARDIAS BD ===== */
 $stmt = $pdo->prepare("
     SELECT fecha, tecnico 
     FROM guardias 
@@ -29,7 +29,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$inicioMes, $finMes]);
 $guardias = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-/* ===== DETECTAR ULTIMO DEL MES ANTERIOR ===== */
+/* ===== DETECTAR ULTIMO MES ANTERIOR ===== */
 $mesAnteriorFin = date('Y-m-t', strtotime('-1 month', strtotime($mes)));
 
 $stmt = $pdo->prepare("
@@ -40,38 +40,32 @@ $stmt = $pdo->prepare("
 $stmt->execute([$mesAnteriorFin]);
 $ultimo = $stmt->fetchColumn();
 
-/* ===== CALCULAR POSICION EN ROTACION ===== */
+/* ===== POSICION ROTACION ===== */
 $index = 0;
 if ($ultimo && in_array($ultimo, $rotacion)) {
     $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
 }
 
-/* ===== AUTO GENERAR ===== */
+/* ===== AUTO GENERADO (SOLO INTERFAZ) ===== */
+$autoGenerado = [];
+
 if (isset($_GET['auto'])) {
 
     foreach ($fechas as $f) {
 
         if (!isset($guardias[$f])) {
-
-            $tecnico = $rotacion[$index];
-
-            $stmt = $pdo->prepare("
-                INSERT INTO guardias (fecha, tecnico, cumple, cumpleanero)
-                VALUES (?, ?, FALSE, NULL)
-                ON CONFLICT (fecha) DO NOTHING
-            ");
-
-            $stmt->execute([$f, $tecnico]);
-
+            $autoGenerado[$f] = $rotacion[$index];
             $index = ($index + 1) % count($rotacion);
+        } else {
+            $autoGenerado[$f] = $guardias[$f];
         }
     }
 
-    header("Location: guardias_carga.php?mes=$mes");
-    exit;
+} else {
+    $autoGenerado = $guardias;
 }
 
-/* ===== GUARDADO MANUAL ===== */
+/* ===== GUARDAR ===== */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     foreach ($_POST['guardias'] as $fecha => $data) {
@@ -155,8 +149,8 @@ select{
     color:white;
 }
 
-/* STATUS AUTO */
-.auto{
+/* INDICADOR AUTO */
+.auto-msg{
     text-align:center;
     margin-top:10px;
     color:#22c55e;
@@ -176,9 +170,14 @@ select{
 <button class="btn">Cambiar</button>
 </form>
 
-<a href="guardias_carga.php?mes=<?= $mes ?>&auto=1">
+<!-- BOTON AUTO -->
+<a href="?mes=<?= $mes ?>&auto=1">
 <button class="btn">Auto-generar guardias</button>
 </a>
+
+<?php if(isset($_GET['auto'])): ?>
+<div class="auto-msg">✅ Vista generada automáticamente (no guardada)</div>
+<?php endif; ?>
 
 </div>
 
@@ -187,7 +186,7 @@ select{
 <div class="grid">
 
 <?php foreach($fechas as $f): 
-$valor = $guardias[$f] ?? '';
+$valor = $autoGenerado[$f] ?? '';
 ?>
 
 <div class="card">
