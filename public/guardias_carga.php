@@ -2,12 +2,12 @@
 require "session_config.php";
 require "db.php";
 
-/* MES */
+/* ===== MES ===== */
 $mes = $_GET['mes'] ?? date('Y-m');
 $inicioMes = date('Y-m-01', strtotime($mes));
 $finMes = date('Y-m-t', strtotime($mes));
 
-/* TECNICOS FIJOS */
+/* ===== TECNICOS ===== */
 $tecnicos = [
     'ERIK',
     'JUAN CARLOS',
@@ -15,33 +15,31 @@ $tecnicos = [
     'SERGIO'
 ];
 
-/* GUARDAR */
+/* ===== GUARDAR ===== */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     foreach ($_POST['guardias'] as $fecha => $data) {
 
         $tecnico = $data['tecnico'] ?? null;
-        $cumple = isset($data['cumple']) ? true : false;
-        $cumpleanero = $data['cumpleanero'] ?? null;
 
         $stmt = $pdo->prepare("
             INSERT INTO guardias (fecha, tecnico, cumple, cumpleanero)
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, FALSE, NULL)
             ON CONFLICT (fecha) DO UPDATE
             SET tecnico = EXCLUDED.tecnico,
-                cumple = EXCLUDED.cumple,
-                cumpleanero = EXCLUDED.cumpleanero,
+                cumple = FALSE,
+                cumpleanero = NULL,
                 updated_at = NOW()
         ");
 
-        $stmt->execute([$fecha, $tecnico, $cumple, $cumpleanero]);
+        $stmt->execute([$fecha, $tecnico]);
     }
 
     header("Location: guardias_carga.php?mes=$mes");
     exit;
 }
 
-/* GENERAR DIAS */
+/* ===== GENERAR DIAS ===== */
 $fechas = [];
 $current = strtotime($inicioMes);
 $end = strtotime($finMes);
@@ -53,55 +51,84 @@ while ($current <= $end) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Guardias</title>
 
 <style>
-body {
-    font-family:Arial;
+
+body{
+    font-family:"Segoe UI", Arial;
     background:#0f172a;
-    color:white;
+    color:#e5e7eb;
     padding:20px;
 }
 
-h2 {
+h2{
     text-align:center;
 }
 
+/* SELECT MES */
+.filtro-mes{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.filtro-mes input{
+    padding:8px;
+    border-radius:8px;
+    border:none;
+}
+
 /* GRID */
-.grid {
+.grid{
     display:grid;
     grid-template-columns: repeat(7,1fr);
-    gap:10px;
+    gap:12px;
 }
 
 /* CARD DIA */
-.card {
+.card{
     background:#1f2937;
     padding:10px;
-    border-radius:10px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* INPUTS */
-select, input {
+/* FECHA */
+.fecha{
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+/* SELECT */
+select{
     width:100%;
-    margin-top:5px;
-    padding:5px;
-    border-radius:6px;
+    padding:6px;
+    border-radius:8px;
     border:none;
+    background:#0f172a;
+    color:#e5e7eb;
 }
 
 /* BOTON */
-button {
-    margin-top:20px;
+.btn-save{
+    display:block;
+    margin:25px auto;
     padding:10px 20px;
     background:#00AEEF;
     border:none;
-    border-radius:10px;
+    border-radius:12px;
     color:white;
+    font-weight:bold;
     cursor:pointer;
+    font-size:14px;
+}
+
+.btn-save:hover{
+    background:#008FCC;
 }
 
 </style>
@@ -111,9 +138,10 @@ button {
 
 <h2>Guardias - <?= date('F Y', strtotime($mes)) ?></h2>
 
-<form method="GET">
-<input type="month" name="mes" value="<?= $mes ?>">
-<button>Cambiar</button>
+<!-- CAMBIAR MES -->
+<form method="GET" class="filtro-mes">
+    <input type="month" name="mes" value="<?= $mes ?>">
+    <button class="btn-save" style="margin-top:10px;">Cambiar</button>
 </form>
 
 <form method="POST">
@@ -124,20 +152,14 @@ button {
 
 <div class="card">
 
-<strong><?= date('d M', strtotime($f)) ?></strong>
+    <div class="fecha"><?= date('d M', strtotime($f)) ?></div>
 
-<select name="guardias[<?= $f ?>][tecnico]">
-<option value="">-- Técnico --</option>
-<?php foreach($tecnicos as $t): ?>
-<option value="<?= $t ?>"><?= $t ?></option>
-<?php endforeach; ?>
-</select>
-
-<label>
-<input type="checkbox" name="guardias[<?= $f ?>][cumple]"> Cumple
-</label>
-
-<input type="text" name="guardias[<?= $f ?>][cumpleanero]" placeholder="Nombre cumple">
+    <select name="guardias[<?= $f ?>][tecnico]">
+        <option value="">-- Seleccionar --</option>
+        <?php foreach($tecnicos as $t): ?>
+            <option value="<?= $t ?>"><?= $t ?></option>
+        <?php endforeach; ?>
+    </select>
 
 </div>
 
@@ -145,7 +167,7 @@ button {
 
 </div>
 
-<button type="submit">Guardar Guardias</button>
+<button class="btn-save">Guardar Guardias</button>
 
 </form>
 
