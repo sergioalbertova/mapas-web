@@ -303,6 +303,7 @@ $sql = "
 ";
 
 $tecnicos = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
