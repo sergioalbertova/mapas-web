@@ -42,42 +42,49 @@ if ($ultimo && in_array($ultimo, $rotacion)) {
     $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
 }
 
-/* ===== AUTO GENERADO (FIX SECUENCIA) ===== */
+/* ===== AUTO GENERADO (FIX DEFINITIVO) ===== */
 $autoGenerado = [];
 
 if (isset($_GET['auto'])) {
+
+    $ultimoAsignado = $ultimo; // viene del mes anterior
 
     foreach ($fechas as $f) {
 
         $diaSemana = date('N', strtotime($f));
 
-        // FIN DE SEMANA: no asignar ni avanzar
+        // FIN DE SEMANA → no asignar
         if ($diaSemana >= 6) {
             $autoGenerado[$f] = '';
             continue;
         }
 
-        // SI YA EXISTE EN BD: respetar y sincronizar rotación
-        if (isset($guardias[$f])) {
+        // SI YA EXISTE EN BD
+        if (isset($guardias[$f]) && $guardias[$f] != '') {
 
             $autoGenerado[$f] = $guardias[$f];
-
-            $pos = array_search($guardias[$f], $rotacion);
-            if ($pos !== false) {
-                $index = ($pos + 1) % count($rotacion);
-            }
+            $ultimoAsignado = $guardias[$f]; // 🔥 IMPORTANTÍSIMO
 
         } else {
 
-            // ASIGNACIÓN NORMAL
-            $autoGenerado[$f] = $rotacion[$index];
-            $index = ($index + 1) % count($rotacion);
+            // OBTENER SIGUIENTE EN ROTACIÓN
+            if ($ultimoAsignado && in_array($ultimoAsignado, $rotacion)) {
+                $pos = array_search($ultimoAsignado, $rotacion);
+                $nuevo = $rotacion[($pos + 1) % count($rotacion)];
+            } else {
+                // inicio si no hay referencia
+                $nuevo = $rotacion[0];
+            }
+
+            $autoGenerado[$f] = $nuevo;
+            $ultimoAsignado = $nuevo; // 🔥 guardas el último real
         }
     }
 
 } else {
     $autoGenerado = $guardias;
 }
+
 
 /* ===== GUARDAR ===== */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
