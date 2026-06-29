@@ -10,7 +10,7 @@ $mes = $_GET['mes'] ?? date('Y-m');
 $inicioMes = date('Y-m-01', strtotime($mes));
 $finMes = date('Y-m-t', strtotime($mes));
 
-/* ===== GENERAR DIAS ===== */
+/* ===== GENERAR FECHAS ===== */
 $fechas = [];
 $current = strtotime($inicioMes);
 $end = strtotime($finMes);
@@ -29,22 +29,20 @@ $stmt = $pdo->prepare("
 $stmt->execute([$inicioMes, $finMes]);
 $guardias = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-/* ===== ULTIMO MES ANTERIOR ===== */
+/* ===== ULTIMO DEL MES ANTERIOR ===== */
 $mesAnteriorFin = date('Y-m-t', strtotime('-1 month', strtotime($mes)));
 
-$stmt = $pdo->prepare("
-    SELECT tecnico FROM guardias WHERE fecha = ?
-");
+$stmt = $pdo->prepare("SELECT tecnico FROM guardias WHERE fecha = ?");
 $stmt->execute([$mesAnteriorFin]);
 $ultimo = $stmt->fetchColumn();
 
-/* ===== POSICION ===== */
+/* ===== POSICION ROTACION ===== */
 $index = 0;
 if ($ultimo && in_array($ultimo, $rotacion)) {
     $index = (array_search($ultimo, $rotacion) + 1) % count($rotacion);
 }
 
-/* ===== AUTO GENERADO ===== */
+/* ===== AUTO GENERADO (SIN GUARDAR) ===== */
 $autoGenerado = [];
 
 if (isset($_GET['auto'])) {
@@ -54,7 +52,6 @@ if (isset($_GET['auto'])) {
         $diaSemana = date('N', strtotime($f));
 
         if ($diaSemana >= 6) {
-            // FIN DE SEMANA
             $autoGenerado[$f] = '';
             continue;
         }
@@ -92,6 +89,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header("Location: guardias_carga.php?mes=$mes");
     exit;
 }
+
+/* ===== CALENDARIO (ALINEADO) ===== */
+$primerDiaSemana = date('N', strtotime($inicioMes));
+
+$calendario = [];
+
+/* ESPACIOS VACIOS */
+for ($i = 1; $i < $primerDiaSemana; $i++) {
+    $calendario[] = null;
+}
+
+/* DIAS */
+foreach ($fechas as $f) {
+    $calendario[] = $f;
+}
 ?>
 
 <!DOCTYPE html>
@@ -120,25 +132,37 @@ body{
     margin:5px;
 }
 
+/* HEADER DIAS */
+.header-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    margin-top:20px;
+    text-align:center;
+    font-weight:bold;
+}
+
+/* GRID CALENDARIO */
 .grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
     gap:10px;
-    margin-top:20px;
+    margin-top:10px;
 }
 
+/* CARD */
 .card{
     background:#1f2937;
     padding:10px;
     border-radius:10px;
 }
 
-/* FIN DE SEMANA VISUAL */
+/* FIN SEMANA */
 .weekend{
-    opacity:0.5;
     background:#111827;
+    opacity:0.5;
 }
 
+/* SELECT */
 select{
     width:100%;
     padding:6px;
@@ -147,6 +171,7 @@ select{
     color:white;
 }
 </style>
+
 </head>
 
 <body>
@@ -160,25 +185,49 @@ select{
 <button class="btn">Cambiar</button>
 </form>
 
-<a href="guardias_carga.php?mes=<?= $mes ?>&auto=1">
-<button class="btn">Auto-generar guardias</button>
+<a href="?mes=<?= $mes ?>&auto=1" class="btn">
+Auto-generar guardias
 </a>
+
+<?php if(isset($_GET['auto'])): ?>
+<div style="color:#22c55e;margin-top:10px;">
+✅ Vista generada (no guardada)
+</div>
+<?php endif; ?>
 
 </div>
 
 <form method="POST">
 
+<!-- ENCABEZADO DIAS -->
+<div class="header-grid">
+<div>Lun</div>
+<div>Mar</div>
+<div>Mié</div>
+<div>Jue</div>
+<div>Vie</div>
+<div>Sáb</div>
+<div>Dom</div>
+</div>
+
 <div class="grid">
 
-<?php foreach($fechas as $f): 
+<?php foreach($calendario as $f): ?>
+
+<?php if($f === null): ?>
+    <div></div>
+<?php else: ?>
+
+<?php
 $valor = $autoGenerado[$f] ?? '';
 $diaSemana = date('N', strtotime($f));
 ?>
 
 <div class="card <?= ($diaSemana >= 6) ? 'weekend' : '' ?>">
 
-<strong><?= date('d M', strtotime($f)) ?></strong>
+<strong><?= date('d', strtotime($f)) ?></strong>
 
+<?php if($diaSemana < 6): ?>
 <select name="guardias[<?= $f ?>][tecnico]">
 
 <option value="">-- Seleccionar --</option>
@@ -190,8 +239,11 @@ $diaSemana = date('N', strtotime($f));
 <?php endforeach; ?>
 
 </select>
+<?php endif; ?>
 
 </div>
+
+<?php endif; ?>
 
 <?php endforeach; ?>
 
