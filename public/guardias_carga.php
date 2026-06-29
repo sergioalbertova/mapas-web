@@ -68,26 +68,22 @@ if (isset($_GET['auto'])) {
     $autoGenerado = $guardias;
 }
 
-/* ===== GUARDAR (FIX ID) ===== */
+/* ===== GUARDAR ===== */
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     foreach ($_POST['guardias'] as $fecha => $data) {
 
         $tecnico = $data['tecnico'] ?? null;
 
-        // 🔥 GENERAR ID MANUAL
-        $stmtID = $pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM guardias");
-        $newId = $stmtID->fetchColumn();
-
         $stmt = $pdo->prepare("
-            INSERT INTO guardias (id, fecha, tecnico, cumple, cumpleanero)
-            VALUES (?, ?, ?, FALSE, NULL)
+            INSERT INTO guardias (fecha, tecnico, cumple, cumpleanero)
+            VALUES (?, ?, FALSE, NULL)
             ON CONFLICT (fecha) DO UPDATE
             SET tecnico = EXCLUDED.tecnico,
                 updated_at = NOW()
         ");
 
-        $stmt->execute([$newId, $fecha, $tecnico]);
+        $stmt->execute([$fecha, $tecnico]);
     }
 
     header("Location: guardias_carga.php?mes=$mes");
