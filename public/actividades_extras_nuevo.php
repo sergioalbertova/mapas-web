@@ -150,7 +150,9 @@ h2 {
 
 <div class="form-card">
 
-<form action="actividades_extras_guardar.php" method="POST">
+<form action="actividades_extras_guardar.php"
+      method="POST"
+      enctype="multipart/form-data">
 
 <input type="hidden" name="idingeniero" value="<?= $idIngeniero ?>">
 
@@ -185,7 +187,9 @@ h2 {
 
 <!-- EVIDENCIA -->
 <label>Evidencia</label>
-<input type="text" name="evidencia">
+<input type="file"
+       name="evidencia"
+       accept=".jpg,.jpeg,.png,.gif,.webp">
 
 <!-- ESTATUS -->
 <label>Estatus</label>

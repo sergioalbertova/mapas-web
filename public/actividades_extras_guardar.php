@@ -2,6 +2,11 @@
 require "auth.php";
 require "db.php";
 
+echo "<pre>";
+print_r($_FILES);
+echo "</pre>";
+exit;
+
 date_default_timezone_set('America/Mexico_City');
 
 // ✅ Validar ingeniero
