@@ -200,7 +200,39 @@ h2 {
     <div class="valor"><?= nl2br(htmlspecialchars($extra['comentarios'] ?? "—")) ?></div>
 
     <div class="label">Evidencia</div>
-    <div class="valor"><?= htmlspecialchars($extra['evidencia'] ?? "—") ?></div>
+
+<div class="valor">
+
+<?php if (!empty($extra['evidencia'])): ?>
+
+    <a href="<?= htmlspecialchars($extra['evidencia']) ?>"
+       target="_blank">
+
+        <img
+            src="<?= htmlspecialchars($extra['evidencia']) ?>"
+            alt="Evidencia"
+            style="
+                max-width:100%;
+                max-height:400px;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+    </a>
+
+    <br><br>
+
+    <a href="<?= htmlspecialchars($extra['evidencia']) ?>"
+       target="_blank">
+       Abrir imagen completa
+    </a>
+
+<?php else: ?>
+
+    Sin evidencia adjunta
+
+<?php endif; ?>
+
+</div>
 
     <div class="label">Estatus</div>
     <div class="valor">
