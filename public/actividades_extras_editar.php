@@ -200,7 +200,9 @@ textarea {
     ?>
 </div>
 
-<form action="actividades_extras_editar_guardar.php" method="POST">
+<form action="actividades_extras_editar_guardar.php"
+      method="POST"
+      enctype="multipart/form-data">
 
 <input type="hidden" name="idextra" value="<?= $extra['idextra'] ?>">
 
@@ -229,10 +231,44 @@ textarea {
 <label>Comentarios</label>
 <textarea name="comentarios"><?= htmlspecialchars($extra['comentarios']) ?></textarea>
 
-<!-- EVIDENCIA -->
-<label>Evidencia</label>
-<input type="text" name="evidencia"
-       value="<?= htmlspecialchars($extra['evidencia']) ?>">
+<!-- EVIDENCIA ACTUAL -->
+<label>Evidencia actual</label>
+
+<?php if (!empty($extra['evidencia'])): ?>
+
+    <div style="margin-bottom:15px;">
+
+        <img
+            src="<?= htmlspecialchars($extra['evidencia']) ?>"
+            alt="Evidencia"
+            style="
+                max-width:100%;
+                max-height:250px;
+                border-radius:8px;
+                border:1px solid #ccc;
+            ">
+
+    </div>
+
+<?php else: ?>
+
+    <div style="margin-bottom:15px;">
+        Sin evidencia adjunta
+    </div>
+
+<?php endif; ?>
+
+<input
+    type="hidden"
+    name="evidencia_actual"
+    value="<?= htmlspecialchars($extra['evidencia']) ?>">
+
+<label>Reemplazar evidencia</label>
+
+<input
+    type="file"
+    name="evidencia"
+    accept=".jpg,.jpeg,.png,.gif,.webp">
 
 <!-- ESTATUS -->
 <label>Estatus</label>
@@ -254,4 +290,3 @@ textarea {
 
 </body>
 </html>
-``
