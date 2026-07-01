@@ -48,10 +48,6 @@ if (
         $evidencia = $resultado['secure_url'];
     }
 
-    echo "<pre>";
-    print_r($resultado);
-    echo "</pre>";
-    exit;
 }
 $estatus           = $_POST['estatus'] ?? "en proceso";
 
