@@ -233,20 +233,20 @@ h2 {
 
 <?php if (!empty($extra['evidencia'])): ?>
 
-    <a href="<?= htmlspecialchars($extra["
-    alt="Evidencia"
-    style="
-        max-width:100%;
-        max-height:400px;
-        border-radius:8px;
-        cursor:pointer;
-    ">
+    <img
+        id="imgEvidencia"
+        src="<?= htmlspecialchars($extra['evidencia']) ?>"
+        alt="Evidencia"
+        style="
+            max-width:100%;
+            max-height:400px;
+            border-radius:8px;
+            cursor:pointer;
+        ">
 
-
-    <a href="<?= htmlspecialchars($extra['evidencia']) ?>"
-       target="_blank">
-       Abrir imagen completa
-    </a>
+    <div style="margin-top:10px;font-size:13px;opacity:.8;">
+        Clic sobre la imagen para ampliarla
+    </div>
 
 <?php else: ?>
 
