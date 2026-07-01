@@ -145,6 +145,34 @@ h2 {
     text-decoration: none;
 }
 
+/* MODAL IMAGEN */
+
+.modal-img {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    background: rgba(0,0,0,.85);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-img img {
+    max-width: 95%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+
+.cerrar-modal {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 42px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
 </style>
 </head>
 
@@ -205,21 +233,15 @@ h2 {
 
 <?php if (!empty($extra['evidencia'])): ?>
 
-    <a href="<?= htmlspecialchars($extra['evidencia']) ?>"
-       target="_blank">
+    <a href="<?= htmlspecialchars($extra["
+    alt="Evidencia"
+    style="
+        max-width:100%;
+        max-height:400px;
+        border-radius:8px;
+        cursor:pointer;
+    ">
 
-        <img
-            src="<?= htmlspecialchars($extra['evidencia']) ?>"
-            alt="Evidencia"
-            style="
-                max-width:100%;
-                max-height:400px;
-                border-radius:8px;
-                cursor:pointer;
-            ">
-    </a>
-
-    <br><br>
 
     <a href="<?= htmlspecialchars($extra['evidencia']) ?>"
        target="_blank">
@@ -248,6 +270,42 @@ h2 {
 </div>
 
 </div>
+
+<div id="modalImg" class="modal-img">
+
+    <span class="cerrar-modal">&times;</span>
+
+    <img id="imagenGrande">
+
+</div>
+
+<script>
+
+const imagen = document.getElementById("imgEvidencia");
+const modal = document.getElementById("modalImg");
+const imagenGrande = document.getElementById("imagenGrande");
+const cerrar = document.querySelector(".cerrar-modal");
+
+if (imagen) {
+
+    imagen.addEventListener("click", () => {
+        imagenGrande.src = imagen.src;
+        modal.style.display = "flex";
+    });
+
+}
+
+cerrar.addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+</script>
 
 <script src="theme.js"></script>
 
