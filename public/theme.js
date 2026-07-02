@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Ajustar icono inicial
     const btn = document.querySelector(".theme-toggle");
     if (btn) {
-        btn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+        btn.textContent = document.body.classList.contains("dark") ? "🔆" : "◑";
     }
 });
 
