@@ -15,7 +15,7 @@ function toggleTheme() {
     // Actualizar icono del botón
     const btn = document.querySelector(".theme-toggle");
     if (btn) {
-        btn.textContent = isDark ? "☀️" : "🌙";
+        btn.textContent = isDark ? "🔆" : "◑";
     }
 }
 
