@@ -191,7 +191,7 @@ body {
 if ($row['fecha_fin']) {
     echo "⏱ " . round($row['duracion_min'],1) . " min";
 } else {
-    echo "⏳";
+    echo "◷ En curso";
 }
 ?>
 </td>
@@ -217,7 +217,7 @@ if ($row['fecha_fin']) {
    <?php if ($row['estatus'] !== 'completado'): ?>
     <a href="actividades_extras_editar.php?id=<?= $row['idextra'] ?>" class="btn editar">Editar</a>
 <?php else: ?>
-    <span style="opacity:0.5;font-size:12px;">🔒 Cerrado</span>
+    <span style="opacity:0.5;font-size:12px;">✓ Cerrado</span>
 <?php endif; ?>
 
 
