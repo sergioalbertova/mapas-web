@@ -78,19 +78,19 @@
     <ul class="submenu-items">
 
         <li>
-            .php">
+            <a href="consulta_respaldos.php">
                 <span class="nav-text">Consulta</span>
             </a>
         </li>
 
         <li>
-            usuarios.php">
+            <a href="usuarios.php">
                 <span class="nav-text">Gestión de Respaldos</span>
             </a>
         </li>
 
         <li>
-            discos_respaldo.php
+            <a href="discos_respaldo.php">
                 <span class="nav-text">Discos</span>
             </a>
         </li>
