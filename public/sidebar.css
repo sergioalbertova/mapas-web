@@ -118,3 +118,27 @@
     opacity: 1;
     left: 75px;
 }
+
+/* ==========================
+   SUBMENUS
+========================== */
+
+.submenu-items {
+    list-style: none;
+    padding-left: 45px;
+    margin: 0;
+}
+
+.submenu-items li a {
+    display: block;
+    padding: 8px 0;
+    text-decoration: none;
+    color: inherit;
+    font-size: 14px;
+    opacity: .85;
+}
+
+.submenu-items li a:hover {
+    opacity: 1;
+    color: #00AEEF;
+}
