@@ -147,29 +147,45 @@ Administración de medios de respaldo
 
         <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Tamaño Total (GB)</th>
+                 <th>Nombre</th>
+                <th>Total (GB)</th>
+                <th>Utilizado (GB)</th>
+                <th>Disponible (GB)</th>
                 <th>Observaciones</th>
             </tr>
         </thead>
-
         <tbody>
 
         <?php foreach ($discos as $d): ?>
 
-            <tr>
-                <td>
-                    <?= htmlspecialchars($d['nombre']) ?>
-                </td>
+            <?php
+                $utilizado = (float)$d['utilizado'];
+                $disponible = (float)$d['tamano_total_gb'] - $utilizado;
+            ?>
 
-                <td>
-                    <?= number_format($d['tamano_total_gb'], 2) ?>
-                </td>
+<tr>
 
-                <td>
-                    <?= htmlspecialchars($d['observaciones'] ?? '') ?>
-                </td>
-            </tr>
+    <td>
+        <?= htmlspecialchars($d['nombre']) ?>
+    </td>
+
+    <td>
+        <?= number_format($d['tamano_total_gb'], 2) ?>
+    </td>
+
+    <td>
+        <?= number_format($utilizado, 2) ?>
+    </td>
+
+    <td>
+        <?= number_format($disponible, 2) ?>
+    </td>
+
+    <td>
+        <?= htmlspecialchars($d['observaciones'] ?? '') ?>
+    </td>
+
+</tr>
 
         <?php endforeach; ?>
 
