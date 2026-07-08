@@ -63,9 +63,9 @@
             </a>
         </li>
 
-        <li class="nav-item submenu">
+       <li class="nav-item submenu">
 
-    #
+    <a class="submenu-toggle">
 
         <svg viewBox="0 0 24 24">
             <path d="M4 4h16v4H4V4zm0 6h16v4H4v-4zm0 6h16v4H4v-4z"/>
@@ -78,19 +78,19 @@
     <ul class="submenu-items">
 
         <li>
-            consulta_respaldos.php">
+            .php">
                 <span class="nav-text">Consulta</span>
             </a>
         </li>
 
         <li>
-            respaldos_usuarios.php
+            usuarios.php">
                 <span class="nav-text">Gestión de Respaldos</span>
             </a>
         </li>
 
         <li>
-            do.php">
+            discos_respaldo.php
                 <span class="nav-text">Discos</span>
             </a>
         </li>
