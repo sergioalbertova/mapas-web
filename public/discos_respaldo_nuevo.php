@@ -122,7 +122,7 @@ Registrar un nuevo medio de almacenamiento
 
 <div class="form-card">
 
-ar.php" method="POST">
+<form action="discos_respaldo_guardar.php" method="POST">
 
     <label>Nombre del Disco</label>
     <input
