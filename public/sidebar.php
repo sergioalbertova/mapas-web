@@ -63,6 +63,46 @@
             </a>
         </li>
 
+        <li class="nav-item submenu">
+
+    #
+
+        <svg viewBox="0 0 24 24">
+            <path d="M4 4h16v4H4V4zm0 6h16v4H4v-4zm0 6h16v4H4v-4z"/>
+        </svg>
+
+        <span class="nav-text">Respaldos</span>
+
+    </a>
+
+    <ul class="submenu-items">
+
+        <li>
+            consulta_respaldos.php">
+                <span class="nav-text">Consulta</span>
+            </a>
+        </li>
+
+        <li>
+            respaldos_usuarios.php
+                <span class="nav-text">Gestión de Respaldos</span>
+            </a>
+        </li>
+
+        <li>
+            do.php">
+                <span class="nav-text">Discos</span>
+            </a>
+        </li>
+
+    </ul>
+
+</li>
+
+
+
+
+
         <li class="nav-item">
                 <a href="activeuser_admin.php">
                     <svg viewBox="0 0 24 24">
