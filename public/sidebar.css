@@ -126,17 +126,22 @@
 .submenu-items {
     display: none;
     list-style: none;
-    padding-left: 35px;
     margin: 8px 0 0 0;
+    padding: 0;
 }
 
 .submenu.open .submenu-items {
     display: block;
 }
 
+.submenu-items li {
+    display: block;
+    width: 100%;
+}
+
 .submenu-items li a {
     display: block;
-    padding: 8px 0;
+    padding: 8px 0 8px 40px;
     text-decoration: none;
     color: inherit;
     font-size: 14px;
@@ -144,6 +149,6 @@
 }
 
 .submenu-items li a:hover {
-    opacity: 1;
     color: #00AEEF;
+    opacity: 1;
 }
