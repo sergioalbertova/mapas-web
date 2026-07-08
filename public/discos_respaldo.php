@@ -119,6 +119,22 @@ th {
     font-weight: 600;
 }
 
+
+.disponible-ok {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.disponible-alerta {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.disponible-critico {
+    color: #ef4444;
+    font-weight: 600;
+}
+
 </style>
 
 </head>
@@ -178,8 +194,33 @@ Administración de medios de respaldo
     </td>
 
     <td>
-        <?= number_format($disponible, 2) ?>
-    </td>
+
+<?php
+
+if ($disponible >= 100) {
+
+    echo '<span class="disponible-ok">'
+        . number_format($disponible, 2)
+        . '</span>';
+
+} elseif ($disponible >= 50) {
+
+    echo '<span class="disponible-alerta">'
+        . number_format($disponible, 2)
+        . '</span>';
+
+} else {
+
+    echo '<span class="disponible-critico">'
+        . number_format($disponible, 2)
+        . '</span>';
+
+}
+
+?>
+
+</td>
+
 
     <td>
         <?= htmlspecialchars($d['observaciones'] ?? '') ?>
