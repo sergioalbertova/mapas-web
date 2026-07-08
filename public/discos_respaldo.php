@@ -6,9 +6,29 @@ require "db.php";
 $nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
 
 $stmt = $pdo->query("
-    SELECT *
-    FROM discos_respaldo
-    ORDER BY nombre
+    SELECT
+        d.iddisco,
+        d.nombre,
+        d.tamano_total_gb,
+        d.observaciones,
+
+        COALESCE(
+            SUM(r.tamano_gb),
+            0
+        ) AS utilizado
+
+    FROM discos_respaldo d
+
+    LEFT JOIN respaldos_usuarios r
+        ON r.iddisco = d.iddisco
+
+    GROUP BY
+        d.iddisco,
+        d.nombre,
+        d.tamano_total_gb,
+        d.observaciones
+
+    ORDER BY d.nombre
 ");
 
 $discos = $stmt->fetchAll(PDO::FETCH_ASSOC);
