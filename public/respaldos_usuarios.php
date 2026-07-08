@@ -35,7 +35,7 @@ $respaldos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <title>Gestión de Respaldos</title>
 
 <link rel="stylesheet" href="sidebar.css">
-.css">
+<link rel="stylesheet" href="topbar.css">
 
 <style>
 
