@@ -124,9 +124,14 @@
 ========================== */
 
 .submenu-items {
+    display: none;
     list-style: none;
-    padding-left: 45px;
-    margin: 0;
+    padding-left: 35px;
+    margin: 8px 0 0 0;
+}
+
+.submenu.open .submenu-items {
+    display: block;
 }
 
 .submenu-items li a {
