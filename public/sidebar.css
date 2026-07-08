@@ -56,12 +56,14 @@
     cursor: pointer;
     transition: background 0.2s ease;
 
+    position: relative;
+    color: var(--sidebar-text);
+}
+
+#sidebar .nav-item > a {
     display: flex;
     align-items: center;
     gap: 12px;
-
-    position: relative;
-    color: var(--sidebar-text);
 }
 
 #sidebar .nav-item:hover {
