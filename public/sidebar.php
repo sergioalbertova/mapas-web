@@ -139,3 +139,27 @@
     </ul>
 
 </div>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const submenuToggle = document.querySelector('.submenu-toggle');
+    const submenu = document.querySelector('.submenu');
+
+    if (submenuToggle && submenu) {
+
+        submenuToggle.addEventListener('click', (e) => {
+
+            e.preventDefault();
+
+            submenu.classList.toggle('open');
+
+        });
+
+    }
+
+});
+
+</script>
