@@ -15,7 +15,6 @@ require "db.php";
 
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
-
 <style>
 
 :root {
@@ -32,96 +31,92 @@ body.dark {
     --border: rgba(255,255,255,.15);
 }
 
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
+body{
+    margin:0;
+    font-family:"Segoe UI",Arial;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
 }
 
-.main {
-    margin-left: 240px;
-    padding: 20px 40px;
-    width: calc(100% - 240px);
+.main{
+    margin-left:240px;
+    padding:20px 40px;
+    width:calc(100% - 240px);
 }
 
-.card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 25px;
+.card{
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:25px;
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 10px;
+h2{
+    text-align:center;
+    margin-bottom:10px;
 }
 
-.subtitle {
-    text-align: center;
-    opacity: .7;
-    margin-bottom: 25px;
+.subtitle{
+    text-align:center;
+    opacity:.7;
+    margin-bottom:25px;
 }
 
-label {
-    font-weight: 600;
+label{
+    font-weight:600;
 }
 
-input[type="text"]{
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    margin-top: 5px;
-    box-sizing: border-box;
-    background: var(--card-bg);
-    color: var(--text);
+input{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    margin-top:5px;
+    box-sizing:border-box;
+    background:var(--card-bg);
+    color:var(--text);
 }
 
-#resultados_usuarios {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-top: 5px;
+#sugerencias{
+    border:1px solid var(--border);
+    border-radius:8px;
+    margin-top:5px;
 }
 
-.item {
-    padding: 10px;
-    cursor: pointer;
+.item{
+    padding:10px;
+    cursor:pointer;
 }
 
-.item:hover {
-    background: rgba(0,174,239,.10);
+.item:hover{
+    background:rgba(0,174,239,.10);
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+#resultado{
+    margin-top:20px;
 }
 
-th,
-td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
+table{
+    width:100%;
+    border-collapse:collapse;
 }
 
-th {
-    text-align: center;
+th,td{
+    padding:12px;
+    border-bottom:1px solid var(--border);
 }
 
-.btn-ver {
-    background: #00AEEF;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 6px;
-    text-decoration: none;
+th{
+    text-align:center;
 }
 
-.sin-resultados {
-    text-align: center;
-    padding: 20px;
-    opacity: .7;
+.btn-ver{
+    background:#00AEEF;
+    color:white;
+    padding:6px 10px;
+    border-radius:6px;
+    text-decoration:none;
 }
 
 </style>
@@ -139,7 +134,7 @@ th {
 <h2>Consulta de Respaldos</h2>
 
 <div class="subtitle">
-Localiza rápidamente los respaldos de un usuario
+Encuentra rápidamente dónde está almacenado un respaldo
 </div>
 
 <div class="card">
@@ -151,9 +146,9 @@ Localiza rápidamente los respaldos de un usuario
         id="buscar_usuario"
         autocomplete="off">
 
-    <div id="resultados_usuarios"></div>
+    <div id="sugerencias"></div>
 
-    <div id="contenedorResultados"></div>
+    <div id="resultado"></div>
 
 </div>
 
@@ -163,49 +158,55 @@ Localiza rápidamente los respaldos de un usuario
 
 <script>
 
-const input = document.getElementById("buscar_usuario");
-const resultados = document.getElementById("resultados_usuarios");
-const contenedor = document.getElementById("contenedorResultados");
+const txtBuscar =
+    document.getElementById("buscar_usuario");
 
-input.addEventListener("keyup", () => {
+const sugerencias =
+    document.getElementById("sugerencias");
 
-    const q = input.value.trim();
+const resultado =
+    document.getElementById("resultado");
+
+txtBuscar.addEventListener("keyup", () => {
+
+    const q = txtBuscar.value.trim();
 
     if (!q) {
 
-        resultados.innerHTML = "";
-        contenedor.innerHTML = "";
-
+        sugerencias.innerHTML = "";
+        resultado.innerHTML = "";
         return;
+
     }
 
     fetch(
-        "buscar_activeuser.php?q="
+        "buscar_respaldos_usuario.php?q="
         + encodeURIComponent(q)
     )
     .then(r => r.json())
     .then(data => {
 
-        resultados.innerHTML = "";
+        sugerencias.innerHTML = "";
 
-        data.forEach(u => {
+        data.forEach(usuario => {
 
             const div =
                 document.createElement("div");
 
             div.className = "item";
-            div.textContent = u.nomuser;
+
+            div.textContent = usuario;
 
             div.onclick = () => {
 
-                input.value = u.nomuser;
-                resultados.innerHTML = "";
+                txtBuscar.value = usuario;
+                sugerencias.innerHTML = "";
 
-                cargarRespaldos(u.nomuser);
+                buscarRespaldos(usuario);
 
             };
 
-            resultados.appendChild(div);
+            sugerencias.appendChild(div);
 
         });
 
@@ -213,7 +214,7 @@ input.addEventListener("keyup", () => {
 
 });
 
-function cargarRespaldos(usuario) {
+function buscarRespaldos(usuario){
 
     fetch(
         "consulta_respaldos_ajax.php?usuario="
@@ -222,7 +223,7 @@ function cargarRespaldos(usuario) {
     .then(r => r.text())
     .then(html => {
 
-        contenedor.innerHTML = html;
+        resultado.innerHTML = html;
 
     });
 
@@ -232,4 +233,3 @@ function cargarRespaldos(usuario) {
 
 </body>
 </html>
-`
