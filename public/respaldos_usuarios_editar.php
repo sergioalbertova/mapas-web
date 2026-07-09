@@ -233,7 +233,7 @@ Modificar respaldo de usuario
 <input
     type="text"
     id="buscar_usuario"
-    value="<?= htmlspecialchars($respaldo['usuario']) ?>">
+    value="<?= htmlspecialchars($respaldo['usuario']) ?>" readonly>
 
 <input
     type="hidden"
