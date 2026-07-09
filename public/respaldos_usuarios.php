@@ -124,9 +124,22 @@ th {
     margin-right: 10px;
 }
 
+
 .acciones {
     white-space: nowrap;
 }
+
+.accion-link {
+    display: block;
+    text-decoration: none;
+    color: var(--text);
+    padding: 4px 0;
+}
+
+.accion-link:hover {
+    color: #00AEEF;
+}
+
 
 .btn-accion {
     display: inline-block;
@@ -228,13 +241,13 @@ Respaldos registrados en medios físicos
 
                 <td class="acciones">
 
-                    <a href="respaldos_usuarios_ver.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-ver"> Ver </a>
+                    <a href="respaldos_usuarios_ver.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-ver"> 👁 Ver </a>
 
-                    <a href="respaldos_usuarios_editar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-editar"> Editar </a>
+                    <a href="respaldos_usuarios_editar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-editar"> ✏ Editar </a>
 
                     <a href="usuarios_eliminar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-eliminar"
                          onclick="return confirm('¿Eliminar respaldo?')">
-                     Eliminar
+                      🗑 Eliminar
                      </a>
 
                 </td>
