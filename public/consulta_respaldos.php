@@ -14,7 +14,7 @@ require "db.php";
 <title>Consulta de Respaldos</title>
 
 <link rel="stylesheet" href="sidebar.css">
-topbar.css">
+<link rel="stylesheet" href="topbar.css">
 
 <style>
 
