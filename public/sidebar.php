@@ -84,8 +84,8 @@
         </li>
 
         <li>
-            <a href="usuarios.php">
-                <span class="nav-text">Gestión de Respaldos</span>
+            <a href="respaldos_usuarios.php">
+                <span class="nav-text">Administración de Respaldos</span>
             </a>
         </li>
 
