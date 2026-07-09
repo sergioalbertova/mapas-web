@@ -159,6 +159,7 @@ Respaldos registrados en medios físicos
                 <th>Tamaño (GB)</th>
                 <th>Fecha</th>
                 <th>Ingeniero</th>
+                <th>Acciones</th>
             </tr>
 
         </thead>
@@ -190,6 +191,19 @@ Respaldos registrados en medios físicos
 
                 <td>
                     <?= htmlspecialchars($r['ingeniero']) ?>
+                </td>
+
+                <td class="acciones">
+
+                    <a href="respaldos_usuarios_ver.php?id=<?= $r['idrespaldo'] ?>"> Ver </a>
+
+                    <a href="respaldos_usuarios_editar.php?id=<?= $r['idrespaldo'] ?>"> Editar </a>
+
+                    <a href="usuarios_eliminar.php?id=<?= $r['idrespaldo'] ?>"
+                         onclick="return confirm('¿Eliminar respaldo?')">
+                     Eliminar
+                     </a>
+
                 </td>
 
             </tr>
