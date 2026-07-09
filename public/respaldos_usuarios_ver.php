@@ -177,7 +177,7 @@ Información completa del respaldo
         <?= htmlspecialchars($respaldo['ingeniero']) ?>
     </div>
 
-    <a href="respaldos_usuarios.php=" class="btn-volver">
+    <a href="respaldos_usuarios.php" class="btn-volver">
         ← Volver
     </a>
 
