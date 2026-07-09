@@ -157,6 +157,19 @@ h2 {
 
 <body>
 
+<?php require "sidebar.php"; ?>
+
+<div class="main">
+
+<?php require "topbar.php"; ?>
+
+<h2>Editar Respaldo</h2>
+
+<div class="subtitle">
+Permite cambiar los datos del respaldo
+</div>
+
+<div class="form-card">
 
 <form action="respaldos_usuarios_editar_guardar.php" method="POST">
    
@@ -241,6 +254,10 @@ h2 {
     </a>
 
 </form>
+
+</div>
+
+</div>
 
 <script src="theme.js"></script>
 
