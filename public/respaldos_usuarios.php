@@ -124,6 +124,39 @@ th {
     margin-right: 10px;
 }
 
+.acciones {
+    white-space: nowrap;
+}
+
+.btn-accion {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.btn-ver {
+    background: #00AEEF;
+    color: white;
+}
+
+.btn-editar {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-eliminar {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-accion:hover {
+    opacity: .9;
+}
+
 </style>
 
 </head>
@@ -195,11 +228,11 @@ Respaldos registrados en medios físicos
 
                 <td class="acciones">
 
-                    <a href="respaldos_usuarios_ver.php?id=<?= $r['idrespaldo'] ?>"> Ver </a>
+                    <a href="respaldos_usuarios_ver.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-ver"> Ver </a>
 
-                    <a href="respaldos_usuarios_editar.php?id=<?= $r['idrespaldo'] ?>"> Editar </a>
+                    <a href="respaldos_usuarios_editar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-editar"> Editar </a>
 
-                    <a href="usuarios_eliminar.php?id=<?= $r['idrespaldo'] ?>"
+                    <a href="usuarios_eliminar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-eliminar"
                          onclick="return confirm('¿Eliminar respaldo?')">
                      Eliminar
                      </a>
