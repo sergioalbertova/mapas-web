@@ -246,7 +246,7 @@ Respaldos registrados en medios físicos
 
                     <a href="respaldos_usuarios_editar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-editar"> ✏ Editar </a>
 
-                    <a href="usuarios_eliminar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-eliminar"
+                    <a href="respaldos_usuarios_eliminar.php?id=<?= $r['idrespaldo'] ?>" class="btn-accion btn-eliminar"
                          onclick="return confirm('¿Eliminar respaldo?')">
                       🗑 Eliminar
                      </a>
