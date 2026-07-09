@@ -221,7 +221,7 @@ Modificar respaldo de usuario
 
 <div class="form-card">
 
-<form action="rios_editar_guardar.php
+<form action="respaldos_usuarios_editar_guardar.php" method="POST"> 
 
 <input
     type="hidden"
