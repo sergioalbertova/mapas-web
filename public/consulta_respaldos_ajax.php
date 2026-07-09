@@ -106,7 +106,7 @@ if (!$respaldos) {
 
             <td>
 
-                aldos_usuarios_ver.php?id=<?= $r['idrespaldo'] ?>"
+                <a href="respaldos_usuarios_ver.php?id=<?= $r['idrespaldo'] ?>"
                     class="btn-ver">
 
                     Ver
