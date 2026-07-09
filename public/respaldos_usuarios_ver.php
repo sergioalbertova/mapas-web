@@ -52,7 +52,8 @@ if (!$respaldo) {
 <meta charset="UTF-8">
 <title>Detalle del Respaldo</title>
 
-<link rel="stylesheetlesheet" href="topbar.css">
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 
 <style>
 
