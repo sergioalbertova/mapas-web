@@ -109,6 +109,7 @@ td {
 
 th {
     font-weight: 600;
+    text-align: center;
 }
 
 .badge {
