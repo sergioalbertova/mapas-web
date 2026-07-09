@@ -68,7 +68,7 @@ $discos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <title>Editar Respaldo</title>
 
 <link rel="stylesheet" href="sidebar.css">
-">
+<link rel="stylesheet" href="topbar.css">
 
 <style>
 
