@@ -146,7 +146,7 @@ th {
     padding: 6px 10px;
     border-radius: 6px;
     text-decoration: none;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
     margin-right: 5px;
 }
