@@ -68,6 +68,96 @@ $discos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Detalle del Respaldo</title>
+
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
+
+<style>
+
+:root {
+    --bg: #F4F7FA;
+    --text: #1F2933;
+    --card-bg: #FFFFFF;
+    --border: #ddd;
+}
+
+body.dark {
+    --bg: #0f172a;
+    --text: #E5E7EB;
+    --card-bg: #1f2937;
+    --border: rgba(255,255,255,.15);
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+}
+
+.main {
+    margin-left: 240px;
+    padding: 20px 40px;
+    width: calc(100% - 240px);
+}
+
+.form-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 700px;
+    margin: auto;
+    border: 1px solid var(--border);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    opacity: .7;
+    margin-bottom: 30px;
+}
+
+.label {
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.valor {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-top: 5px;
+}
+
+.btn-volver {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 18px;
+    background: #00AEEF;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
 <form action="respaldos_usuarios_editar_guardar.php" method="POST">
    
 <input type="hidden" name="idrespaldo" value="<?= $respaldo['idrespaldo'] ?>">
@@ -151,3 +241,9 @@ $discos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </a>
 
 </form>
+
+<script src="theme.js"></script>
+
+</body>
+
+</html>
