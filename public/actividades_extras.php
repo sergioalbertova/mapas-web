@@ -35,7 +35,7 @@ function safe($v) {
 <head>
 <meta charset="UTF-8">
 <title>Actividades Extras</title>
-
+<link rel="icon" href="apoyo2.ico" type="image/x-icon">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 

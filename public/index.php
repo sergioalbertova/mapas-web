@@ -15,7 +15,7 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <head>
 <meta charset="UTF-8">
 <title>Inicio</title>
-
+<link rel="icon" href="apoyo2.ico" type="image/x-icon">
 <style>
 :root {
     --bg: #F4F7FA;
