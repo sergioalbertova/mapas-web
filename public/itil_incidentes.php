@@ -36,7 +36,7 @@ $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
 <meta charset="UTF-8">
 <title>Incidentes ITIL</title>
-
+<link rel="icon" href="apoyo2.png" type="image/x-icon">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 

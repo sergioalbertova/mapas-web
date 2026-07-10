@@ -16,7 +16,7 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <head>
 <meta charset="UTF-8">
 <title>Administrar ActiveUser</title>
-
+<link rel="icon" href="apoyo2.png" type="image/x-icon">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 

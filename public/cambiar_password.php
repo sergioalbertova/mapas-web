@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 <head>
 <meta charset="UTF-8">
 <title>Cambiar contraseña</title>
-
+<link rel="icon" href="apoyo2.png" type="image/x-icon">
 <style>
 /* ============================
    PALETA CORPORATIVA

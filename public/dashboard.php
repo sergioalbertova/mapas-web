@@ -20,7 +20,7 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <head>
 <meta charset="UTF-8">
 <title>Mapeo de Nodos</title>
-
+<link rel="icon" href="apoyo2.png" type="image/x-icon">
 <style>
 :root {
     --bg: #F4F7FA;

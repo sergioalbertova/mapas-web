@@ -33,7 +33,7 @@ $respaldos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <meta charset="UTF-8">
 <title>Gestión de Respaldos</title>
-
+<link rel="icon" href="apoyo2.png" type="image/x-icon">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
 
