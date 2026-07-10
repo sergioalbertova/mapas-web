@@ -208,6 +208,9 @@ button:hover {
 
 <!-- CONTENIDO PRINCIPAL -->
 <div class="main">
+
+     <?php require "topbar.php"; ?>
+     
     <div class="form-container">
 
         <h1>Cambiar contraseña</h1>
@@ -230,21 +233,7 @@ button:hover {
     </div>
 </div>
 
-<script>
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-}
-
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-}
-
-function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    sidebar.classList.toggle("collapsed");
-}
-</script>
+<script src="theme.js"></script>
 
 </body>
 </html>
