@@ -1,9 +1,14 @@
 <?php
-require "session_config.php";
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
+require "auth.php";
+require "db.php";
+
+$id = $_SESSION['user_id'];
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 ?>
 <!DOCTYPE html>
 <html lang="es">
