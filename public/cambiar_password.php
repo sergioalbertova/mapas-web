@@ -49,6 +49,10 @@ body.dark {
     --shadow: rgba(0,0,0,0.45);
 }
 
+body.dark .form-container {
+    border: 1px solid rgba(255,255,255,.10);
+}
+
 /* ============================
    ESTILOS GENERALES
    ============================ */
@@ -66,30 +70,46 @@ body {
 /* ============================
    CONTENIDO PRINCIPAL
    ============================ */
+
 .main {
     margin-left: 240px;
-    padding: 20px 40px;
+    padding: 30px 40px;
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease;
+
+    display: flex;
+    flex-direction: column;
 }
+
 
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
 
+
 .form-container {
     background: var(--card-bg);
     padding: 30px;
     border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.08);
     box-shadow: 0 4px 20px var(--shadow);
+
     width: 100%;
-    max-width: 450px;
+    max-width: 500px;
+
+    margin: 0 auto;
 }
+
 
 h1 {
     text-align: center;
-    color: var(--primary);
+    margin-bottom: 10px;
+    color: var(--text);
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--subtext);
     margin-bottom: 25px;
 }
 
@@ -100,29 +120,42 @@ label {
 
 input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-top: 6px;
     margin-bottom: 18px;
+
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--sidebar-hover);
+
     background: var(--card-bg);
     color: var(--text);
+
+    box-sizing: border-box;
 }
 
 button {
     width: 100%;
     padding: 12px;
-    background: var(--primary);
+
+    background: #00AEEF;
+
     color: white;
+
     border: none;
     border-radius: 8px;
+
     cursor: pointer;
     font-size: 15px;
+    font-weight: 600;
+
+    transition: .2s;
 }
 
 button:hover {
-    background: var(--primary-hover);
+    opacity: .9;
 }
+
+
 </style>
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
@@ -141,6 +174,9 @@ button:hover {
     <div class="form-container">
 
         <h1>Cambiar contraseña</h1>
+        <div class="subtitle">
+             Actualiza tu contraseña de acceso al sistema
+        </div>
 
         <form action="guardar_password.php" method="POST">
 
