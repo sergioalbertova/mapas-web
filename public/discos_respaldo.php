@@ -191,7 +191,19 @@ td:last-child {
 
 .barra-usado {
     height: 100%;
-    transition: width .3s ease;
+    background: #10b981;
+
+    transition:
+        width .8s ease,
+        background-color .3s ease;
+}
+
+.barra-usado {
+    height: 100%;
+
+    transition:
+        width 1s ease-in-out,
+        background-color .3s ease;
 }
 
 .uso-verde {
