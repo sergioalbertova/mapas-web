@@ -141,16 +141,20 @@ td:last-child {
 
 .barra-disco {
     width: 220px;
-    height: 20px;
+    height: 22px;
 
     display: flex;
 
-    border-radius: 20px;
+    border-radius: 30px;
     overflow: hidden;
 
-    background: #e5e7eb;
+    border: 1px solid rgba(0,0,0,.15);
 
-    box-shadow: inset 0 1px 3px rgba(0,0,0,.15);
+    background: #d1d5db;
+
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,.20),
+        0 1px 2px rgba(255,255,255,.25);
 }
 
 .barra-libre {
@@ -163,6 +167,10 @@ td:last-child {
     height: 100%;
 }
 
+.barra-libre,
+.barra-ocupado {
+    transition: width .4s ease;
+}
 .porcentaje {
     font-size: 12px;
     font-weight: 600;
