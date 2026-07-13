@@ -157,15 +157,27 @@ td:last-child {
         0 1px 2px rgba(255,255,255,.25);
 }
 
+
 .barra-libre {
-    background: #10b981;
-    height: 100%;
+    background:
+        linear-gradient(
+            to bottom,
+            #34d399,
+            #059669
+        );
 }
 
+
+
 .barra-ocupado {
-    background: #ef4444;
-    height: 100%;
+    background:
+        linear-gradient(
+            to bottom,
+            #f87171,
+            #dc2626
+        );
 }
+
 
 .barra-libre,
 .barra-ocupado {
