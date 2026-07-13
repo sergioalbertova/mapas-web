@@ -140,12 +140,33 @@ td:last-child {
 }
 
 .barra-disco {
-    width: 180px;
-    height: 18px;
-    background: #e5e7eb;
+    width: 220px;
+    height: 20px;
+
+    display: flex;
+
     border-radius: 20px;
     overflow: hidden;
-    position: relative;
+
+    background: #e5e7eb;
+
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.15);
+}
+
+.barra-libre {
+    background: #10b981;
+    height: 100%;
+}
+
+.barra-ocupado {
+    background: #ef4444;
+    height: 100%;
+}
+
+.porcentaje {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
 }
 
 .barra-usado {
@@ -214,6 +235,20 @@ Administración de medios de respaldo
             <?php
                 $utilizado = (float)$d['utilizado'];
                 $disponible = (float)$d['tamano_total_gb'] - $utilizado;
+
+
+                $porcentajeLibre = 0;
+                $porcentajeOcupado = 0;
+
+                if ($d['tamano_total_gb'] > 0) {
+
+                    $porcentajeOcupado =
+                    ($utilizado * 100)
+                     / $d['tamano_total_gb'];
+
+                    $porcentajeLibre =
+                    100 - $porcentajeOcupado;
+                }
 
                 $porcentajeUso = 0;
 
@@ -291,15 +326,28 @@ if ($disponible >= 100) {
 
     <div class="barra-disco">
 
-       <div
-        class="barra-usado <?= $claseUso ?>"
-        style="width: <?= min($porcentajeUso, 100) ?>%;">
-    </div>
+        <div
+            class="barra-libre"
+            style="width: <?= $porcentajeLibre ?>%;">
+        </div>
+
+        <div
+            class="barra-ocupado"
+            style="width: <?= $porcentajeOcupado ?>%;">
+        </div>
 
     </div>
 
     <div class="porcentaje">
-        <?= number_format($porcentajeUso, 1) ?>%
+
+        Libre:
+        <?= number_format($porcentajeLibre,1) ?>%
+
+        |
+
+        Ocupado:
+        <?= number_format($porcentajeOcupado,1) ?>%
+
     </div>
 
 </td>
