@@ -119,6 +119,10 @@ th {
     font-weight: 600;
 }
 
+th:last-child,
+td:last-child {
+    text-align: center;
+}
 
 .disponible-ok {
     color: #10b981;
@@ -133,6 +137,38 @@ th {
 .disponible-critico {
     color: #ef4444;
     font-weight: 600;
+}
+
+.barra-disco {
+    width: 180px;
+    height: 18px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.barra-usado {
+    height: 100%;
+    transition: width .3s ease;
+}
+
+.uso-verde {
+    background: #10b981;
+}
+
+.uso-amarillo {
+    background: #f59e0b;
+}
+
+.uso-rojo {
+    background: #ef4444;
+}
+
+.porcentaje {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3px;
 }
 
 </style>
@@ -168,6 +204,7 @@ Administración de medios de respaldo
                 <th>Utilizado (GB)</th>
                 <th>Disponible (GB)</th>
                 <th>Observaciones</th>
+                <th>Uso</th>
             </tr>
         </thead>
         <tbody>
@@ -177,6 +214,30 @@ Administración de medios de respaldo
             <?php
                 $utilizado = (float)$d['utilizado'];
                 $disponible = (float)$d['tamano_total_gb'] - $utilizado;
+
+                $porcentajeUso = 0;
+
+                if ($d['tamano_total_gb'] > 0) {
+
+                $porcentajeUso =
+                 ($utilizado * 100)
+                / $d['tamano_total_gb'];
+
+                }
+
+                $claseUso = 'uso-verde';
+
+                if ($porcentajeUso >= 90) {
+
+                 $claseUso = 'uso-rojo';
+
+                } elseif ($porcentajeUso >= 70) {
+
+                $claseUso = 'uso-amarillo';
+
+                }
+
+
             ?>
 
 <tr>
@@ -225,6 +286,23 @@ if ($disponible >= 100) {
     <td>
         <?= htmlspecialchars($d['observaciones'] ?? '') ?>
     </td>
+
+<td>
+
+    <div class="barra-disco">
+
+       <div
+        class="barra-usado <?= $claseUso ?>"
+        style="width: <?= min($porcentajeUso, 100) ?>%;">
+    </div>
+
+    </div>
+
+    <div class="porcentaje">
+        <?= number_format($porcentajeUso, 1) ?>%
+    </div>
+
+</td>
 
 </tr>
 
