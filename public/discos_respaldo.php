@@ -28,10 +28,38 @@ $stmt = $pdo->query("
         d.tamano_total_gb,
         d.observaciones
 
-    ORDER BY d.nombre
+    ORDER BY d.iddisco
 ");
 
 $discos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$totalCapacidad = 0;
+$totalUtilizado = 0;
+
+foreach ($discos as $d) {
+
+    $totalCapacidad += $d['tamano_total_gb'];
+    $totalUtilizado += $d['utilizado'];
+
+}
+
+$totalLibre =
+    $totalCapacidad - $totalUtilizado;
+
+$porcentajeLibre = 0;
+$porcentajeOcupado = 0;
+
+if ($totalCapacidad > 0) {
+
+    $porcentajeLibre =
+        ($totalLibre * 100)
+        / $totalCapacidad;
+
+    $porcentajeOcupado =
+        ($totalUtilizado * 100)
+        / $totalCapacidad;
+}
+
 
 ?>
 
@@ -224,6 +252,55 @@ td:last-child {
     margin-top: 3px;
 }
 
+.resumen-capacidad {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.resumen-capacidad h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.barra-global {
+    width: 100%;
+    height: 28px;
+
+    display: flex;
+
+    border-radius: 30px;
+    overflow: hidden;
+
+    background: #e5e7eb;
+
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,.15);
+}
+
+.barra-global-libre {
+    background: linear-gradient(
+        to bottom,
+        #34d399,
+        #059669
+    );
+}
+
+.barra-global-ocupado {
+    background: linear-gradient(
+        to bottom,
+        #f87171,
+        #dc2626
+    );
+}
+
+.info-global {
+    margin-top: 12px;
+    font-weight: 600;
+}
+
 </style>
 
 </head>
@@ -244,6 +321,44 @@ Administración de medios de respaldo
 
 <div class="card">
 
+<div class="resumen-capacidad">
+
+    <h3>💾 Capacidad Global de Respaldos</h3>
+
+    <div class="barra-global">
+
+        <div
+            class="barra-global-libre"
+            style="width: <?= $porcentajeLibre ?>%;">
+        </div>
+
+        <div
+            class="barra-global-ocupado"
+            style="width: <?= $porcentajeOcupado ?>%;">
+        </div>
+
+    </div>
+
+    <div class="info-global">
+
+        Libre:
+        <?= number_format($porcentajeLibre,1) ?>%
+        (<?= number_format($totalLibre,2) ?> GB)
+
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+
+        Ocupado:
+        <?= number_format($porcentajeOcupado,1) ?>%
+        (<?= number_format($totalUtilizado,2) ?> GB)
+
+        <br><br>
+
+        Capacidad Total:
+        <?= number_format($totalCapacidad,2) ?> GB
+
+    </div>
+
+</div>
    
 <a href="discos_respaldo_nuevo.php" class="btn-nuevo">+ Nuevo Disco</a>
 
