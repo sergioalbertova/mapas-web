@@ -65,12 +65,15 @@ body {
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-.main h2 {
+
+h2 {
     text-align: center;
     font-size: 28px;
     margin-bottom: 8px;
     font-weight: 600;
+    color: var(--text);
 }
+
 
 /* ============================
    CONTENIDO PRINCIPAL
@@ -117,16 +120,29 @@ label {
 input {
     width: 100%;
     padding: 12px;
+
     margin-top: 6px;
     margin-bottom: 18px;
 
     border-radius: 8px;
-    border: 1px solid var(--sidebar-hover);
+
+    border: 1px solid #9ca3af;
 
     background: var(--card-bg);
     color: var(--text);
 
     box-sizing: border-box;
+
+    transition: .2s;
+}
+
+input:focus {
+    outline: none;
+
+    border-color: #00AEEF;
+
+    box-shadow:
+        0 0 0 3px rgba(0,174,239,.20);
 }
 
 button {
@@ -154,15 +170,21 @@ button:hover {
 
 .form-container {
     background: var(--card-bg);
-    padding: 30px;
-    border-radius: 12px;
-    border: 1px solid rgba(0,0,0,.08);
+    padding: 35px;
+    border-radius: 14px;
+
+    border: 1px solid rgba(0,0,0,.10);
+
     box-shadow: 0 4px 20px var(--shadow);
 
     width: 100%;
-    max-width: 500px;
+    max-width: 550px;
 
     margin: 40px auto;
+}
+
+body.dark .form-container {
+    border: 1px solid rgba(255,255,255,.12);
 }
 
 
