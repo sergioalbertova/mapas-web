@@ -72,10 +72,13 @@ body {
    ============================ */
 
 .main {
-     margin-left: 240px;
+    margin-left: 240px;
     padding: 20px 40px;
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 
@@ -95,7 +98,7 @@ body {
     width: 100%;
     max-width: 500px;
 
-    margin: 0 auto;
+     margin: 30px auto 0 auto;
 }
 
 
@@ -171,11 +174,11 @@ button:hover {
 
     <div class="form-container">
 
-        <h1>Cambiar contraseña</h1>
+        <h2>Cambiar contraseña</h2>
         <div class="subtitle">
              Actualiza tu contraseña de acceso al sistema
         </div>
-
+<div class="form-container">
         <form action="guardar_password.php" method="POST">
 
             <label>Contraseña actual</label>
@@ -190,7 +193,7 @@ button:hover {
             <button type="submit">Actualizar contraseña</button>
 
         </form>
-
+ </div>
     </div>
 </div>
 
