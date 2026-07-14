@@ -84,23 +84,30 @@ body {
 }
 
 .titulo {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 600;
     margin-bottom: 5px;
+    text-align: center;
 }
 
 .subtitulo {
     opacity: 0.7;
     margin-bottom: 25px;
+    text-align: center;
 }
 
 .form-card {
     background: var(--card-bg);
-    padding: 20px;
+    padding: 25px;
     border-radius: 14px;
     box-shadow: 0 10px 25px var(--shadow);
+
+    width: 100%;
     max-width: 600px;
+
+    margin: 0 auto;
 }
+
 
 label {
     display: block;
@@ -138,6 +145,20 @@ input {
     text-decoration: none;
     display: inline-block;
 }
+
+.botones {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.contenedor {
+    padding: 20px;
+
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 </style>
 
 </head>
@@ -175,11 +196,11 @@ input {
     <input type="number" name="ubimapa2">
 
      
-
+    <div class="botones">
 
     <button class="btn-guardar">Guardar usuario</button>
     <a href="activeuser_admin.php" class="btn-regresar">Regresar</a>
-
+    </div>
 </form>
 
 
