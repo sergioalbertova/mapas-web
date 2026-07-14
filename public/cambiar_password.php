@@ -65,7 +65,12 @@ body {
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-
+.main h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
 
 /* ============================
    CONTENIDO PRINCIPAL
@@ -101,12 +106,6 @@ body {
      margin: 30px auto 0 auto;
 }
 
-
-h1 {
-    text-align: center;
-    margin-bottom: 10px;
-    color: var(--text);
-}
 
 .subtitle {
     text-align: center;
