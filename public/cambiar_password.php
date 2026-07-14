@@ -72,12 +72,10 @@ body {
    ============================ */
 
 .main {
-    margin-left: 240px;
-    padding: 30px 40px;
+     margin-left: 240px;
+    padding: 20px 40px;
     width: calc(100% - 240px);
-
-    display: flex;
-    flex-direction: column;
+    transition: margin-left 0.25s ease;
 }
 
 
