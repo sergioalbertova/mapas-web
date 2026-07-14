@@ -80,10 +80,6 @@ body {
     margin-left: 240px;
     padding: 20px 40px;
     width: calc(100% - 240px);
-
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
 }
 
 
@@ -156,6 +152,20 @@ button:hover {
 }
 
 
+.form-container {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.08);
+    box-shadow: 0 4px 20px var(--shadow);
+
+    width: 100%;
+    max-width: 500px;
+
+    margin: 40px auto;
+}
+
+
 </style>
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
@@ -177,7 +187,7 @@ button:hover {
         <div class="subtitle">
              Actualiza tu contraseña de acceso al sistema
         </div>
-<div class="form-container">
+
         <form action="guardar_password.php" method="POST">
 
             <label>Contraseña actual</label>
@@ -192,7 +202,7 @@ button:hover {
             <button type="submit">Actualizar contraseña</button>
 
         </form>
- </div>
+
     </div>
 </div>
 
