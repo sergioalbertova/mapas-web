@@ -186,6 +186,9 @@ body.dark .selected-row {
 <div class="main">
 <?php require "topbar.php"; ?>
     <div class="search-box">
+        <br>
+         <h3>Incidentes para ITIL</h3>
+         <br>
         <label for="search">Buscar:</label>
         <input type="text" id="search" placeholder="Escribe parte de cualquier palabra (ej: bit, memoria, vpn, licencia)">
     </div>
