@@ -209,6 +209,7 @@ body.dark .itil-topbar {
 }
 
 
+
 </style>
 
 </head>
@@ -330,6 +331,6 @@ if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 </script>
-
+<script src="theme.js"></script>
 </body>
 </html>
