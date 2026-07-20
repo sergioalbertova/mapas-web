@@ -46,15 +46,35 @@ if (
 /* Sidebar colapsable */
 function toggleSidebar() {
 
-    const sidebar = document.getElementById("sidebar");
+    console.log("Entró a toggleSidebar");
 
-    if (!sidebar) return;
+    const sidebar =
+        document.getElementById("sidebar");
+
+    console.log("Sidebar:", sidebar);
+
+    if (!sidebar) {
+
+        console.log("No encontró sidebar");
+        return;
+
+    }
 
     sidebar.classList.toggle("collapsed");
+
+    console.log(
+        "Estado:",
+        sidebar.classList.contains("collapsed")
+    );
 
     localStorage.setItem(
         "sidebarCollapsed",
         sidebar.classList.contains("collapsed")
+    );
+
+    console.log(
+        "Guardado:",
+        localStorage.getItem("sidebarCollapsed")
     );
 
 }

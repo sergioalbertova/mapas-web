@@ -56,7 +56,7 @@
             </a>
 
              <span class="tooltip">
-                Mapeo de nodos
+                Calendario
             </span>
 
 
