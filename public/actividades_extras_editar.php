@@ -162,7 +162,8 @@ textarea {
 }
 
 </style>
-
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 </head>
 
 <body>
