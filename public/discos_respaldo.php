@@ -323,7 +323,15 @@ Administración de medios de respaldo
 
 <div class="resumen-capacidad">
 
-    <h3>💾 Capacidad Global de Respaldos</h3>
+    <h3 class="titulo-storage">
+
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C7 2 3 3.8 3 6v12c0 2.2 4 4 9 4s9-1.8 9-4V6c0-2.2-4-4-9-4zm0 2c4.4 0 7 .9 7 2s-2.6 2-7 2-7-.9-7-2 2.6-2 7-2z"/>
+    </svg>
+
+    Capacidad Global de Respaldos
+
+</h3>
 
     <div class="barra-global">
 
