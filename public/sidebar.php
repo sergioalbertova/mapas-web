@@ -27,6 +27,11 @@
                 </svg>
                 <span class="nav-text">Incidentes / Apoyos</span>
             </a>
+
+         <span class="tooltip">
+                Incidentes / Apoyos
+         </span>
+
         </li>
 
         <li class="nav-item">
@@ -36,6 +41,10 @@
                 </svg>
                 <span class="nav-text">Mapeo de nodos</span>
             </a>
+            <span class="tooltip">
+                Mapeo de nodos
+         </span>
+
         </li>
 
         <li class="nav-item">
@@ -45,6 +54,12 @@
                 </svg>
                 <span class="nav-text">Calendario</span>
             </a>
+
+             <span class="tooltip">
+                Mapeo de nodos
+            </span>
+
+
         </li>
 
         <li class="nav-item">
@@ -54,6 +69,12 @@
                 </svg>
                 <span class="nav-text">Incidentes TI</span>
             </a>
+
+             <span class="tooltip">
+                Incidentes TI
+         </span>
+
+
         </li>
 
 
@@ -66,6 +87,10 @@
                 </svg>
                 <span class="nav-text">Actividades Extras</span>
             </a>
+        <span class="tooltip">
+                Actividades Extras
+         </span>
+
         </li>
 
        <li class="nav-item submenu">
@@ -79,6 +104,10 @@
         <span class="nav-text">Respaldos</span>
 
     </a>
+
+        <span class="tooltip">
+                Respaldos
+         </span>
 
     <ul class="submenu-items">
 
@@ -115,6 +144,11 @@
                     </svg>
                     <span class="nav-text">Usuarios</span>
                 </a>
+
+                <span class="tooltip">
+                Usuarios
+                </span>
+
             </li>
        
 
@@ -126,6 +160,11 @@
                 </svg>
                 <span class="nav-text">Cambiar contraseña</span>
             </a>
+
+             <span class="tooltip">
+               Cambiar contraseña
+            </span>
+
         </li>
 
        
@@ -139,6 +178,11 @@
                 </svg>
                 <span class="nav-text">Cerrar sesión</span>
             </a>
+
+            <span class="tooltip">
+              Cerrar sesión
+            </span>
+
         </li>
 
     </ul>
