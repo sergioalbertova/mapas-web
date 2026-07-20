@@ -63,10 +63,7 @@ body {
     width: calc(100% - 240px);
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
-.sidebar.collapsed ~ .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
-}
+
 
 /* BUSCADOR */
 .search-box {
@@ -174,9 +171,12 @@ body.dark .selected-row {
     font-weight: bold;
 }
 </style>
-</head>
+
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
+
+</head>
+
 <body>
 
 <!-- SIDEBAR -->
@@ -298,6 +298,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
+<script src="theme.js"></script>
 </body>
 </html>
