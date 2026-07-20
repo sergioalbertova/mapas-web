@@ -32,12 +32,29 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btn) {
         btn.textContent = document.body.classList.contains("dark") ? "🔆" : "◑";
     }
+
+    const sidebar = document.getElementById("sidebar");
+
+if (
+    sidebar &&
+    localStorage.getItem("sidebarCollapsed") === "true"
+) {
+    sidebar.classList.add("collapsed");
+}
 });
 
 /* Sidebar colapsable */
 function toggleSidebar() {
+
     const sidebar = document.getElementById("sidebar");
+
     if (!sidebar) return;
 
     sidebar.classList.toggle("collapsed");
+
+    localStorage.setItem(
+        "sidebarCollapsed",
+        sidebar.classList.contains("collapsed")
+    );
+
 }

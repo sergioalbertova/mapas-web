@@ -13,6 +13,11 @@
                 </svg>
                 <span class="nav-text">Inicio</span>
             </a>
+            
+            <span class="tooltip">
+                Inicio
+         </span>
+
         </li>
 
         <li class="nav-item">

@@ -154,3 +154,8 @@
     color: #00AEEF;
     opacity: 1;
 }
+
+#sidebar.collapsed ~ .main {
+    margin-left: 70px !important;
+    width: calc(100% - 70px) !important;
+}
