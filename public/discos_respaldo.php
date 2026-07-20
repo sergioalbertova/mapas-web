@@ -327,29 +327,32 @@ Administración de medios de respaldo
 
     <div class="barra-global">
 
-        <div
-            class="barra-global-libre"
-            style="width: <?= $porcentajeLibre ?>%;">
-        </div>
+        
 
         <div
             class="barra-global-ocupado"
             style="width: <?= $porcentajeOcupado ?>%;">
         </div>
 
+        <div
+            class="barra-global-libre"
+            style="width: <?= $porcentajeLibre ?>%;">
+        </div>
+
     </div>
 
     <div class="info-global">
 
-        Libre:
-        <?= number_format($porcentajeLibre,1) ?>%
-        (<?= number_format($totalLibre,2) ?> GB)
 
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-
-        Ocupado:
+        🔴 Ocupado:
         <?= number_format($porcentajeOcupado,1) ?>%
         (<?= number_format($totalUtilizado,2) ?> GB)
+
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+
+         🟢 Libre:
+        <?= number_format($porcentajeLibre,1) ?>%
+        (<?= number_format($totalLibre,2) ?> GB)
 
         <br><br>
 
@@ -474,26 +477,26 @@ if ($disponible >= 100) {
     <div class="barra-disco">
 
         <div
-            class="barra-libre"
-            style="width: <?= $porcentajeLibre ?>%;">
+            class="barra-ocupado"
+            style="width: <?= $porcentajeOcupado ?>%;">
         </div>
 
         <div
-            class="barra-ocupado"
-            style="width: <?= $porcentajeOcupado ?>%;">
+            class="barra-libre"
+            style="width: <?= $porcentajeLibre ?>%;">
         </div>
 
     </div>
 
     <div class="porcentaje">
 
-        Libre:
-        <?= number_format($porcentajeLibre,1) ?>%
-
-        |
-
         Ocupado:
         <?= number_format($porcentajeOcupado,1) ?>%
+            
+        |
+
+        Libre:
+        <?= number_format($porcentajeLibre,1) ?>%
 
     </div>
 
