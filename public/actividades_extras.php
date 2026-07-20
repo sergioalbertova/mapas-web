@@ -46,6 +46,12 @@ function safe($v) {
     --text: #1F2933;
     --card-bg: #FFFFFF;
     --border: #ddd;
+
+    
+ --sidebar-bg: #FFFFFF;
+    --sidebar-text: #1F2933;
+    --sidebar-border: rgba(0,0,0,0.10);
+
 }
 
 body.dark {
@@ -53,6 +59,12 @@ body.dark {
     --text: #E5E7EB;
     --card-bg: #1f2937;
     --border: rgba(255,255,255,0.15);
+
+    
+--sidebar-bg: #020617;
+    --sidebar-text: #E5E7EB;
+    --sidebar-border: rgba(255,255,255,0.10);
+
 }
 
 /* BASE */
