@@ -161,16 +161,11 @@ body {
 /* MAIN                      */
 /* ========================= */
 .main {
-    margin-left: 240px;
+
     margin-top: 140px;
 
     padding: 20px 40px;
 
-    width: calc(100% - 240px);
-
-    transition:
-        margin-left 0.25s ease,
-        width 0.25s ease;
 }
 
 
@@ -229,6 +224,14 @@ body.dark .itil-topbar {
     transition:
         margin-left .25s ease,
         width .25s ease;
+
+}
+
+#sidebar.collapsed ~ .main-shell {
+
+    margin-left: 70px;
+
+    width: calc(100% - 70px);
 
 }
 
