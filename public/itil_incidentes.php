@@ -108,18 +108,14 @@ body {
 /* ========================= */
 .itil-topbar {
     position: fixed;
-    top: 60px !important; /* BAJADO PARA QUE NO SE META */
+    top: 70px;
     left: 240px;
     right: 0;
     height: 55px;
-    background: var(--card-bg);
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 0 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2500 !important;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    z-index: 1500;    
+    border-radius: 12px;
+    margin: 10px 20px 0 20px;
+    width: auto;
 }
 
 #sidebar.collapsed ~ .itil-topbar {
@@ -163,7 +159,7 @@ body {
 /* ========================= */
 .main {
     margin-left: 240px;
-    margin-top: 120px;
+    margin-top: 140px;
 
     padding: 20px 40px;
 
