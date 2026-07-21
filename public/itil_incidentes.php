@@ -111,7 +111,7 @@ body {
     align-items: center;
     gap: 18px;
     position: fixed;
-    top: 70px;
+    top: 65px;
     left: 240px;
     right: 0;
     height: 55px;
@@ -162,9 +162,9 @@ body {
 /* ========================= */
 .main {
 
-    margin-top: 140px;
+    margin-top: 110px;
 
-    padding: 20px 40px;
+    padding: 15px 20px;
 
 }
 
