@@ -27,6 +27,7 @@ $stmt2 = $pdo->query("
     ORDER BY tituloincidente
 ");
 $catalogo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+$paginaActual = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
