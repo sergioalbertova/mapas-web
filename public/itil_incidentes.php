@@ -122,6 +122,11 @@ body {
     border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
+#sidebar.collapsed ~ .itil-topbar {
+    left: 70px;
+}
+
+
 .sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
