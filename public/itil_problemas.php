@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
 $id = $_SESSION['user_id'];
@@ -24,17 +24,15 @@ ORDER BY p.fecha_creacion DESC
 ";
 $stmt = $pdo->query($sql);
 $problemas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$paginaActual = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Problemas ITIL</title>
-
+<link rel="icon" href="apoyo2.png" type="image/x-icon">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="stylesheet" href="sidebar.css">
-<link rel="stylesheet" href="topbar.css">
 
 <style>
 /* ========================= */
@@ -42,25 +40,38 @@ $problemas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 /* ========================= */
 :root {
     --bg: #F4F7FA;
-    --sidebar-bg: #FFFFFF;
-    --sidebar-hover: #E8EEF5;
-    --card-bg: #FFFFFF;
     --text: #1F2933;
-    --subtext: #6B7280;
-    --primary: #0054A6;
-    --primary-hover: #003F7D;
+
+    --topbar-bg: rgba(255,255,255,0.85);
+    --topbar-text: #1F2933;
+    --topbar-border: rgba(0,0,0,0.1);
+
+    --sidebar-bg: #FFFFFF;
+    --sidebar-text: #1F2933;
+    --sidebar-border: rgba(0,0,0,0.1);
+
+    --card-bg: #FFFFFF;
+    --card-text: #1F2933;
+
+    --accent: #00AEEF;
     --shadow: rgba(0,0,0,0.08);
 }
 
 body.dark {
-    --bg: #1A1D21;
-    --sidebar-bg: #24272C;
-    --sidebar-hover: #2F3338;
-    --card-bg: #2C2F34;
+    --bg: #0f172a;
     --text: #E5E7EB;
-    --subtext: #9CA3AF;
-    --primary: #4FC3F7;
-    --primary-hover: #81D4FA;
+
+    --topbar-bg: rgba(17,24,39,0.85);
+    --topbar-text: #E5E7EB;
+    --topbar-border: rgba(255,255,255,0.1);
+
+    --sidebar-bg: #020617;
+    --sidebar-text: #E5E7EB;
+    --sidebar-border: rgba(255,255,255,0.1);
+
+    --card-bg: #1f2937;
+    --card-text: #E5E7EB;
+
     --shadow: rgba(0,0,0,0.45);
 }
 
@@ -73,27 +84,23 @@ body {
     background: var(--bg);
     color: var(--text);
     display: flex;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 /* ========================= */
 /* TOPBAR GENERAL (PRIMERO) */
 /* ========================= */
-.topbar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    z-index: 3000 !important;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    box-shadow: 0 2px 8px var(--shadow);
-}
 
-#sidebar.collapsed ~ .topbar {
-    left: 70px;
+
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 
@@ -101,21 +108,30 @@ body {
 /* TOPBAR ITIL (DEBAJO)     */
 /* ========================= */
 .itil-topbar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
     position: fixed;
-    top: 60px !important; /* DEBAJO DEL TOPBAR GENERAL */
+    top: 65px;
     left: 240px;
     right: 0;
     height: 55px;
-    background: var(--sidebar-bg);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 0 25px;
-    box-shadow: 0 2px 8px var(--shadow);
-    z-index: 2500 !important;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    z-index: 1500;    
+    border-radius: 12px;
+    margin: 10px 20px 0 20px;
+    width: auto;
 }
 
+#sidebar.collapsed ~ .itil-topbar {
+    left: 70px;
+}
+
+#sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+/* ESTILO PROFESIONAL DEL MENÚ ITIL */
 .itil-topbar a {
     text-decoration: none;
     color: var(--text);
@@ -145,24 +161,25 @@ body {
 /* MAIN                      */
 /* ========================= */
 .main {
-    margin-left: 240px;
-    width: calc(100% - 240px);
-    margin-top: 125px !important; /* 55px general + 60px ITIL */
-    padding: 20px;
-    transition: margin-left 0.25s ease, width 0.25s ease;
+
+    margin-top: 110px;
+
+    padding: 15px 20px;
+
 }
+
 
 /* ============================================================
    CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
    ============================================================ */
-#sidebar.collapsed ~ * .itil-topbar {
-    left: 70px !important;
+#sidebar.collapsed ~ .main-shell {
+
+    margin-left: 70px;
+
+    width: calc(100% - 70px);
+
 }
 
-#sidebar.collapsed ~ * .main {
-    margin-left: 70px !important;
-    width: calc(100% - 70px) !important;
-}
 
 /* ========================= */
 /* TARJETAS                  */
@@ -185,14 +202,60 @@ body.dark .itil-topbar {
     background: rgba(36, 39, 44, 0.65) !important;
 }
 
+.itil-topbar a.active {
 
+    background: #00AEEF;
+
+    color: white;
+
+    box-shadow:
+        0 3px 10px rgba(0,174,239,.25);
+
+}
+
+.itil-topbar a.active svg {
+
+    fill: white;
+
+    opacity: 1;
+
+}
+
+.itil-topbar a.active {
+
+    background: #00AEEF;
+    color: white;
+
+    border-bottom: 3px solid #ffffff;
+}
+
+.itil-topbar a.active {
+
+    background: #00AEEF;
+
+    color: white;
+
+    box-shadow:
+        0 3px 10px rgba(0,174,239,.25);
+
+}
+
+.itil-topbar a.active svg {
+
+    fill: white;
+
+    opacity: 1;
+
+}
 </style>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 </head>
 
 <body>
 
 <?php require "sidebar.php"; ?>
-
+<div class="main-shell">
 <!-- === TOPBAR GENERAL (PRIMERO) === -->
 <?php require "topbar.php"; ?>
 
@@ -291,7 +354,8 @@ if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
 }
 </script>
-
+</div>
+<script src="theme.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
