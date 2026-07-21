@@ -126,11 +126,11 @@ body {
     left: 70px;
 }
 
-
-.sidebar.collapsed ~ .main {
+#sidebar.collapsed ~ .main {
     margin-left: 70px;
     width: calc(100% - 70px);
 }
+
 
 /* ESTILO PROFESIONAL DEL MENÚ ITIL */
 .itil-topbar a {
@@ -163,15 +163,17 @@ body {
 /* ========================= */
 .main {
     margin-left: 240px;
+    margin-top: 120px;
+
     padding: 20px 40px;
+
     width: calc(100% - 240px);
-    transition: margin-left 0.25s ease;
+
+    transition:
+        margin-left 0.25s ease,
+        width 0.25s ease;
 }
 
-.sidebar.collapsed ~ .topbar + .itil-topbar + .main {
-    margin-left: 70px;
-    width: calc(100% - 70px);
-}
 
 /* ========================= */
 /* TABLA                     */
