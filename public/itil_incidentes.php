@@ -30,6 +30,7 @@ ORDER BY i.id DESC
 ";
 $stmt = $pdo->query($sql);
 $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$paginaActual = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -255,6 +256,33 @@ body.dark .itil-topbar {
 
 }
 
+.itil-topbar a.active {
+
+    background: #00AEEF;
+    color: white;
+
+    border-bottom: 3px solid #ffffff;
+}
+
+.itil-topbar a.active {
+
+    background: #00AEEF;
+
+    color: white;
+
+    box-shadow:
+        0 3px 10px rgba(0,174,239,.25);
+
+}
+
+.itil-topbar a.active svg {
+
+    fill: white;
+
+    opacity: 1;
+
+}
+
 </style>
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
@@ -272,7 +300,7 @@ body.dark .itil-topbar {
 <!-- === TOPBAR ITIL (DEBAJO DEL GENERAL) === -->
 <div class="itil-topbar">
 
-    <a href="itil_incidentes.php"  class="active">>
+    <a href="itil_incidentes.php"  class="<?= $paginaActual == 'itil_incidentes.php' ? 'active' : '' ?>">
         <svg><path d="M4 4h16v4H4V4zm0 6h16v10H4V10z"/></svg>
         Incidentes
     </a>
