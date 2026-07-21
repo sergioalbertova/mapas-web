@@ -305,32 +305,32 @@ body.dark .itil-topbar {
         Incidentes
     </a>
 
-    <a href="itil_incidente_nuevo.php">
+    <a href="itil_incidente_nuevo.php"   class="<?= $paginaActual == 'itil_incidente_nuevo.php' ? 'active' : '' ?>">>
         <svg><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Nuevo
     </a>
 
-    <a href="itil_problemas.php">
+    <a href="itil_problemas.php" class="<?= $paginaActual == 'itil_problemas.php' ? 'active' : '' ?>">>
         <svg><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Problemas
     </a>
 
-    <a href="itil_catalogo.php">
+    <a href="itil_catalogo.php"  class="<?= $paginaActual == 'itil_catalogo.php' ? 'active' : '' ?>">>
         <svg><path d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>
         Catálogo Incidentes
     </a>
 
-    <a href="itil_solicitudes.php">
+    <a href="itil_solicitudes.php" class="<?= $paginaActual == 'itil_solicitudes.php' ? 'active' : '' ?>">>
         <svg><rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         En Proceso
     </a>
 
-    <a href="itil_sla.php">
+    <a href="itil_sla.php" class="<?= $paginaActual == 'itil_sla.php' ? 'active' : '' ?>">>
         <svg><path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         SLA
     </a>
 
-    <a href="itil_estadisticas.php">
+    <a href="itil_estadisticas.php"  class="<?= $paginaActual == 'itil_estadisticas.php' ? 'active' : '' ?>">>
         <svg><path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         Estadísticas
     </a>
