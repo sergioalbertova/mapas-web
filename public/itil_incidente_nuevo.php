@@ -74,8 +74,9 @@ body {
 
 
 
-.sidebar.collapsed ~ .topbar {
-    left: 70px;
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 
