@@ -96,18 +96,11 @@ body {
 /* ========================= */
 /* TOPBAR GENERAL (PRIMERO) */
 /* ========================= */
-.topbar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    z-index: 3000 !important;
-    background: var(--sidebar-bg);
-}
 
-.sidebar.collapsed ~ .topbar {
-    left: 70px;
+
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 /* ========================= */
