@@ -39,7 +39,6 @@ $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <link rel="icon" href="apoyo2.png" type="image/x-icon">
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
-
 <style>
 
 /* ========================= */
@@ -47,25 +46,38 @@ $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 /* ========================= */
 :root {
     --bg: #F4F7FA;
-    --sidebar-bg: #FFFFFF;
-    --sidebar-hover: #E8EEF5;
-    --card-bg: #FFFFFF;
     --text: #1F2933;
-    --subtext: #6B7280;
-    --primary: #0054A6;
-    --primary-hover: #003F7D;
+
+    --topbar-bg: rgba(255,255,255,0.85);
+    --topbar-text: #1F2933;
+    --topbar-border: rgba(0,0,0,0.1);
+
+    --sidebar-bg: #FFFFFF;
+    --sidebar-text: #1F2933;
+    --sidebar-border: rgba(0,0,0,0.1);
+
+    --card-bg: #FFFFFF;
+    --card-text: #1F2933;
+
+    --accent: #00AEEF;
     --shadow: rgba(0,0,0,0.08);
 }
 
 body.dark {
-    --bg: #1A1D21;
-    --sidebar-bg: #24272C;
-    --sidebar-hover: #2F3338;
-    --card-bg: #2C2F34;
+    --bg: #0f172a;
     --text: #E5E7EB;
-    --subtext: #9CA3AF;
-    --primary: #00AEEF;
-    --primary-hover: #0088C0;
+
+    --topbar-bg: rgba(17,24,39,0.85);
+    --topbar-text: #E5E7EB;
+    --topbar-border: rgba(255,255,255,0.1);
+
+    --sidebar-bg: #020617;
+    --sidebar-text: #E5E7EB;
+    --sidebar-border: rgba(255,255,255,0.1);
+
+    --card-bg: #1f2937;
+    --card-text: #E5E7EB;
+
     --shadow: rgba(0,0,0,0.45);
 }
 
@@ -78,6 +90,7 @@ body {
     background: var(--bg);
     color: var(--text);
     display: flex;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* ========================= */
@@ -116,8 +129,9 @@ body {
     border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.sidebar.collapsed ~ .itil-topbar {
-    left: 70px;
+.sidebar.collapsed ~ .main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 /* ESTILO PROFESIONAL DEL MENÚ ITIL */
@@ -151,10 +165,9 @@ body {
 /* ========================= */
 .main {
     margin-left: 240px;
+    padding: 20px 40px;
     width: calc(100% - 240px);
-    margin-top: 125px !important; /* 55 + 60 */
-    padding: 25px;
-    transition: margin-left 0.25s ease, width 0.25s ease;
+    transition: margin-left 0.25s ease;
 }
 
 .sidebar.collapsed ~ .topbar + .itil-topbar + .main {
@@ -211,7 +224,8 @@ body.dark .itil-topbar {
 
 
 </style>
-
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="topbar.css">
 </head>
 
 <body>
