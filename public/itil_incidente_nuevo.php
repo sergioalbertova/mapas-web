@@ -72,25 +72,7 @@ body {
     display: flex;
 }
 
-/* ========================= */
-/* TOPBAR GENERAL (PRIMERO) */
-/* ========================= */
-.topbar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 240px;
-    right: 0;
-    height: 55px;
-    z-index: 3000 !important;
-    background: var(--sidebar-bg);
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 20px;
-    box-shadow: 0 2px 8px var(--shadow);
-}
 
 .sidebar.collapsed ~ .topbar {
     left: 70px;
