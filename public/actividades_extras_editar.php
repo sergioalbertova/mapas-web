@@ -161,6 +161,28 @@ textarea {
     cursor: pointer;
 }
 
+.info-box {
+    padding: 15px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-label {
+    min-width: 75px;
+    font-weight: 600;
+}
+
 </style>
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
@@ -179,26 +201,39 @@ textarea {
 
 <div class="form-card">
 
-<!-- 🔥 INFO DE TIEMPO -->
+<!-- INFO DE TIEMPO -->
 <div class="info-box">
-    <strong>Inicio:</strong> <?= $inicio ?><br>
 
-    <strong>Fin:</strong>
-    <?php if ($fin): ?>
-        <?= $fin ?>
-    <?php else: ?>
-        <span class="badge en-proceso">En proceso</span>
-    <?php endif; ?>
-    <br>
+    <div class="info-row">
+        <span class="info-label">Inicio:</span>
+        <span><?= $inicio ?></span>
+    </div>
 
-    <strong>Duración:</strong>
-    <?php
-    if ($extra['fecha_fin']) {
-        echo "⏱ " . round($extra['duracion_min'],1) . " min";
-    } else {
-        echo "⏳ En curso";
-    }
-    ?>
+    <div class="info-row">
+        <span class="info-label">Fin:</span>
+
+        <?php if ($fin): ?>
+            <span><?= $fin ?></span>
+        <?php else: ?>
+            <span class="badge en-proceso">En proceso</span>
+        <?php endif; ?>
+    </div>
+
+    <div class="info-row">
+        <span class="info-label">Duración:</span>
+
+        <span>
+            <?php
+            if ($extra['fecha_fin']) {
+                echo "⏱ " . round($extra['duracion_min'],1) . " min";
+            } else {
+                echo "⏳ En curso";
+            }
+            ?>
+        </span>
+
+    </div>
+
 </div>
 
 <form action="actividades_extras_editar_guardar.php"
