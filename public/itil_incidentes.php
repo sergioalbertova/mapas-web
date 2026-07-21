@@ -107,6 +107,9 @@ body {
 /* TOPBAR ITIL (DEBAJO)     */
 /* ========================= */
 .itil-topbar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
     position: fixed;
     top: 70px;
     left: 240px;
