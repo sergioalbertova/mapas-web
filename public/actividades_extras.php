@@ -42,28 +42,28 @@ function safe($v) {
 
 /* ✅ VARIABLES (IMPORTANTE para dark mode) */
 :root {
-    --bg: #F4F7FA;
-    --text: #1F2933;
+     --bg: #F4F7FA;
+    --sidebar-bg: #FFFFFF;
+    --sidebar-hover: #E8EEF5;
     --card-bg: #FFFFFF;
-    --border: #ddd;
-
-    
- --sidebar-bg: #FFFFFF;
-    --sidebar-text: #1F2933;
-    --sidebar-border: rgba(0,0,0,0.10);
+    --text: #1F2933;
+    --subtext: #6B7280;
+    --primary: #0054A6;
+    --primary-hover: #003F7D;
+    --shadow: rgba(0,0,0,0.08);
 
 }
 
 body.dark {
-    --bg: #0f172a;
+   --bg: #1A1D21;
+    --sidebar-bg: #24272C;
+    --sidebar-hover: #2F3338;
+    --card-bg: #2C2F34;
     --text: #E5E7EB;
-    --card-bg: #1f2937;
-    --border: rgba(255,255,255,0.15);
-
-    
---sidebar-bg: #020617;
-    --sidebar-text: #E5E7EB;
-    --sidebar-border: rgba(255,255,255,0.10);
+    --subtext: #9CA3AF;
+    --primary: #00AEEF;
+    --primary-hover: #0088C0;
+    --shadow: rgba(0,0,0,0.45);
 
 }
 
