@@ -220,7 +220,17 @@ body.dark .itil-topbar {
     background: rgba(36, 39, 44, 0.65) !important;
 }
 
+.main-shell {
 
+    margin-left: 240px;
+
+    width: calc(100% - 240px);
+
+    transition:
+        margin-left .25s ease,
+        width .25s ease;
+
+}
 
 </style>
 <link rel="stylesheet" href="sidebar.css">
@@ -230,6 +240,8 @@ body.dark .itil-topbar {
 <body>
 
 <?php require "sidebar.php"; ?>
+
+<div class="main-shell">
 
 <!-- === TOPBAR GENERAL (PRIMERO) === -->
 <?php require "topbar.php"; ?>
@@ -331,7 +343,7 @@ body.dark .itil-topbar {
     </div>
 </div>
 
-
+</div>
 <script src="theme.js"></script>
 </body>
 </html>
