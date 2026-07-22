@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . "/session_config.php";
-require __DIR__ . "/db.php";
+require "session_config.php";
+require "db.php";
 
 /* ============================================================
    OBTENER TÉCNICO LOGUEADO (usuario + nombre)
