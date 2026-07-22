@@ -58,6 +58,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
     --primary: #00AEEF;
     --primary-hover: #0088C0;
+    --sidebar-hover: #E8EEF5;
 
 }
 
@@ -80,6 +81,7 @@ body.dark {
 
     --primary: #00AEEF;
     --primary-hover: #0099D6;
+    --sidebar-hover: #2F3338;
 }
 
 
@@ -232,7 +234,7 @@ textarea {
 .lista {
     background: var(--card-bg);
     border: 1px solid var(--sidebar-hover);
-    borderbutton-radius: 6px;
+    border-radius: 6px;
     max-height: 200px;
     overflow-y: auto;
     display: none;
@@ -273,21 +275,6 @@ body.dark .itil-topbar {
 
 }
 
-.itil-topbar a.active svg {
-
-    fill: white;
-
-    opacity: 1;
-
-}
-
-.itil-topbar a.active {
-
-    background: #00AEEF;
-    color: white;
-
-    border-bottom: 3px solid #ffffff;
-}
 
 .main-shell {
 
