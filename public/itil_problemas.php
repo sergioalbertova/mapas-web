@@ -111,15 +111,13 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             display: flex;
             align-items: center;
             gap: 18px;
-            position: fixed;
-            top: 65px;
-            left: 240px;
-            right: 0;
-            height: 55px;
-            z-index: 1500;
-            border-radius: 12px;
-            margin: 10px 20px 0 20px;
-            width: auto;
+
+            top: 70px;
+            z-index: 2500;
+
+            margin-top: 10px;
+
+            padding-left: 20px;
         }
 
         #sidebar.collapsed~.itil-topbar {
