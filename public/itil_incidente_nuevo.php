@@ -12,6 +12,13 @@ $stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
 $stmt->execute([$tecnico_id]);
 $tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
 
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
+
 if ($tecnico) {
     $nombreTecnico = $tecnico['usuario'] . " - " . $tecnico['nombre'];
 } else {
