@@ -232,6 +232,42 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             opacity: 1;
 
         }
+
+        .card-itil {
+
+            background: var(--card-bg);
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            box-shadow: 0 8px 20px var(--shadow);
+
+        }
+
+        .table {
+
+            color: var(--text);
+
+        }
+
+        .table thead th {
+
+            background: var(--accent);
+
+            color: white;
+
+            border: none;
+
+            padding: 14px;
+
+        }
+
+        .table tbody td {
+
+            padding: 14px;
+
+        }
     </style>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="topbar.css">
@@ -300,45 +336,45 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         </div>
 
         <!-- === MAIN: LISTADO DE PROBLEMAS === -->
-        <div class="main">
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">Problemas ITIL</h4>
-                <a href="itil_problema_nuevo.php" class="btn btn-primary">+ Nuevo problema</a>
-            </div>
 
-            <div class="card-itil">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Título</th>
-                            <th>Estado</th>
-                            <th>Técnico responsable</th>
-                            <th>Fecha creación</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($problemas as $p): ?>
-                            <tr>
-                                <td><?= $p['id'] ?></td>
-                                <td><?= htmlspecialchars($p['titulo']) ?></td>
-                                <td><?= $p['estado'] ?></td>
-                                <td><?= $p['tecnico'] ?: 'Sin asignar' ?></td>
-                                <td><?= date('d/m/Y H:i', strtotime($p['fecha_creacion'])) ?></td>
-                                <td>
-                                    <a href="itil_problema_ver.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                        Ver
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Problemas ITIL</h4>
+            <a href="itil_problema_nuevo.php" class="btn btn-primary">+ Nuevo problema</a>
         </div>
+
+        <div class="card-itil">
+            <tableclass="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Estado</th>
+                        <th>Técnico responsable</th>
+                        <th>Fecha creación</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($problemas as $p): ?>
+                        <tr>
+                            <td><?= $p['id'] ?></td>
+                            <td><?= htmlspecialchars($p['titulo']) ?></td>
+                            <td><?= $p['estado'] ?></td>
+                            <td><?= $p['tecnico'] ?: 'Sin asignar' ?></td>
+                            <td><?= date('d/m/Y H:i', strtotime($p['fecha_creacion'])) ?></td>
+                            <td>
+                                <a href="itil_problema_ver.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                    Ver
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+                </table>
+        </div>
+
+
     </div>
     <!-- === SCRIPTS === -->
     <script>
