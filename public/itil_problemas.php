@@ -466,7 +466,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
                             <td><?= $p['tecnico'] ?: 'Sin asignar' ?></td>
                             <td><?= date('d/m/Y H:i', strtotime($p['fecha_creacion'])) ?></td>
                             <td>
-                                <a href="itil_problema_ver.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" class="btn-ver">
+                                <a href="itil_problema_ver.php?id=<?= $p['id'] ?>" class="btn-ver">
                                     Ver
                                 </a>
                             </td>
