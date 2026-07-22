@@ -88,9 +88,10 @@
 }
 
 /* Ocultar texto al colapsar */
-#sidebar.collapsed .nav-text {
+#sidebar.collapsed .nav-item > a > .nav-text {
     display: none;
 }
+
 
 /* Tooltip cuando está colapsado */
 #sidebar .tooltip {
@@ -274,23 +275,12 @@ body.dark .submenu-items a,
 
 }
 
-.sidebar.collapsed .submenu-items a,
-.sidebar.collapsed .submenu-items .nav-text {
-
-    color: #1F2933 !important;
-
-    opacity: 1 !important;
-
-    visibility: visible !important;
-
+#sidebar.collapsed .submenu-items .nav-text {
+    display: inline !important;
 }
 
-.dark .submenu-items a,
-.dark .submenu-items .nav-text {
-
-    color: #E5E7EB !important;
-
+#sidebar.collapsed .nav-item:not(.submenu) .nav-text {
+    display: none;
 }
-.dark .submenu-items li a {
-    color: #E5E7EB !important;
-}
+
+
