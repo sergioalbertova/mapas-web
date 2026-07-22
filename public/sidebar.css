@@ -159,3 +159,83 @@
     margin-left: 70px !important;
     width: calc(100% - 70px) !important;
 }
+
+/* =====================================
+   SUBMENU FLOTANTE AL COLAPSAR SIDEBAR
+   ===================================== */
+
+.sidebar.collapsed .submenu {
+    position: relative;
+}
+
+.sidebar.collapsed .submenu-items {
+
+    display: none;
+
+    position: absolute;
+
+    top: 0;
+
+    left: 70px;
+
+    min-width: 230px;
+
+    padding: 10px 0;
+
+    background: var(--sidebar-bg);
+
+    border: 1px solid var(--sidebar-border);
+
+    border-radius: 12px;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+
+    z-index: 9999;
+
+}
+
+/* Mostrar al pasar mouse */
+
+.sidebar.collapsed .submenu:hover .submenu-items {
+
+    display: block;
+
+}
+
+/* Estilo de enlaces */
+
+.sidebar.collapsed .submenu-items li {
+
+    list-style: none;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+.sidebar.collapsed .submenu-items a {
+
+    display: block;
+
+    padding: 12px 16px;
+
+    text-decoration: none;
+
+    color: var(--sidebar-text);
+
+    transition: .2s ease;
+
+}
+
+.sidebar.collapsed .submenu-items a:hover {
+
+    background: rgba(0,174,239,.12);
+
+}
+
+.sidebar:not(.collapsed) .submenu-items {
+    position: static;
+    box-shadow: none;
+    border: none;
+}
