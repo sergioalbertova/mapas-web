@@ -248,3 +248,30 @@ body.dark .submenu-items,
     border: 1px solid rgba(255,255,255,.10);
 
 }
+
+.sidebar.collapsed .submenu-items a {
+
+    color: #1F2933 !important;
+
+}
+
+body.dark .submenu-items a,
+.dark .submenu-items a {
+
+    color: #E5E7EB !important;
+
+}
+
+.sidebar.collapsed .submenu-items {
+
+    overflow: hidden;
+
+}
+
+.sidebar.collapsed .submenu-items a:hover {
+
+    background: rgba(0,174,239,.12);
+
+    color: #00AEEF !important;
+
+}
