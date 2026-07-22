@@ -452,7 +452,7 @@ body.dark .itil-topbar {
         </form>
     </div>
 </div>
-
+</div>
 <script>
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
@@ -528,7 +528,7 @@ selectTitulo.addEventListener("change", function() {
     [...selUrg.options].forEach(o => { o.selected = (o.value === urg); });
 });
 </script>
-</div>
+
 <script src="theme.js"></script>
 </body>
 </html>
