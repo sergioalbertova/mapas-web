@@ -305,6 +305,36 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             border-radius: 999px;
             font-weight: 600;
         }
+
+        td.estado-cell {
+            text-align: center;
+        }
+
+        .btn-ver {
+
+            background: rgba(0, 174, 239, .12);
+
+            color: #00AEEF;
+
+            border: 1px solid #00AEEF;
+
+            border-radius: 10px;
+
+            padding: 8px 14px;
+
+            font-weight: 600;
+
+            transition: .2s ease;
+
+        }
+
+        .btn-ver:hover {
+
+            background: #00AEEF;
+
+            color: white;
+
+        }
     </style>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="topbar.css">
@@ -399,7 +429,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
                             <td><?= $p['id'] ?></td>
                             <td><?= htmlspecialchars($p['titulo']) ?></td>
 
-                            <td>
+                            <td class="estado-cell"
 
                                 <?php
 
@@ -416,14 +446,14 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
                                 ?>
 
                                 <span class="<?= $clase ?>">
-                                    <?= htmlspecialchars($p['estado']) ?>
+                                <?= htmlspecialchars($p['estado']) ?>
                                 </span>
 
                             </td>
 
                             <td><?= $p['tecnico'] ?: 'Sin asignar' ?></td>
                             <td><?= date('d/m/Y H:i', strtotime($p['fecha_creacion'])) ?></td>
-                            <td>
+                            <td class="btn-ver">
                                 <a href="itil_problema_ver.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary">
                                     Ver
                                 </a>
