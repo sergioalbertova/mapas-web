@@ -323,6 +323,17 @@ body.dark .itil-topbar {
 
 }
 
+button {
+    padding: 10px 15px;
+    background: #0054A6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+button:hover {
+    background: #003f7d;
+}
 </style>
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
