@@ -55,6 +55,10 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
     --accent: #00AEEF;
     --shadow: rgba(0,0,0,0.08);
+
+    --primary: #00AEEF;
+    --primary-hover: #0088C0;
+
 }
 
 body.dark {
@@ -73,6 +77,9 @@ body.dark {
     --card-text: #E5E7EB;
 
     --shadow: rgba(0,0,0,0.45);
+
+    --primary: #00AEEF;
+    --primary-hover: #0099D6;
 }
 
 
@@ -323,17 +330,7 @@ body.dark .itil-topbar {
 
 }
 
-button {
-    padding: 10px 15px;
-    background: #0054A6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-button:hover {
-    background: #003f7d;
-}
+
 </style>
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
