@@ -159,19 +159,12 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* MAIN                      */
         /* ========================= */
         .main {
-
             margin-left: 240px;
-
             width: calc(100% - 240px);
-
-            margin-top: 110px;
-
             padding: 15px 20px;
-
             transition:
                 margin-left .25s ease,
                 width .25s ease;
-
         }
 
         #sidebar.collapsed~.main {
