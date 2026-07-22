@@ -96,7 +96,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             background: var(--bg);
             color: var(--text);
             display: flex;
-            transition: background 0.3s ease, color 0.3s ease;
+            /* transition: background 0.3s ease, color 0.3s ease; */
         }
 
         /* ========================= */
