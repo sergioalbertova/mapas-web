@@ -285,7 +285,15 @@ body.dark .itil-topbar {
 
 .main-shell {
 
-   width: 100%;
+   
+margin-left: 240px;
+
+    width: calc(100% - 240px);
+
+    transition:
+        margin-left .25s ease,
+        width .25s ease;
+
 
 }
 
