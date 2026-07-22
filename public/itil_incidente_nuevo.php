@@ -318,6 +318,10 @@ body.dark .itil-topbar {
 
 }
 
+.topbar {
+    border-left: 1px solid var(--topbar-border);
+}
+
 
 </style>
 <link rel="stylesheet" href="sidebar.css">
