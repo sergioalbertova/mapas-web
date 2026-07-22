@@ -183,8 +183,6 @@ body {
     background: var(--card-bg);
     padding: 25px;
     border-radius: 12px;
-    border: 1px solid var(--sidebar-border);
-    box-shadow: 0 4px 20px var(--shadow);
     box-shadow: 0 3px 10px var(--shadow);
     max-width: 900px;
     margin: auto;
@@ -214,14 +212,7 @@ label {
     display: block; 
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;    
-    border-color: var(--accent);
-    box-shadow:
-        0 0 0 3px rgba(0,174,239,.15);
-
+input, select, textarea {
     width: 100%; 
     padding: 10px; 
     margin-top: 6px;
@@ -327,12 +318,6 @@ body.dark .itil-topbar {
 }
 
 
-.titulo-pagina {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-
 </style>
 <link rel="stylesheet" href="sidebar.css">
 <link rel="stylesheet" href="topbar.css">
@@ -386,9 +371,7 @@ body.dark .itil-topbar {
 
 <!-- ====== MAIN ====== -->
 <div class="main">
-   <h2 class="titulo-pagina">
-    Registrar nuevo incidente
-    </h2>
+    <center><h2>Registrar nuevo incidente</h2></center>
 
     <div class="form-box">
         <form action="itil_incidente_guardar.php" method="POST">
