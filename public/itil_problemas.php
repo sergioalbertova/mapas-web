@@ -33,7 +33,9 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
     <meta charset="UTF-8">
     <title>Problemas ITIL</title>
     <link rel="icon" href="apoyo2.png" type="image/x-icon">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 
     <style>
         /* ========================= */
@@ -187,16 +189,14 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* ========================= */
 
 
+
         .itil-topbar a.active {
-
             background: #00AEEF;
-
             color: white;
-
-            box-shadow:
-                0 3px 10px rgba(0, 174, 239, .25);
-
+            border-bottom: 3px solid #fff;
+            box-shadow: 0 3px 10px rgba(0, 174, 239, .25);
         }
+
 
         .itil-topbar a.active svg {
 
@@ -206,32 +206,8 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
         }
 
-        .itil-topbar a.active {
 
-            background: #00AEEF;
-            color: white;
 
-            border-bottom: 3px solid #ffffff;
-        }
-
-        .itil-topbar a.active {
-
-            background: #00AEEF;
-
-            color: white;
-
-            box-shadow:
-                0 3px 10px rgba(0, 174, 239, .25);
-
-        }
-
-        .itil-topbar a.active svg {
-
-            fill: white;
-
-            opacity: 1;
-
-        }
 
         .card-itil {
 
@@ -267,6 +243,38 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
             padding: 14px;
 
+        }
+
+        .header-itil {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 16px var(--shadow);
+        }
+
+        .card-itil {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 8px 20px var(--shadow);
+        }
+
+        .table {
+            margin-bottom: 0;
+            color: var(--text);
+        }
+
+        .table thead th {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+        }
+
+        .table tbody td {
+            padding: 14px;
+            vertical-align: middle;
         }
     </style>
     <link rel="stylesheet" href="sidebar.css">
@@ -337,14 +345,15 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
         <!-- === MAIN: LISTADO DE PROBLEMAS === -->
 
-
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Problemas ITIL</h4>
+
             <a href="itil_problema_nuevo.php" class="btn btn-primary">+ Nuevo problema</a>
         </div>
 
+
         <div class="card-itil">
-            <tableclass="table table-hover align-middle">
+            <table class="table table-hover align-middle">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -371,25 +380,12 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-                </table>
+            </table>
         </div>
 
 
     </div>
     <!-- === SCRIPTS === -->
-    <script>
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("collapsed");
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle("dark");
-            localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-        }
-        if (localStorage.getItem("theme") === "dark") {
-            document.body.classList.add("dark");
-        }
-    </script>
 
     <script src="theme.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
