@@ -136,18 +136,16 @@
     display: block;
 }
 
-.submenu-items li {
-    display: block;
-    width: 100%;
-}
-
 .submenu-items li a {
     display: block;
-    padding: 8px 0 8px 40px;
+    padding: 8px 40px;
     text-decoration: none;
-    color: inherit;
+
+    color: #1F2933 !important;
+
     font-size: 14px;
-    opacity: .85;
+
+    opacity: 1 !important;
 }
 
 .submenu-items li a:hover {
@@ -274,4 +272,25 @@ body.dark .submenu-items a,
 
     color: #00AEEF !important;
 
+}
+
+.sidebar.collapsed .submenu-items a,
+.sidebar.collapsed .submenu-items .nav-text {
+
+    color: #1F2933 !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+}
+
+.dark .submenu-items a,
+.dark .submenu-items .nav-text {
+
+    color: #E5E7EB !important;
+
+}
+.dark .submenu-items li a {
+    color: #E5E7EB !important;
 }
