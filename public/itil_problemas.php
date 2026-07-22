@@ -91,10 +91,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         }
 
 
-        .sidebar.collapsed~.main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
-        }
+
 
         /* ========================= */
         /* TOPBAR GENERAL (PRIMERO) */
@@ -165,9 +162,25 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* ========================= */
         .main {
 
+            margin-left: 240px;
+
+            width: calc(100% - 240px);
+
             margin-top: 110px;
 
             padding: 15px 20px;
+
+            transition:
+                margin-left .25s ease,
+                width .25s ease;
+
+        }
+
+        #sidebar.collapsed~.main {
+
+            margin-left: 70px;
+
+            width: calc(100% - 70px);
 
         }
 
@@ -276,6 +289,31 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             padding: 14px;
             vertical-align: middle;
         }
+
+
+        .badge-identificado {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .badge-resuelto {
+            background: #dcfce7;
+            color: #166534;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .badge-general {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
     </style>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="topbar.css">
@@ -369,7 +407,29 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
                         <tr>
                             <td><?= $p['id'] ?></td>
                             <td><?= htmlspecialchars($p['titulo']) ?></td>
-                            <td><?= $p['estado'] ?></td>
+
+                            <td>
+
+                                <?php
+
+                                $clase = 'badge-general';
+
+                                if ($p['estado'] === 'Identificado') {
+                                    $clase = 'badge-identificado';
+                                }
+
+                                if ($p['estado'] === 'Resuelto') {
+                                    $clase = 'badge-resuelto';
+                                }
+
+                                ?>
+
+                                <span class="<?= $clase ?>">
+                                    <?= htmlspecialchars($p['estado']) ?>
+                                </span>
+
+                            </td>
+
                             <td><?= $p['tecnico'] ?: 'Sin asignar' ?></td>
                             <td><?= date('d/m/Y H:i', strtotime($p['fecha_creacion'])) ?></td>
                             <td>
