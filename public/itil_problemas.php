@@ -231,16 +231,13 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
         }
 
-        .table thead th {
+        .table tbody tr {
+            background: var(--card-bg);
+        }
 
-            background: var(--accent);
-
-            color: white;
-
-            border: none;
-
-            padding: 14px;
-
+        .table tbody tr:hover {
+            background: rgba(0, 174, 239, .05);
+            transition: .2s ease;
         }
 
         .table tbody td {
@@ -333,6 +330,21 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             background: #00AEEF;
 
             color: white;
+
+        }
+
+        .card-itil {
+
+            background: var(--card-bg);
+
+            border-radius: 18px;
+
+            padding: 24px;
+
+            border: 1px solid rgba(255, 255, 255, .06);
+
+            box-shadow:
+                0 10px 25px var(--shadow);
 
         }
     </style>
