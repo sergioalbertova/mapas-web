@@ -187,6 +187,7 @@
 
 .sidebar.collapsed .submenu {
     position: relative;
+    padding-right: 240px;
 }
 
 .sidebar.collapsed .submenu-items {
@@ -197,7 +198,7 @@
 
     top: 0;
 
-    left: 80px;
+    left: 70px;
 
     min-width: 230px;
 
@@ -261,9 +262,12 @@ body.dark .submenu-items,
 
 }
 
-.sidebar.collapsed .submenu-items a {
+.sidebar.collapsed .submenu-items a,
+.sidebar.collapsed .submenu-items .nav-text {
 
-    color: #1F2933 !important;
+    color: #111827 !important;
+
+    font-weight: 500;
 
 }
 
@@ -337,7 +341,7 @@ body.dark .submenu-items,
 .dark .sidebar.collapsed .submenu-items a,
 .dark .sidebar.collapsed .submenu-items .nav-text {
 
-    color: #E5E7EB !important;
+    color: #F3F4F6 !important;
 
 }
 
@@ -351,4 +355,30 @@ body.dark .submenu-items,
 
 .submenu-items .nav-text {
     color: var(--sidebar-text);
+}
+
+.sidebar.collapsed .submenu-items::before {
+
+    content: "RESPALDOS";
+
+    display: block;
+
+    padding: 12px 16px;
+
+    color: #00AEEF;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    border-bottom: 1px solid rgba(0,0,0,.08);
+
+    margin-bottom: 12px;
+
+}
+
+.sidebar.collapsed .submenu-items li:first-child {
+    margin-top: 6px;
 }
