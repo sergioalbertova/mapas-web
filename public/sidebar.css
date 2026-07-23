@@ -341,7 +341,11 @@ body.dark .submenu-items,
 .dark .sidebar.collapsed .submenu-items a,
 .dark .sidebar.collapsed .submenu-items .nav-text {
 
-    color: #F3F4F6 !important;
+    
+color: #FFFFFF !important;
+
+    opacity: 1 !important;
+
 
 }
 
@@ -381,4 +385,12 @@ body.dark .submenu-items,
 
 .sidebar.collapsed .submenu-items li:first-child {
     margin-top: 6px;
+}
+
+.dark .submenu-items li a {
+    color: #FFFFFF !important;
+}
+
+#sidebar.collapsed .submenu:hover > .tooltip {
+    display: none;
 }
