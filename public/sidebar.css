@@ -394,3 +394,8 @@ color: #FFFFFF !important;
 #sidebar.collapsed .submenu:hover > .tooltip {
     display: none;
 }
+
+
+.sidebar.collapsed .submenu-items a {
+    color: inherit !important;
+}
