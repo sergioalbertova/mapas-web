@@ -337,9 +337,7 @@ body.dark .submenu-items,
     color: #E5E7EB;
 }
 
-.submenu-items .nav-text {
-    color: var(--sidebar-text);
-}
+
 
 .sidebar.collapsed .submenu-items::before {
 
@@ -367,9 +365,6 @@ body.dark .submenu-items,
     margin-top: 6px;
 }
 
-.dark .submenu-items li a {
-    color: #FFFFFF !important;
-}
 
 #sidebar.collapsed .submenu:hover > .tooltip {
     display: none;
@@ -391,5 +386,13 @@ body.dark .submenu-items,
 .dark .sidebar.collapsed .submenu-items .nav-text {
 
     color: #FFFFFF !important;
+
+}
+
+html.dark .sidebar.collapsed .submenu-items li,
+html.dark .sidebar.collapsed .submenu-items li a,
+html.dark .sidebar.collapsed .submenu-items .nav-text {
+
+    opacity: 1 !important;
 
 }
