@@ -384,3 +384,12 @@ body.dark .submenu-items,
 .dark .sidebar.collapsed .submenu-items .nav-text {
     color: #FFFFFF !important;
 }
+
+.dark .sidebar.collapsed .submenu-items,
+.dark .sidebar.collapsed .submenu-items li,
+.dark .sidebar.collapsed .submenu-items li a,
+.dark .sidebar.collapsed .submenu-items .nav-text {
+
+    color: #FFFFFF !important;
+
+}
