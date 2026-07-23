@@ -112,10 +112,6 @@
             <ul class="submenu-items">
 
 
-                <li class="submenu-title">
-                    Respaldos
-                </li>
-
 
                 <li>
                     <a href="consulta_respaldos.php">
