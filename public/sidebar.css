@@ -297,13 +297,13 @@ body.dark .submenu-items,
 
 .submenu-title {
 
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 700;
 
     text-transform: uppercase;
 
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
 
     color: #00AEEF;
 
@@ -311,7 +311,7 @@ body.dark .submenu-items,
 
     border-bottom: 1px solid rgba(0,0,0,.08);
 
-    margin-bottom: 8px;
+    margin-bottom: 0px;
 
 }
 
@@ -320,5 +320,23 @@ body.dark .submenu-items,
     color: #38BDF8;
 
     border-bottom: 1px solid rgba(255,255,255,.08);
+
+}
+
+.submenu-title + li {
+    margin-top: 10px;
+}
+
+.sidebar.collapsed .submenu-items a,
+.sidebar.collapsed .submenu-items .nav-text {
+
+    color: #1F2933 !important;
+
+}
+
+.dark .sidebar.collapsed .submenu-items a,
+.dark .sidebar.collapsed .submenu-items .nav-text {
+
+    color: #E5E7EB !important;
 
 }
