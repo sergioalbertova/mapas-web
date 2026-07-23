@@ -95,26 +95,55 @@
 
 /* Tooltip cuando está colapsado */
 #sidebar .tooltip {
+
     position: absolute;
+
     left: 80px;
+
     top: 50%;
+
     transform: translateY(-50%);
 
     background: var(--sidebar-bg);
+
     color: var(--sidebar-text);
 
-    padding: 6px 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px var(--shadow);
+    border: 1px solid var(--sidebar-border);
 
-    font-size: 13px;
+    padding: 8px 12px;
+
+    border-radius: 8px;
+
+    box-shadow: 0 5px 15px var(--shadow);
+
     white-space: nowrap;
 
+    font-size: 13px;
+
     opacity: 0;
+
     pointer-events: none;
 
-    transition: opacity 0.2s ease, left 0.2s ease;
     z-index: 99999;
+
+}
+
+.dark #sidebar .tooltip {
+
+    background: #1f2937;
+
+    color: #E5E7EB;
+
+    border-color: rgba(255,255,255,.10);
+
+}
+
+#sidebar.collapsed .nav-item:hover > .tooltip {
+
+    opacity: 1;
+
+    left: 75px;
+
 }
 
 #sidebar.collapsed .nav-item:hover .tooltip {
@@ -215,15 +244,7 @@
 
 .sidebar.collapsed .submenu-items a {
 
-    display: block;
-
-    padding: 12px 16px;
-
-    color: var(--text);
-
-    text-decoration: none;
-
-    font-weight: 500;
+    color: var(--sidebar-text) !important;
 
 }
 
@@ -254,12 +275,7 @@ body.dark .submenu-items,
 
 }
 
-body.dark .submenu-items a,
-.dark .submenu-items a {
 
-    color: #E5E7EB !important;
-
-}
 
 .sidebar.collapsed .submenu-items {
 
