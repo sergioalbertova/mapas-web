@@ -339,6 +339,26 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
                 0 10px 25px var(--shadow);
 
         }
+
+        .main-shell {
+
+            margin-left: 240px;
+
+            width: calc(100% - 240px);
+
+            transition:
+                margin-left .25s ease,
+                width .25s ease;
+
+        }
+
+        #sidebar.collapsed~.main-shell {
+
+            margin-left: 70px;
+
+            width: calc(100% - 70px);
+
+        }
     </style>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="topbar.css">
