@@ -104,7 +104,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             top: 60px !important;
             /* DEBAJO DEL TOPBAR GENERAL */
             left: 240px;
-            right: 0;
+            width: calc(100% - 240px);
             height: 55px;
             background: var(--sidebar-bg);
             display: flex;
@@ -146,23 +146,21 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* ========================= */
         .main {
 
-            margin-top: 110px;
-
-            padding: 15px 20px;
+            padding: 130px 20px 20px 20px;
 
         }
 
         /* ============================================================
    CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
    ============================================================ */
-        #sidebar.collapsed~* .itil-topbar {
-            left: 70px !important;
+        #sidebar.collapsed~.main-shell .itil-topbar {
+
+            left: 70px;
+
+            width: calc(100% - 70px);
+
         }
 
-        #sidebar.collapsed~* .main {
-            margin-left: 70px !important;
-            width: calc(100% - 70px) !important;
-        }
 
         /* ========================= */
         /* TABLA                     */
