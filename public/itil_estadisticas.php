@@ -292,6 +292,7 @@ $urlSinTecnico = "itil_estadisticas.php";
 if (!empty($paramsURL)) {
     $urlSinTecnico .= "?" . http_build_query($paramsURL);
 }
+
 $paginaActual = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
@@ -375,6 +376,33 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
         body.dark .itil-topbar {
             background: rgba(36, 39, 44, 0.65) !important;
+        }
+
+        .itil-topbar a.active {
+
+            background: #00AEEF;
+
+            color: white;
+
+            box-shadow:
+                0 3px 10px rgba(0, 174, 239, .25);
+
+        }
+
+        .itil-topbar a.active svg {
+
+            fill: white;
+
+            opacity: 1;
+
+        }
+
+        .itil-topbar a.active {
+
+            background: #00AEEF;
+            color: white;
+
+            border-bottom: 3px solid #ffffff;
         }
     </style>
     <link rel="stylesheet" href="sidebar.css">
