@@ -100,29 +100,28 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* TOPBAR ITIL (DEBAJO)     */
         /* ========================= */
         .itil-topbar {
+            display: flex;
+            align-items: center;
+            gap: 18px;
 
-            position: sticky;
-
-            top: 60px;
+            position: fixed;
+            top: 65px;
+            left: 240px;
+            right: 0;
 
             height: 55px;
 
-            background: var(--sidebar-bg);
+            z-index: 1500;
 
-            display: flex;
+            border-radius: 12px;
 
-            align-items: center;
+            margin: 10px 20px 0 20px;
 
-            gap: 25px;
+            width: auto;
+        }
 
-            padding: 0 25px;
-
-            box-shadow: 0 2px 8px var(--shadow);
-
-            border-bottom: 1px solid rgba(0, 0, 0, .08);
-
-            z-index: 20;
-
+        #sidebar.collapsed~.itil-topbar {
+            left: 70px;
         }
 
         .itil-topbar a {
@@ -161,16 +160,6 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
         }
 
-        /* ============================================================
-   CORRECCIÓN DEFINITIVA PARA EL SIDEBAR COLAPSADO
-   ============================================================ */
-        #sidebar.collapsed~.main-shell .itil-topbar {
-
-            left: 70px;
-
-            width: calc(100% - 70px);
-
-        }
 
 
         /* ========================= */
@@ -275,10 +264,10 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
     <?php require "sidebar.php"; ?>
 
     <!-- === TOPBAR GENERAL (PRIMERO) === -->
-    <?php require "topbar.php"; ?>
+
 
     <div class="main-shell">
-
+        <?php require "topbar.php"; ?>
         <!-- === TOPBAR REAL === -->
         <div class="itil-topbar">
 
