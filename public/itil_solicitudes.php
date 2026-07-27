@@ -54,7 +54,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
     <title>Incidentes ITIL</title>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="topbar.css">
-
+    <link rel="icon" href="apoyo2.png" type="image/x-icon">
     <style>
         /* ========================= */
         /* VARIABLES                 */
@@ -94,26 +94,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             display: flex;
         }
 
-        /* ========================= */
-        /* TOPBAR GENERAL (PRIMERO) */
-        /* ========================= */
-        .topbar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 240px;
-            right: 0;
-            height: 55px;
-            z-index: 3000 !important;
-            background: var(--sidebar-bg);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 8px var(--shadow);
-        }
 
-        #sidebar.collapsed~.topbar {
-            left: 70px;
-        }
 
         /* ========================= */
         /* TOPBAR ITIL (DEBAJO)     */
@@ -380,20 +361,8 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         </div>
     </div>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("collapsed");
-        }
 
-        function toggleTheme() {
-            document.body.classList.toggle("dark");
-            localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-        }
-        if (localStorage.getItem("theme") === "dark") {
-            document.body.classList.add("dark");
-        }
-    </script>
-
+    <script src="theme.js"></script>
 </body>
 
 </html>
