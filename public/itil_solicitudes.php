@@ -100,20 +100,29 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* TOPBAR ITIL (DEBAJO)     */
         /* ========================= */
         .itil-topbar {
-            position: fixed;
-            top: 60px !important;
-            /* DEBAJO DEL TOPBAR GENERAL */
-            left: 240px;
-            width: calc(100% - 240px);
+
+            position: sticky;
+
+            top: 60px;
+
             height: 55px;
+
             background: var(--sidebar-bg);
+
             display: flex;
+
             align-items: center;
+
             gap: 25px;
+
             padding: 0 25px;
+
             box-shadow: 0 2px 8px var(--shadow);
-            z-index: 2500 !important;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+            border-bottom: 1px solid rgba(0, 0, 0, .08);
+
+            z-index: 20;
+
         }
 
         .itil-topbar a {
@@ -146,7 +155,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* ========================= */
         .main {
 
-            padding: 130px 20px 20px 20px;
+            padding: 20px;
 
         }
 
@@ -240,13 +249,9 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
         .main-shell {
 
-            margin-left: 240px;
+            margin-left: 70px;
 
-            width: calc(100% - 240px);
-
-            transition:
-                margin-left .25s ease,
-                width .25s ease;
+            width: calc(100% - 70px);
 
         }
 
