@@ -239,6 +239,26 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
             border-bottom: 3px solid #ffffff;
         }
+
+        .main-shell {
+
+            margin-left: 240px;
+
+            width: calc(100% - 240px);
+
+            transition:
+                margin-left .25s ease,
+                width .25s ease;
+
+        }
+
+        #sidebar.collapsed~.main-shell {
+
+            margin-left: 70px;
+
+            width: calc(100% - 70px);
+
+        }
     </style>
 </head>
 
@@ -248,7 +268,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
     <!-- === TOPBAR GENERAL (PRIMERO) === -->
     <?php require "topbar.php"; ?>
 
-    <div class="main">
+    <div class="main-shell">
 
         <!-- === TOPBAR REAL === -->
         <div class="itil-topbar">
