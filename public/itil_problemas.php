@@ -92,18 +92,6 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
 
 
-
-        /* ========================= */
-        /* TOPBAR GENERAL (PRIMERO) */
-        /* ========================= */
-
-
-        .sidebar.collapsed~.main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
-        }
-
-
         /* ========================= */
         /* TOPBAR ITIL (DEBAJO)     */
         /* ========================= */
@@ -151,21 +139,12 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* MAIN                      */
         /* ========================= */
         .main {
-            margin-left: 240px;
-            width: calc(100% - 240px);
+            margin-top: 110px;
             padding: 15px 20px;
-            transition:
-                margin-left .25s ease,
-                width .25s ease;
-        }
-
-        #sidebar.collapsed~.main {
-
-            margin-left: 70px;
-
-            width: calc(100% - 70px);
 
         }
+
+
 
 
         /* ============================================================
@@ -204,19 +183,6 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
 
 
-
-        .card-itil {
-
-            background: var(--card-bg);
-
-            border-radius: 14px;
-
-            padding: 20px;
-
-            box-shadow: 0 8px 20px var(--shadow);
-
-        }
-
         .table {
 
             color: var(--text);
@@ -246,12 +212,6 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             box-shadow: 0 6px 16px var(--shadow);
         }
 
-        .card-itil {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 8px 20px var(--shadow);
-        }
 
         .table {
             margin-bottom: 0;
@@ -358,6 +318,59 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
             width: calc(100% - 70px);
 
+        }
+
+        .table {
+
+            color: var(--text) !important;
+
+            background: transparent !important;
+
+        }
+
+        .table tbody tr {
+
+            background: var(--card-bg) !important;
+
+        }
+
+        .table tbody td {
+
+            background: var(--card-bg) !important;
+
+            color: var(--text) !important;
+
+            border-color: rgba(255, 255, 255, .05) !important;
+
+        }
+
+        .table thead th {
+
+            background: var(--accent) !important;
+
+            color: #fff !important;
+
+        }
+
+        .table-hover tbody tr:hover td {
+
+            background: rgba(0, 174, 239, .08) !important;
+
+        }
+
+        body.dark .badge-identificado {
+            background: #4b3b12;
+            color: #fcd34d;
+        }
+
+        body.dark .badge-resuelto {
+            background: #10351f;
+            color: #4ade80;
+        }
+
+        body.dark .badge-general {
+            background: #374151;
+            color: #e5e7eb;
         }
     </style>
     <link rel="stylesheet" href="sidebar.css">
