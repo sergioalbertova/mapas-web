@@ -120,14 +120,6 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             padding-left: 20px;
         }
 
-        #sidebar.collapsed~.itil-topbar {
-            left: 70px;
-        }
-
-        #sidebar.collapsed~.main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
-        }
 
         /* ESTILO PROFESIONAL DEL MENÚ ITIL */
         .itil-topbar a {
@@ -355,7 +347,7 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 <body>
 
     <?php require "sidebar.php"; ?>
-    <div class="main">
+    <div class="main-shell">
         <!-- === TOPBAR GENERAL (PRIMERO) === -->
         <?php require "topbar.php"; ?>
 
