@@ -141,17 +141,15 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
             opacity: 0.85;
         }
 
-
         /* ========================= */
         /* MAIN                      */
         /* ========================= */
         .main {
-            margin-left: 240px;
-            width: calc(100% - 240px);
-            margin-top: 125px !important;
-            /* 55px general + 60px ITIL */
-            padding: 20px;
-            transition: margin-left 0.25s ease, width 0.25s ease;
+
+            margin-top: 110px;
+
+            padding: 15px 20px;
+
         }
 
         /* ============================================================
@@ -250,117 +248,119 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
     <!-- === TOPBAR GENERAL (PRIMERO) === -->
     <?php require "topbar.php"; ?>
 
-
-    <!-- === TOPBAR REAL === -->
-    <div class="itil-topbar">
-
-        <a href="itil_incidentes.php" class="<?= $paginaActual == 'itil_incidentes.php' ? 'active' : '' ?>">
-            <svg>
-                <path d="M4 4h16v4H4V4zm0 6h16v10H4V10z" />
-            </svg>
-            Incidentes
-        </a>
-
-        <a href="itil_incidente_nuevo.php" class="<?= $paginaActual == 'itil_incidente_nuevo.php' ? 'active' : '' ?>">
-            <svg>
-                <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none" />
-            </svg>
-            Nuevo
-        </a>
-
-        <a href="itil_problemas.php" class="<?= $paginaActual == 'itil_problemas.php' ? 'active' : '' ?>">
-            <svg>
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-            </svg>
-            Problemas
-        </a>
-
-        <a href="itil_catalogo.php" class="<?= $paginaActual == 'itil_catalogo.php' ? 'active' : '' ?>">
-            <svg>
-                <path d="M4 4h16v4H4zm0 6h16v10H4z" />
-            </svg>
-            Catálogo Incidentes
-        </a>
-
-        <a href="itil_solicitudes.php" class="<?= $paginaActual == 'itil_solicitudes.php' ? 'active' : '' ?>">
-            <svg>
-                <rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none" />
-            </svg>
-            En Proceso
-        </a>
-
-        <a href="itil_sla.php" class="<?= $paginaActual == 'itil_sla.php' ? 'active' : '' ?>">
-            <svg>
-                <path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none" />
-            </svg>
-            SLA
-        </a>
-
-        <a href="itil_estadisticas.php" class="<?= $paginaActual == 'itil_estadisticas.php' ? 'active' : '' ?>">
-            <svg>
-                <path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none" />
-            </svg>
-            Estadísticas
-        </a>
-
-    </div>
-
-    <!-- ========================= -->
-    <!-- MAIN                      -->
-    <!-- ========================= -->
     <div class="main">
-        <div class="table-box">
-            <h2>Incidentes registrados</h2>
 
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Título</th>
-                    <th>Usuario afectado</th>
-                    <th>Prioridad</th>
-                    <th>Estado</th>
-                    <th>Técnico asignado</th>
-                    <th>Fecha</th>
-                </tr>
+        <!-- === TOPBAR REAL === -->
+        <div class="itil-topbar">
 
-                <?php if (count($incidentes) === 0): ?>
-                    <tr>
-                        <td colspan="7" style="text-align:center; padding:20px;">
-                            No hay incidentes registrados aún.
-                        </td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($incidentes as $i): ?>
-                        <tr>
-                            <td><?= $i['id'] ?></td>
+            <a href="itil_incidentes.php" class="<?= $paginaActual == 'itil_incidentes.php' ? 'active' : '' ?>">
+                <svg>
+                    <path d="M4 4h16v4H4V4zm0 6h16v10H4V10z" />
+                </svg>
+                Incidentes
+            </a>
 
-                            <td>
-                                <a href="itil_incidente_ver.php?id=<?= $i['id'] ?>"
-                                    style="color: var(--primary); font-weight:bold;">
-                                    <?= htmlspecialchars($i['titulo']) ?>
-                                </a>
-                            </td>
+            <a href="itil_incidente_nuevo.php" class="<?= $paginaActual == 'itil_incidente_nuevo.php' ? 'active' : '' ?>">
+                <svg>
+                    <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" fill="none" />
+                </svg>
+                Nuevo
+            </a>
 
-                            <td><?= htmlspecialchars($i['usuario_afectado']) ?></td>
-                            <td><?= htmlspecialchars($i['prioridad']) ?></td>
+            <a href="itil_problemas.php" class="<?= $paginaActual == 'itil_problemas.php' ? 'active' : '' ?>">
+                <svg>
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+                </svg>
+                Problemas
+            </a>
 
-                            <td>
-                                <?php $clase = "estado_" . str_replace(" ", "_", $i['estado']); ?>
-                                <span class="estado <?= $clase ?>">
-                                    <?= htmlspecialchars($i['estado']) ?>
-                                </span>
-                            </td>
+            <a href="itil_catalogo.php" class="<?= $paginaActual == 'itil_catalogo.php' ? 'active' : '' ?>">
+                <svg>
+                    <path d="M4 4h16v4H4zm0 6h16v10H4z" />
+                </svg>
+                Catálogo Incidentes
+            </a>
 
-                            <td><?= htmlspecialchars($i['tecnico_nombre']) ?></td>
+            <a href="itil_solicitudes.php" class="<?= $paginaActual == 'itil_solicitudes.php' ? 'active' : '' ?>">
+                <svg>
+                    <rect x="3" y="6" width="18" height="12" stroke="currentColor" stroke-width="2" fill="none" />
+                </svg>
+                En Proceso
+            </a>
 
-                            <td><?= date("Y-m-d H:i:s", strtotime($i['fecha_reporte'])) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </table>
+            <a href="itil_sla.php" class="<?= $paginaActual == 'itil_sla.php' ? 'active' : '' ?>">
+                <svg>
+                    <path d="M12 2v20m10-10H2" stroke="currentColor" stroke-width="2" fill="none" />
+                </svg>
+                SLA
+            </a>
+
+            <a href="itil_estadisticas.php" class="<?= $paginaActual == 'itil_estadisticas.php' ? 'active' : '' ?>">
+                <svg>
+                    <path d="M4 20V10m6 10V4m6 16v-6m6 6V8" stroke="currentColor" stroke-width="2" fill="none" />
+                </svg>
+                Estadísticas
+            </a>
+
         </div>
-    </div>
 
+        <!-- ========================= -->
+        <!-- MAIN                      -->
+        <!-- ========================= -->
+        <div class="main">
+            <div class="table-box">
+                <h2>Incidentes registrados</h2>
+
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Usuario afectado</th>
+                        <th>Prioridad</th>
+                        <th>Estado</th>
+                        <th>Técnico asignado</th>
+                        <th>Fecha</th>
+                    </tr>
+
+                    <?php if (count($incidentes) === 0): ?>
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding:20px;">
+                                No hay incidentes registrados aún.
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($incidentes as $i): ?>
+                            <tr>
+                                <td><?= $i['id'] ?></td>
+
+                                <td>
+                                    <a href="itil_incidente_ver.php?id=<?= $i['id'] ?>"
+                                        style="color: var(--primary); font-weight:bold;">
+                                        <?= htmlspecialchars($i['titulo']) ?>
+                                    </a>
+                                </td>
+
+                                <td><?= htmlspecialchars($i['usuario_afectado']) ?></td>
+                                <td><?= htmlspecialchars($i['prioridad']) ?></td>
+
+                                <td>
+                                    <?php $clase = "estado_" . str_replace(" ", "_", $i['estado']); ?>
+                                    <span class="estado <?= $clase ?>">
+                                        <?= htmlspecialchars($i['estado']) ?>
+                                    </span>
+                                </td>
+
+                                <td><?= htmlspecialchars($i['tecnico_nombre']) ?></td>
+
+                                <td><?= date("Y-m-d H:i:s", strtotime($i['fecha_reporte'])) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </table>
+            </div>
+        </div>
+
+    </div>
 
     <script src="theme.js"></script>
 </body>
