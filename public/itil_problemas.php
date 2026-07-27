@@ -427,68 +427,69 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         </div>
 
         <!-- === MAIN: LISTADO DE PROBLEMAS === -->
+        <div class="main">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Problemas ITIL</h4>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Problemas ITIL</h4>
-
-            <a href="itil_problema_nuevo.php" class="btn btn-primary">+ Nuevo problema</a>
-        </div>
+                <a href="itil_problema_nuevo.php" class="btn btn-primary">+ Nuevo problema</a>
+            </div>
 
 
-        <div class="card-itil">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Estado</th>
-                        <th>Técnico responsable</th>
-                        <th>Fecha creación</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($problemas as $p): ?>
+            <div class="card-itil">
+                <table class="table table-hover align-middle">
+                    <thead>
                         <tr>
-                            <td><?= $p['id'] ?></td>
-                            <td><?= htmlspecialchars($p['titulo']) ?></td>
-
-                            <td class="estado-cell"
-
-                                <?php
-
-                                $clase = 'badge-general';
-
-                                if ($p['estado'] === 'Identificado') {
-                                    $clase = 'badge-identificado';
-                                }
-
-                                if ($p['estado'] === 'Resuelto') {
-                                    $clase = 'badge-resuelto';
-                                }
-
-                                ?>
-
-                                <span class="<?= $clase ?>">
-                                <?= htmlspecialchars($p['estado']) ?>
-                                </span>
-
-                            </td>
-
-                            <td><?= $p['tecnico'] ?: 'Sin asignar' ?></td>
-                            <td><?= date('d/m/Y H:i', strtotime($p['fecha_creacion'])) ?></td>
-                            <td>
-                                <a href="itil_problema_ver.php?id=<?= $p['id'] ?>" class="btn-ver">
-                                    Ver
-                                </a>
-                            </td>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Técnico responsable</th>
+                            <th>Fecha creación</th>
+                            <th></th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($problemas as $p): ?>
+                            <tr>
+                                <td><?= $p['id'] ?></td>
+                                <td><?= htmlspecialchars($p['titulo']) ?></td>
+
+                                <td class="estado-cell"
+
+                                    <?php
+
+                                    $clase = 'badge-general';
+
+                                    if ($p['estado'] === 'Identificado') {
+                                        $clase = 'badge-identificado';
+                                    }
+
+                                    if ($p['estado'] === 'Resuelto') {
+                                        $clase = 'badge-resuelto';
+                                    }
+
+                                    ?>
+
+                                    <span class="<?= $clase ?>">
+                                    <?= htmlspecialchars($p['estado']) ?>
+                                    </span>
+
+                                </td>
+
+                                <td><?= $p['tecnico'] ?: 'Sin asignar' ?></td>
+                                <td><?= date('d/m/Y H:i', strtotime($p['fecha_creacion'])) ?></td>
+                                <td>
+                                    <a href="itil_problema_ver.php?id=<?= $p['id'] ?>" class="btn-ver">
+                                        Ver
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+
         </div>
-
-
     </div>
     <!-- === SCRIPTS === -->
 
