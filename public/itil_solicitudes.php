@@ -155,7 +155,9 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
         /* ========================= */
         .main {
 
-            padding: 20px;
+            margin-top: 110px;
+
+            padding: 15px 20px;
 
         }
 
@@ -249,9 +251,13 @@ $paginaActual = basename($_SERVER['PHP_SELF']);
 
         .main-shell {
 
-            margin-left: 70px;
+            margin-left: 240px;
 
-            width: calc(100% - 70px);
+            width: calc(100% - 240px);
+
+            transition:
+                margin-left .25s ease,
+                width .25s ease;
 
         }
 
