@@ -233,8 +233,8 @@ $ym = $coords['ym'] ?? null;
         /* RADAR */
         .radar {
             position: absolute;
-            width: 140px;
-            height: 140px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: rgba(0, 174, 239, 0.25);
             transform: translate(-50%, -50%);
@@ -250,12 +250,12 @@ $ym = $coords['ym'] ?? null;
 
         @keyframes radarPulse {
             0% {
-                transform: translate(-50%, -50%) scale(0.2);
+                transform: translate(-50%, -50%) scale(0.3);
                 opacity: 0.8;
             }
 
             100% {
-                transform: translate(-50%, -50%) scale(1.8);
+                transform: translate(-50%, -50%) scale(1.5);
                 opacity: 0;
             }
         }
