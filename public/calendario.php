@@ -143,7 +143,7 @@ $nombreMes = $meses[$mes] . " " . $anio;
 
         .main {
             margin-left: 240px;
-            padding: 30px;
+            padding: 15px 20px;
             width: calc(100% - 240px);
             transition: margin-left 0.25s ease;
         }
@@ -158,7 +158,7 @@ $nombreMes = $meses[$mes] . " " . $anio;
             max-width: 1200px;
             margin: 0 auto;
             background: var(--card-bg);
-            padding: 30px;
+            padding: 20px;
             border-radius: 16px;
             box-shadow: 0 12px 35px var(--shadow);
             animation: fadeIn 0.4s ease;
@@ -179,8 +179,9 @@ $nombreMes = $meses[$mes] . " " . $anio;
         /* TÍTULO DEL MES */
         h1 {
             text-align: center;
-            margin-bottom: 15px;
-            font-size: 40px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 32px;
             font-weight: 700;
             letter-spacing: -1px;
             color: var(--primary);
@@ -197,6 +198,7 @@ $nombreMes = $meses[$mes] . " " . $anio;
             padding: 12px 18px;
             border-radius: 10px;
             border-left: 4px solid var(--primary);
+            margin-bottom: 10px;
         }
 
         /* NAVEGACIÓN GLASS */
@@ -262,7 +264,7 @@ $nombreMes = $meses[$mes] . " " . $anio;
         }
 
         .tabla-calendario td {
-            height: 100px;
+            height: 70px;
             padding: 6px;
             border: 1px solid var(--border);
             background: var(--card-bg);
@@ -323,7 +325,8 @@ $nombreMes = $meses[$mes] . " " . $anio;
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-top: 0;
+            margin-bottom: 12px;
             flex-wrap: wrap;
         }
 
@@ -503,9 +506,6 @@ $nombreMes = $meses[$mes] . " " . $anio;
                     <strong><?= htmlspecialchars($tecnicoHoy) ?></strong>
                 </div>
             <?php endif; ?>
-
-
-
 
             <div class="resumen">
                 <?php foreach ($conteo as $nombre => $total): ?>
