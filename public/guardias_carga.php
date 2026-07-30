@@ -3,7 +3,7 @@ require "session_config.php";
 require "db.php";
 
 /* ===== ROTACION ===== */
-$rotacion = ['ERIK', 'JUAN CARLOS', 'SERGIO', 'ANTONIETA'];
+$rotacion = ['ERIK', 'SERGIO', 'ANTONIETA'];
 
 /* ===== MES ===== */
 $mes = $_GET['mes'] ?? date('Y-m');
