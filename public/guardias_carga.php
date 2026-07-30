@@ -61,7 +61,6 @@ if (isset($_GET['auto'])) {
         $autoGenerado[$f] = $rotacion[$index];
         $index = ($index + 1) % count($rotacion);
     }
-
 } else {
     // botón cambiar o normal
     $autoGenerado = $guardias;
@@ -105,165 +104,172 @@ foreach ($fechas as $f) {
 
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Guardias</title>
+    <meta charset="UTF-8">
+    <title>Guardias</title>
 
-<style>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial;
+            background: #0f172a;
+            color: #E5E7EB;
+            padding: 20px;
+        }
 
-body{
-    font-family:"Segoe UI", Arial;
-    background:#0f172a;
-    color:#E5E7EB;
-    padding:20px;
-}
+        .top {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-.top{
-    text-align:center;
-    margin-bottom:20px;
-}
+        /* BOTONES */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: #00AEEF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
 
-/* BOTONES */
-.btn{
-    padding:8px 14px;
-    border-radius:10px;
-    background:#00AEEF;
-    color:white;
-    border:none;
-    cursor:pointer;
-    margin:5px;
-}
+        /* CONTENEDOR ACCIONES */
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-/* CONTENEDOR ACCIONES */
-.actions{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    margin-top:10px;
-}
+        /* DIAS HEADER */
+        .header-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
 
-/* DIAS HEADER */
-.header-grid{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    text-align:center;
-    margin-top:20px;
-    font-weight:bold;
-}
+        /* GRID CALENDARIO */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-/* GRID CALENDARIO */
-.grid{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:10px;
-    margin-top:10px;
-}
+        /* CARD */
+        .card {
+            background: #1f2937;
+            padding: 10px;
+            border-radius: 10px;
+        }
 
-/* CARD */
-.card{
-    background:#1f2937;
-    padding:10px;
-    border-radius:10px;
-}
+        /* FIN DE SEMANA */
+        .weekend {
+            background: #111827;
+            opacity: 0.5;
+        }
 
-/* FIN DE SEMANA */
-.weekend{
-    background:#111827;
-    opacity:0.5;
-}
-
-/* SELECT */
-select{
-    width:100%;
-    padding:6px;
-    border-radius:6px;
-    background:#0f172a;
-    color:white;
-}
-
-</style>
+        /* SELECT */
+        select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 6px;
+            background: #0f172a;
+            color: white;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="top">
+    <div class="top">
 
-<h2>Guardias <?= date('F Y', strtotime($mes)) ?></h2>
+        <h2>Guardias <?= date('F Y', strtotime($mes)) ?></h2>
 
-<form method="GET">
-<input type="month" name="mes" value="<?= $mes ?>">
-</form>
+        <form method="GET">
 
-<div class="actions">
+            <input type="month"
+                name="mes"
+                value="<?= $mes ?>">
 
-<form method="GET">
-    <input type="hidden" name="mes" value="<?= $mes ?>">
-    <button class="btn">Cambiar</button>
-</form>
+            <button class="btn">
+                Cambiar
+            </button>
 
-<a href="?mes=<?= $mes ?>&auto=1" class="btn">
-Auto-generar guardias
-</a>
+        </form>
 
-</div>
+        <a href="?mes=<?= $mes ?>&auto=1" class="btn">
+            Auto-generar guardias
+        </a>
 
-<?php if(isset($_GET['auto'])): ?>
-<div style="color:#22c55e;text-align:center;margin-top:10px;">
-✅ Generado desde cero (sin guardar)
-</div>
-<?php endif; ?>
+    </div>
 
-</div>
+    <?php if (isset($_GET['auto'])): ?>
+        <div style="color:#22c55e;text-align:center;margin-top:10px;">
+            ✅ Generado desde cero (sin guardar)
+        </div>
+    <?php endif; ?>
 
-<form method="POST">
+    </div>
 
-<div class="header-grid">
-<div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
-</div>
+    <form method="POST">
 
-<div class="grid">
+        <div class="header-grid">
+            <div>Lun</div>
+            <div>Mar</div>
+            <div>Mié</div>
+            <div>Jue</div>
+            <div>Vie</div>
+            <div>Sáb</div>
+            <div>Dom</div>
+        </div>
 
-<?php foreach($calendario as $f): ?>
+        <div class="grid">
 
-<?php if($f === null): ?>
-<div></div>
-<?php else: ?>
+            <?php foreach ($calendario as $f): ?>
 
-<?php
-$valor = $autoGenerado[$f] ?? '';
-$diaSemana = date('N', strtotime($f));
-?>
+                <?php if ($f === null): ?>
+                    <div></div>
+                <?php else: ?>
 
-<div class="card <?= ($diaSemana >= 6) ? 'weekend' : '' ?>">
+                    <?php
+                    $valor = $autoGenerado[$f] ?? '';
+                    $diaSemana = date('N', strtotime($f));
+                    ?>
 
-<strong><?= date('d', strtotime($f)) ?></strong>
+                    <div class="card <?= ($diaSemana >= 6) ? 'weekend' : '' ?>">
 
-<?php if($diaSemana < 6): ?>
-<select name="guardias[<?= $f ?>][tecnico]">
+                        <strong><?= date('d', strtotime($f)) ?></strong>
 
-<option value="">-- Seleccionar --</option>
+                        <?php if ($diaSemana < 6): ?>
+                            <select name="guardias[<?= $f ?>][tecnico]">
 
-<?php foreach($rotacion as $t): ?>
-<option value="<?= $t ?>" <?= ($valor == $t) ? 'selected' : '' ?>>
-<?= $t ?>
-</option>
-<?php endforeach; ?>
+                                <option value="">-- Seleccionar --</option>
 
-</select>
-<?php endif; ?>
+                                <?php foreach ($rotacion as $t): ?>
+                                    <option value="<?= $t ?>" <?= ($valor == $t) ? 'selected' : '' ?>>
+                                        <?= $t ?>
+                                    </option>
+                                <?php endforeach; ?>
 
-</div>
+                            </select>
+                        <?php endif; ?>
 
-<?php endif; ?>
+                    </div>
 
-<?php endforeach; ?>
+                <?php endif; ?>
 
-</div>
+            <?php endforeach; ?>
 
-<button class="btn">Guardar cambios</button>
+        </div>
 
-</form>
+        <button class="btn">Guardar cambios</button>
+
+    </form>
 
 </body>
+
 </html>
