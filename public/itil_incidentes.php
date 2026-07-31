@@ -27,7 +27,7 @@ FROM itil_incidentes i
 LEFT JOIN usuarios u ON u.id = i.tecnico_asignado
 LEFT JOIN activeuser au ON au.idu = i.usuario_final_id
 ORDER BY i.id DESC
-LIMIT 50
+LIMIT 150
 ";
 $stmt = $pdo->query($sql);
 $incidentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
