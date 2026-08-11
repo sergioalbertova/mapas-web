@@ -126,8 +126,57 @@ $categorias = $pdo->query("
             width: calc(100% - 70px);
         }
 
+        /* ========================= */
+        /* TOPBAR ITIL (DEBAJO)     */
+        /* ========================= */
+        .itil-topbar {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            position: fixed;
+            top: 65px;
+            left: 240px;
+            right: 0;
+            height: 55px;
+            z-index: 1500;
+            border-radius: 12px;
+            margin: 10px 20px 0 20px;
+            width: auto;
+        }
 
+        #sidebar.collapsed~.itil-topbar {
+            left: 70px;
+        }
 
+        #sidebar.collapsed~.main {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        }
+
+        .itil-topbar a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s ease;
+            font-size: 15px;
+        }
+
+        .itil-topbar a:hover {
+            background: var(--sidebar-hover);
+            transform: translateY(-1px);
+        }
+
+        .itil-topbar svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            opacity: 0.85;
+        }
 
         .sidebar.collapsed {
             width: 70px;
@@ -244,17 +293,16 @@ $categorias = $pdo->query("
         }
 
         /* ========================= */
-        /* MAIN CENTRADO             */
+        /* MAIN                      */
         /* ========================= */
         .main {
-            margin-left: 240px;
-            width: calc(100% - 240px);
-            margin-top: 95px;
-            padding: 25px;
 
-            display: flex;
-            justify-content: center;
+            margin-top: 110px;
+
+            padding: 15px 20px;
+
         }
+
 
         .sidebar.collapsed~.itil-topbar+.main {
             margin-left: 70px;
