@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
 date_default_timezone_set('America/Mexico_City');
@@ -31,7 +31,8 @@ if (!$usuario_actual_id) {
 }
 
 /* Registrar historial */
-function registrar_historial($pdo, $incidente_id, $usuario_id, $estado_anterior, $estado_nuevo) {
+function registrar_historial($pdo, $incidente_id, $usuario_id, $estado_anterior, $estado_nuevo)
+{
     $fecha = date("Y-m-d H:i:s");
     $sql = "INSERT INTO itil_incidente_historial 
             (incidente_id, usuario_id, estado_anterior, estado_nuevo, fecha)
@@ -41,7 +42,8 @@ function registrar_historial($pdo, $incidente_id, $usuario_id, $estado_anterior,
 }
 
 /* Redirigir */
-function volver($id) {
+function volver($id)
+{
     header("Location: itil_incidente_ver.php?id=" . $id);
     exit;
 }

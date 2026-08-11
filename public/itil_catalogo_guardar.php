@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
 // Validar sesión
@@ -53,4 +53,3 @@ $stmt->execute([
 
 header("Location: itil_catalogo.php?msg=ok");
 exit;
-?>

@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
 /* Validar que venga el ID */

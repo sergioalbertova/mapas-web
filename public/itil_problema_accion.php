@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 date_default_timezone_set('America/Mexico_City');
 require "db.php";
 
@@ -42,7 +42,6 @@ if ($accion === "crear_problema") {
         $_SESSION['mensaje'] = "Problema registrado correctamente (ID $nuevoID).";
         header("Location: itil_problemas.php");
         exit;
-
     } catch (Exception $e) {
         $_SESSION['error'] = "Error al guardar el problema: " . $e->getMessage();
         header("Location: itil_problema_nuevo.php");
@@ -93,7 +92,6 @@ if ($accion === "actualizar_problema") {
         $_SESSION['mensaje'] = "Cambios guardados correctamente.";
         header("Location: itil_problema_ver.php?id=$id");
         exit;
-
     } catch (Exception $e) {
         $_SESSION['error'] = "Error al actualizar el problema: " . $e->getMessage();
         header("Location: itil_problema_ver.php?id=$id");
@@ -136,7 +134,6 @@ if ($accion === "cambiar_estado") {
         $_SESSION['mensaje'] = "Estado actualizado correctamente.";
         header("Location: itil_problema_ver.php?id=$id");
         exit;
-
     } catch (Exception $e) {
         $_SESSION['error'] = "Error al cambiar estado: " . $e->getMessage();
         header("Location: itil_problema_ver.php?id=$id");
@@ -166,7 +163,6 @@ if ($accion === "reasignar_tecnico") {
         $_SESSION['mensaje'] = "Técnico reasignado correctamente.";
         header("Location: itil_problema_ver.php?id=$id");
         exit;
-
     } catch (Exception $e) {
         $_SESSION['error'] = "Error al reasignar técnico: " . $e->getMessage();
         header("Location: itil_problema_ver.php?id=$id");

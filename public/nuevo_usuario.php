@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
 date_default_timezone_set('America/Mexico_City');
@@ -59,86 +59,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<title>Nuevo Usuario</title>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    padding: 20px;
-}
-.form-box {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 450px;
-    margin: auto;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 12px;
-}
-button {
-    padding: 10px 15px;
-    background: #0054A6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-button:hover {
-    background: #003f7d;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Nuevo Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        .form-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 450px;
+            margin: auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #0054A6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #003f7d;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="form-box">
-    <h2>Agregar nuevo usuario</h2>
+    <div class="form-box">
+        <h2>Agregar nuevo usuario</h2>
 
-    <?php if (isset($msg)) echo "<p><strong>$msg</strong></p>"; ?>
+        <?php if (isset($msg)) echo "<p><strong>$msg</strong></p>"; ?>
 
-    <form method="POST">
+        <form method="POST">
 
-        <label>Nombre (nomuser) *</label>
-        <input type="text" name="nomuser" required>
+            <label>Nombre (nomuser) *</label>
+            <input type="text" name="nomuser" required>
 
-        <label>Ubicación</label>
-        <input type="text" name="ubicacion">
+            <label>Ubicación</label>
+            <input type="text" name="ubicacion">
 
-        <label>Horario 1</label>
-        <input type="text" name="hor1">
+            <label>Horario 1</label>
+            <input type="text" name="hor1">
 
-        <label>Horario 2</label>
-        <input type="text" name="hor2">
+            <label>Horario 2</label>
+            <input type="text" name="hor2">
 
-        <label>Piso</label>
-        <input type="text" name="piso">
+            <label>Piso</label>
+            <input type="text" name="piso">
 
-        <label>UX</label>
-        <input type="number" name="ux">
+            <label>UX</label>
+            <input type="number" name="ux">
 
-        <label>UY</label>
-        <input type="number" name="uy">
+            <label>UY</label>
+            <input type="number" name="uy">
 
-        <label>Ubimapa</label>
-        <input type="text" name="ubimapa">
+            <label>Ubimapa</label>
+            <input type="text" name="ubimapa">
 
-        <label>Observaciones</label>
-        <textarea name="observaciones"></textarea>
+            <label>Observaciones</label>
+            <textarea name="observaciones"></textarea>
 
-        <label>Horario 3</label>
-        <input type="text" name="hor3">
+            <label>Horario 3</label>
+            <input type="text" name="hor3">
 
-        <label>Ubimapa 2</label>
-        <input type="number" name="ubimapa2">
+            <label>Ubimapa 2</label>
+            <input type="number" name="ubimapa2">
 
-        <button type="submit">Guardar usuario</button>
-    </form>
-</div>
+            <button type="submit">Guardar usuario</button>
+        </form>
+    </div>
 
 </body>
+
 </html>

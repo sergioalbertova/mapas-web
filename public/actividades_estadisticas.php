@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
 $hoy = date("Y-m-d");
@@ -66,7 +66,7 @@ AND fecha_inicio BETWEEN :inicio AND :fin
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -82,7 +82,7 @@ AND fecha_inicio BETWEEN :inicio AND :fin
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -97,7 +97,7 @@ WHERE fecha_inicio BETWEEN :inicio AND :fin
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -112,7 +112,7 @@ WHERE fecha_inicio BETWEEN :inicio AND :fin
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -127,7 +127,7 @@ WHERE fecha_inicio BETWEEN :inicio AND :fin
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -148,7 +148,7 @@ $sql = "
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $sql .= "
     GROUP BY u.id,u.nombre
@@ -160,9 +160,9 @@ $stmt->execute($params);
 
 $porTecnico = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$chartTecnicoIDs    = array_column($porTecnico,'id');
-$chartTecnicoLabels = array_column($porTecnico,'tecnico');
-$chartTecnicoData   = array_column($porTecnico,'total');
+$chartTecnicoIDs    = array_column($porTecnico, 'id');
+$chartTecnicoLabels = array_column($porTecnico, 'tecnico');
+$chartTecnicoData   = array_column($porTecnico, 'total');
 
 
 $sql = "
@@ -177,7 +177,7 @@ $sql = "
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $sql .= "
     GROUP BY c.actividad
@@ -189,8 +189,8 @@ $stmt->execute($params);
 
 $porActividad = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$chartActividadLabels = array_column($porActividad,'actividad');
-$chartActividadData   = array_column($porActividad,'total');
+$chartActividadLabels = array_column($porActividad, 'actividad');
+$chartActividadData   = array_column($porActividad, 'total');
 
 $sql = "
     SELECT
@@ -202,7 +202,7 @@ $sql = "
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $sql .= "
     GROUP BY estatus
@@ -214,8 +214,8 @@ $stmt->execute($params);
 
 $porEstado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$chartEstadoLabels = array_column($porEstado,'estatus');
-$chartEstadoData   = array_column($porEstado,'total');
+$chartEstadoLabels = array_column($porEstado, 'estatus');
+$chartEstadoData   = array_column($porEstado, 'total');
 
 $sql = "
     SELECT
@@ -227,7 +227,7 @@ $sql = "
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $sql .= "
     GROUP BY mes
@@ -239,8 +239,8 @@ $stmt->execute($params);
 
 $mensual = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$chartMensualLabels = array_column($mensual,'mes');
-$chartMensualData   = array_column($mensual,'total');
+$chartMensualLabels = array_column($mensual, 'mes');
+$chartMensualData   = array_column($mensual, 'total');
 
 $sql = "
     SELECT
@@ -254,7 +254,7 @@ $sql = "
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $sql .= "
     GROUP BY tecnico
@@ -279,7 +279,7 @@ $sql = "
 
 $params = $paramsBase;
 
-filtroTecnicoSQL($sql,$params,$tecnicoFiltro);
+filtroTecnicoSQL($sql, $params, $tecnicoFiltro);
 
 $sql .= "
     GROUP BY c.actividad
@@ -306,360 +306,376 @@ $tecnicos = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<title>Dashboard Actividades Extras</title>
+    <meta charset="UTF-8">
+    <title>Dashboard Actividades Extras</title>
 
-<link rel="stylesheet" href="itil_estadisticas.css">
-<link rel="stylesheet" href="sidebar.css">
-<link rel="stylesheet" href="topbar.css">
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link rel="stylesheet" href="itil_estadisticas.css">
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="topbar.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<style>
+    <style>
+        .tecnicos-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-.tecnicos-cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:12px;
-    margin-bottom:20px;
-}
+        .tec-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            box-shadow: 0 2px 6px var(--shadow);
+            transition: .2s;
+        }
 
-.tec-card{
-    background:var(--card-bg);
-    border-radius:10px;
-    padding:12px;
-    text-align:center;
-    text-decoration:none;
-    color:var(--text);
-    font-weight:600;
-    box-shadow:0 2px 6px var(--shadow);
-    transition:.2s;
-}
+        .tec-card:hover {
+            transform: translateY(-2px);
+        }
 
-.tec-card:hover{
-    transform:translateY(-2px);
-}
+        .tec-card.active {
+            background: #00AEEF;
+            color: white;
+        }
 
-.tec-card.active{
-    background:#00AEEF;
-    color:white;
-}
+        .kpi-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
 
-.kpi-value{
-    font-size:32px;
-    font-weight:bold;
-    margin-top:8px;
-}
+        .kpi-sub {
+            color: var(--subtext);
+            font-size: 13px;
+            margin-top: 5px;
+        }
 
-.kpi-sub{
-    color:var(--subtext);
-    font-size:13px;
-    margin-top:5px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-}
+        th,
+        td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, .08);
+            text-align: left;
+        }
 
-th,td{
-    padding:8px;
-    border-bottom:1px solid rgba(0,0,0,.08);
-    text-align:left;
-}
+        body.dark th,
+        body.dark td {
+            border-color: rgba(255, 255, 255, .08);
+        }
 
-body.dark th,
-body.dark td{
-    border-color:rgba(255,255,255,.08);
-}
-
-.main {
-    margin-left: 240px;
-    margin-top: 20px;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-</style>
+        .main {
+            margin-left: 240px;
+            margin-top: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 
 <body>
 
-<?php require "sidebar.php"; ?>
-<?php require "topbar.php"; ?>
+    <?php require "sidebar.php"; ?>
+    <?php require "topbar.php"; ?>
 
-<br>
+    <br>
 
-<div class="filtro-bar">
+    <div class="filtro-bar">
 
-<form method="GET" class="filtro-row">
+        <form method="GET" class="filtro-row">
 
-    <input type="date" name="inicio" value="<?= htmlspecialchars($fecha_inicio) ?>">
-    <input type="date" name="fin" value="<?= htmlspecialchars($fecha_fin) ?>">
+            <input type="date" name="inicio" value="<?= htmlspecialchars($fecha_inicio) ?>">
+            <input type="date" name="fin" value="<?= htmlspecialchars($fecha_fin) ?>">
 
-    <?php if($tecnicoFiltro): ?>
-        <input type="hidden" name="tecnico" value="<?= $tecnicoFiltro ?>">
-    <?php endif; ?>
+            <?php if ($tecnicoFiltro): ?>
+                <input type="hidden" name="tecnico" value="<?= $tecnicoFiltro ?>">
+            <?php endif; ?>
 
-    <button type="submit">Filtrar</button>
+            <button type="submit">Filtrar</button>
 
-</form>
+        </form>
 
-<div class="filtro-row">
+        <div class="filtro-row">
 
-    <form method="GET">
-        <input type="hidden" name="rango" value="hoy">
-        <button>Hoy</button>
-    </form>
+            <form method="GET">
+                <input type="hidden" name="rango" value="hoy">
+                <button>Hoy</button>
+            </form>
 
-    <form method="GET">
-        <input type="hidden" name="rango" value="7">
-        <button>Últimos 7 días</button>
-    </form>
+            <form method="GET">
+                <input type="hidden" name="rango" value="7">
+                <button>Últimos 7 días</button>
+            </form>
 
-    <form method="GET">
-        <input type="hidden" name="rango" value="mes">
-        <button>Mes actual</button>
-    </form>
+            <form method="GET">
+                <input type="hidden" name="rango" value="mes">
+                <button>Mes actual</button>
+            </form>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
-<div class="main">
+    <div class="main">
 
-<h2 class="dashboard-title">
-Dashboard Actividades Extras
-</h2>
+        <h2 class="dashboard-title">
+            Dashboard Actividades Extras
+        </h2>
 
-<div class="dashboard-subtitle">
-Vista ejecutiva de actividades registradas
-</div>
+        <div class="dashboard-subtitle">
+            Vista ejecutiva de actividades registradas
+        </div>
 
-<div class="tecnicos-cards">
+        <div class="tecnicos-cards">
 
-<?php foreach($tecnicos as $t): ?>
+            <?php foreach ($tecnicos as $t): ?>
 
-<a
-class="tec-card <?= ($tecnicoFiltro==$t['id']) ? 'active' : '' ?>"
-href="?inicio=<?= urlencode($fecha_inicio) ?>&fin=<?= urlencode($fecha_fin) ?>&tecnico=<?= $t['id'] ?>">
+                <a
+                    class="tec-card <?= ($tecnicoFiltro == $t['id']) ? 'active' : '' ?>"
+                    href="?inicio=<?= urlencode($fecha_inicio) ?>&fin=<?= urlencode($fecha_fin) ?>&tecnico=<?= $t['id'] ?>">
 
-<?= htmlspecialchars($t['nombre']) ?>
+                    <?= htmlspecialchars($t['nombre']) ?>
 
-</a>
+                </a>
 
-<?php endforeach; ?>
+            <?php endforeach; ?>
 
-</div>
+        </div>
 
-<div class="dashboard-grid">
+        <div class="dashboard-grid">
 
-<div class="card">
-<h3>Total Actividades</h3>
-<div class="kpi-value"><?= $total ?></div>
-<div class="kpi-sub">Registradas</div>
-</div>
+            <div class="card">
+                <h3>Total Actividades</h3>
+                <div class="kpi-value"><?= $total ?></div>
+                <div class="kpi-sub">Registradas</div>
+            </div>
 
-<div class="card">
-<h3>Completadas</h3>
-<div class="kpi-value"><?= $totalCompletadas ?></div>
-<div class="kpi-sub">Finalizadas</div>
-</div>
+            <div class="card">
+                <h3>Completadas</h3>
+                <div class="kpi-value"><?= $totalCompletadas ?></div>
+                <div class="kpi-sub">Finalizadas</div>
+            </div>
 
-<div class="card">
-<h3>Pendientes</h3>
-<div class="kpi-value"><?= $totalPendientes ?></div>
-<div class="kpi-sub">Abiertas</div>
-</div>
+            <div class="card">
+                <h3>Pendientes</h3>
+                <div class="kpi-value"><?= $totalPendientes ?></div>
+                <div class="kpi-sub">Abiertas</div>
+            </div>
 
-<div class="card">
-<h3>Duración Promedio</h3>
-<div class="kpi-value"><?= number_format($duracionPromedio,2) ?></div>
-<div class="kpi-sub">Minutos</div>
-</div>
+            <div class="card">
+                <h3>Duración Promedio</h3>
+                <div class="kpi-value"><?= number_format($duracionPromedio, 2) ?></div>
+                <div class="kpi-sub">Minutos</div>
+            </div>
 
-<div class="card">
-<h3>Tiempo Total</h3>
-<div class="kpi-value"><?= round($tiempoTotal/60,1) ?></div>
-<div class="kpi-sub">Horas</div>
-</div>
+            <div class="card">
+                <h3>Tiempo Total</h3>
+                <div class="kpi-value"><?= round($tiempoTotal / 60, 1) ?></div>
+                <div class="kpi-sub">Horas</div>
+            </div>
 
-<div class="card">
-<h3>Ingenieros Activos</h3>
-<div class="kpi-value"><?= $tecnicosActivos ?></div>
-<div class="kpi-sub">Participantes</div>
-</div>
+            <div class="card">
+                <h3>Ingenieros Activos</h3>
+                <div class="kpi-value"><?= $tecnicosActivos ?></div>
+                <div class="kpi-sub">Participantes</div>
+            </div>
 
-</div>
+        </div>
 
-<div class="dashboard-2col">
+        <div class="dashboard-2col">
 
-<div class="chart-card">
-<h3>Actividades por Técnico</h3>
-<div id="chartTecnico" class="chart-container"></div>
-</div>
+            <div class="chart-card">
+                <h3>Actividades por Técnico</h3>
+                <div id="chartTecnico" class="chart-container"></div>
+            </div>
 
-<div class="chart-card">
-<h3>Actividades por Tipo</h3>
-<div id="chartActividad" class="chart-container"></div>
-</div>
+            <div class="chart-card">
+                <h3>Actividades por Tipo</h3>
+                <div id="chartActividad" class="chart-container"></div>
+            </div>
 
-</div>
+        </div>
 
-<div class="dashboard-2col">
+        <div class="dashboard-2col">
 
-<div class="chart-card">
-<h3>Actividades por Estado</h3>
-<div id="chartEstado" class="chart-container"></div>
-</div>
+            <div class="chart-card">
+                <h3>Actividades por Estado</h3>
+                <div id="chartEstado" class="chart-container"></div>
+            </div>
 
-<div class="chart-card">
-<h3>Tendencia Mensual</h3>
-<div id="chartMensual" class="chart-container"></div>
-</div>
+            <div class="chart-card">
+                <h3>Tendencia Mensual</h3>
+                <div id="chartMensual" class="chart-container"></div>
+            </div>
 
-</div>
+        </div>
 
-<div class="dashboard-2col">
+        <div class="dashboard-2col">
 
-<div class="table-box">
+            <div class="table-box">
 
-<h3>Top Técnicos</h3>
+                <h3>Top Técnicos</h3>
 
-<table>
+                <table>
 
-<tr>
-<th>Técnico</th>
-<th>Total</th>
-</tr>
+                    <tr>
+                        <th>Técnico</th>
+                        <th>Total</th>
+                    </tr>
 
-<?php foreach($topTecnicos as $row): ?>
+                    <?php foreach ($topTecnicos as $row): ?>
 
-<tr>
-<td><?= htmlspecialchars($row['tecnico']) ?></td>
-<td><?= $row['total'] ?></td>
-</tr>
+                        <tr>
+                            <td><?= htmlspecialchars($row['tecnico']) ?></td>
+                            <td><?= $row['total'] ?></td>
+                        </tr>
 
-<?php endforeach; ?>
+                    <?php endforeach; ?>
 
-</table>
+                </table>
 
-</div>
+            </div>
 
-<div class="table-box">
+            <div class="table-box">
 
-<h3>Top Actividades</h3>
+                <h3>Top Actividades</h3>
 
-<table>
+                <table>
 
-<tr>
-<th>Actividad</th>
-<th>Total</th>
-</tr>
+                    <tr>
+                        <th>Actividad</th>
+                        <th>Total</th>
+                    </tr>
 
-<?php foreach($topActividades as $row): ?>
+                    <?php foreach ($topActividades as $row): ?>
 
-<tr>
-<td><?= htmlspecialchars($row['actividad']) ?></td>
-<td><?= $row['total'] ?></td>
-</tr>
+                        <tr>
+                            <td><?= htmlspecialchars($row['actividad']) ?></td>
+                            <td><?= $row['total'] ?></td>
+                        </tr>
 
-<?php endforeach; ?>
+                    <?php endforeach; ?>
 
-</table>
+                </table>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-<script>
-
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-}
-
-const isDark = document.body.classList.contains("dark");
-
-let chartTecnicoIDs    = <?= json_encode($chartTecnicoIDs) ?>;
-let chartTecnicoLabels = <?= json_encode($chartTecnicoLabels) ?>;
-let chartTecnicoData   = <?= json_encode($chartTecnicoData) ?>;
-
-let chartActividadLabels = <?= json_encode($chartActividadLabels) ?>;
-let chartActividadData   = <?= json_encode($chartActividadData) ?>;
-
-let chartEstadoLabels = <?= json_encode($chartEstadoLabels) ?>;
-let chartEstadoData   = <?= json_encode($chartEstadoData) ?>;
-
-let chartMensualLabels = <?= json_encode($chartMensualLabels) ?>;
-let chartMensualData   = <?= json_encode($chartMensualData) ?>;
-
-new ApexCharts(document.querySelector("#chartTecnico"),{
-    chart:{
-        type:'bar',
-        height:280,
-        events:{
-            dataPointSelection:function(event,ctx,config){
-
-                const id=chartTecnicoIDs[config.dataPointIndex];
-
-                const params=new URLSearchParams(window.location.search);
-
-                params.set("tecnico",id);
-
-                window.location.href="actividades_estadisticas.php?"+params.toString();
+        <script>
+            if (localStorage.getItem("theme") === "dark") {
+                document.body.classList.add("dark");
             }
-        }
-    },
-    series:[{
-        name:'Actividades',
-        data:chartTecnicoData
-    }],
-    xaxis:{
-        categories:chartTecnicoLabels
-    },
-    theme:{mode:isDark?'dark':'light'}
-}).render();
 
-new ApexCharts(document.querySelector("#chartActividad"),{
-    chart:{type:'pie',height:280},
-    labels:chartActividadLabels,
-    series:chartActividadData,
-    theme:{mode:isDark?'dark':'light'}
-}).render();
+            const isDark = document.body.classList.contains("dark");
 
-new ApexCharts(document.querySelector("#chartEstado"),{
-    chart:{type:'bar',height:280},
-    plotOptions:{
-        bar:{
-            horizontal:true
-        }
-    },
-    series:[{
-        name:'Actividades',
-        data:chartEstadoData
-    }],
-    xaxis:{
-        categories:chartEstadoLabels
-    },
-    theme:{mode:isDark?'dark':'light'}
-}).render();
+            let chartTecnicoIDs = <?= json_encode($chartTecnicoIDs) ?>;
+            let chartTecnicoLabels = <?= json_encode($chartTecnicoLabels) ?>;
+            let chartTecnicoData = <?= json_encode($chartTecnicoData) ?>;
 
-new ApexCharts(document.querySelector("#chartMensual"),{
-    chart:{type:'line',height:280},
-    series:[{
-        name:'Actividades',
-        data:chartMensualData
-    }],
-    xaxis:{
-        categories:chartMensualLabels
-    },
-    stroke:{
-        curve:'smooth'
-    },
-    theme:{mode:isDark?'dark':'light'}
-}).render();
+            let chartActividadLabels = <?= json_encode($chartActividadLabels) ?>;
+            let chartActividadData = <?= json_encode($chartActividadData) ?>;
 
-</script>
+            let chartEstadoLabels = <?= json_encode($chartEstadoLabels) ?>;
+            let chartEstadoData = <?= json_encode($chartEstadoData) ?>;
+
+            let chartMensualLabels = <?= json_encode($chartMensualLabels) ?>;
+            let chartMensualData = <?= json_encode($chartMensualData) ?>;
+
+            new ApexCharts(document.querySelector("#chartTecnico"), {
+                chart: {
+                    type: 'bar',
+                    height: 280,
+                    events: {
+                        dataPointSelection: function(event, ctx, config) {
+
+                            const id = chartTecnicoIDs[config.dataPointIndex];
+
+                            const params = new URLSearchParams(window.location.search);
+
+                            params.set("tecnico", id);
+
+                            window.location.href = "actividades_estadisticas.php?" + params.toString();
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Actividades',
+                    data: chartTecnicoData
+                }],
+                xaxis: {
+                    categories: chartTecnicoLabels
+                },
+                theme: {
+                    mode: isDark ? 'dark' : 'light'
+                }
+            }).render();
+
+            new ApexCharts(document.querySelector("#chartActividad"), {
+                chart: {
+                    type: 'pie',
+                    height: 280
+                },
+                labels: chartActividadLabels,
+                series: chartActividadData,
+                theme: {
+                    mode: isDark ? 'dark' : 'light'
+                }
+            }).render();
+
+            new ApexCharts(document.querySelector("#chartEstado"), {
+                chart: {
+                    type: 'bar',
+                    height: 280
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true
+                    }
+                },
+                series: [{
+                    name: 'Actividades',
+                    data: chartEstadoData
+                }],
+                xaxis: {
+                    categories: chartEstadoLabels
+                },
+                theme: {
+                    mode: isDark ? 'dark' : 'light'
+                }
+            }).render();
+
+            new ApexCharts(document.querySelector("#chartMensual"), {
+                chart: {
+                    type: 'line',
+                    height: 280
+                },
+                series: [{
+                    name: 'Actividades',
+                    data: chartMensualData
+                }],
+                xaxis: {
+                    categories: chartMensualLabels
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                theme: {
+                    mode: isDark ? 'dark' : 'light'
+                }
+            }).render();
+        </script>
 
 </body>
+
 </html>
