@@ -121,10 +121,7 @@ $categorias = $pdo->query("
         }
 
 
-        .sidebar.collapsed~.main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
-        }
+
 
         /* ========================= */
         /* TOPBAR ITIL (DEBAJO)     */
@@ -144,14 +141,7 @@ $categorias = $pdo->query("
             width: auto;
         }
 
-        #sidebar.collapsed~.itil-topbar {
-            left: 70px;
-        }
 
-        #sidebar.collapsed~.main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
-        }
 
         .itil-topbar a {
             text-decoration: none;
@@ -182,16 +172,7 @@ $categorias = $pdo->query("
             width: 70px;
         }
 
-        .sidebar h2 {
-            margin: 0 0 20px;
-            font-size: 20px;
-            color: var(--primary);
-            transition: opacity 0.25s ease;
-        }
 
-        .sidebar.collapsed h2 {
-            opacity: 0;
-        }
 
         .nav-item {
             padding: 10px 12px;
@@ -224,9 +205,7 @@ $categorias = $pdo->query("
             fill: currentColor;
         }
 
-        .sidebar.collapsed .nav-text {
-            display: none;
-        }
+
 
         /* TOOLTIP */
         .tooltip {
@@ -246,10 +225,7 @@ $categorias = $pdo->query("
             z-index: 99999;
         }
 
-        .sidebar.collapsed .nav-item:hover .tooltip {
-            opacity: 1;
-            left: 75px;
-        }
+
 
         /* ====== TOPBAR ITIL ====== */
         .itil-topbar {
@@ -315,10 +291,7 @@ $categorias = $pdo->query("
 
 
 
-        .sidebar.collapsed~.itil-topbar+.main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
-        }
+
 
         /* ========================= */
         /* FORMULARIO                */
@@ -410,14 +383,6 @@ $categorias = $pdo->query("
                 margin-left .25s ease,
                 width .25s ease;
 
-
-        }
-
-        #sidebar.collapsed~.main-shell {
-
-            margin-left: 70px;
-
-            width: calc(100% - 70px);
 
         }
     </style>
