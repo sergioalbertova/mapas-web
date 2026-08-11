@@ -1,5 +1,5 @@
 <?php
-require "session_config.php";
+require "auth.php";
 require "db.php";
 
 if (!isset($_POST['nombre']) || trim($_POST['nombre']) === "") {
@@ -16,4 +16,3 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
-?>

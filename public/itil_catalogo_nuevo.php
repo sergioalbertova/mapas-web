@@ -2,11 +2,15 @@
 require "auth.php";
 require "db.php";
 
-// Validar sesión
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php?msg=no_session");
-    exit;
-}
+$id = $_SESSION['user_id'];
+
+/* ============================================================
+   OBTENER TÉCNICO LOGUEADO
+   ============================================================ */
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -30,14 +34,18 @@ if (!isset($_SESSION['user_id'])) {
 
         body.dark {
             --bg: #1A1D21;
+            --sidebar-bg: #24272C;
+            --sidebar-hover: #2F3338;
             --card-bg: #2C2F34;
             --text: #E5E7EB;
             --subtext: #9CA3AF;
-            --primary: #00AEEF;
-            --primary-hover: #0088C0;
+            --primary: #4FC3F7;
+            --primary-hover: #81D4FA;
             --shadow: rgba(0, 0, 0, 0.45);
-            --input-bg: #1F2226;
-            --input-border: #3A3D42;
+        }
+
+        body.dark .text-muted {
+            color: var(--subtext) !important;
         }
 
         body {
@@ -48,101 +56,37 @@ if (!isset($_SESSION['user_id'])) {
             display: flex;
         }
 
-
         /* ========================= */
-        /* SIDEBAR ORIGINAL          */
+        /* TOPBAR GENERAL (PRIMERO) */
         /* ========================= */
-        .sidebar {
-            width: 240px;
+        .topbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 240px;
+            right: 0;
+            height: 55px;
+            z-index: 3000 !important;
             background: var(--sidebar-bg);
-            height: 100vh;
-            box-shadow: 4px 0 20px var(--shadow);
-            padding: 20px 15px;
             display: flex;
-            flex-direction: column;
-            position: fixed;
-            transition: width 0.25s ease;
-            overflow: visible;
-            z-index: 2000;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px var(--shadow);
         }
+
+
 
         .sidebar.collapsed {
             width: 70px;
         }
 
-        .sidebar h2 {
-            margin: 0 0 20px;
-            font-size: 20px;
-            color: var(--primary);
-            transition: opacity 0.25s ease;
-        }
 
-        .sidebar.collapsed h2 {
-            opacity: 0;
-        }
-
-        .nav-item {
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-        }
-
-        .nav-item:hover {
-            background: var(--sidebar-hover);
-        }
-
-        .nav-item a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        .sidebar.collapsed .nav-text {
-            display: none;
-        }
-
-        /* TOOLTIP */
-        .tooltip {
-            position: absolute;
-            left: 80px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--sidebar-bg);
-            padding: 6px 12px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px var(--shadow);
-            font-size: 13px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease, left 0.2s ease;
-            z-index: 99999;
-        }
-
-        .sidebar.collapsed .nav-item:hover .tooltip {
-            opacity: 1;
-            left: 75px;
-        }
-
-        /* ====== TOPBAR ITIL ====== */
+        /* ========================= */
+        /* TOPBAR ITIL (DEBAJO)     */
+        /* ========================= */
         .itil-topbar {
             position: fixed;
-            top: 0;
+            top: 60px !important;
+            /* DEBAJO DEL TOPBAR GENERAL */
             left: 240px;
             right: 0;
             height: 55px;
@@ -152,45 +96,50 @@ if (!isset($_SESSION['user_id'])) {
             gap: 25px;
             padding: 0 25px;
             box-shadow: 0 2px 8px var(--shadow);
-            z-index: 2100;
-        }
-
-        .sidebar.collapsed~.itil-topbar {
-            left: 70px;
+            z-index: 2500 !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .itil-topbar a {
             text-decoration: none;
             color: var(--text);
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 6px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            transition: 0.2s ease;
+            font-size: 15px;
         }
 
         .itil-topbar a:hover {
             background: var(--sidebar-hover);
+            transform: translateY(-1px);
         }
 
         .itil-topbar svg {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             fill: currentColor;
+            opacity: 0.85;
         }
 
-        /* MAIN */
+        /* ========================= */
+        /* MAIN                      */
+        /* ========================= */
         .main {
             margin-left: 240px;
-            padding: 40px;
             width: calc(100% - 240px);
-            transition: margin-left 0.25s ease;
+            margin-top: 125px !important;
+            /* 55px general + 60px ITIL */
+            padding: 20px;
+            transition: margin-left 0.25s ease, width 0.25s ease;
         }
 
-        .sidebar.collapsed~.main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
+        #sidebar.collapsed~* .main {
+            margin-left: 70px !important;
+            width: calc(100% - 70px) !important;
         }
 
         /* TITULO */
@@ -286,6 +235,8 @@ if (!isset($_SESSION['user_id'])) {
 <body>
 
     <?php require "sidebar.php"; ?>
+    <!-- === TOPBAR GENERAL (PRIMERO) === -->
+    <?php require "topbar.php"; ?>
 
     <!-- === TOPBAR REAL === -->
     <div class="itil-topbar">

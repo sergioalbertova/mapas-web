@@ -394,41 +394,7 @@ $tecnicos = $stmtTec->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- === SCRIPTS ORIGINALES === -->
-    <script>
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("collapsed");
-        }
-
-        function setDarkIcon(isDark) {
-            const icon = document.getElementById("darkToggleIcon");
-            const text = document.getElementById("darkToggleText");
-            if (!icon) return;
-
-            if (isDark) {
-                icon.innerHTML = '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1021 12.79z"/>';
-                text.textContent = "Tema claro";
-            } else {
-                icon.innerHTML = '<path d="M12 3a1 1 0 011 1v1a1 1 0 01-2 0V4a1 1 0 011-1zm0 12a4 4 0 100-8 4 4 0 000 8zm7-3a1 1 0 010 2h-1a1 1 0 010-2h1zM6 12a1 1 0 01-1 1H4a1 1 0 010-2h1a1 1 0 011 1zm11.66-6.66a1 1 0 010 1.41l-.71.71a1 1 0 11-1.41-1.41l.71-.71a1 1 0 011.41 0zM7.46 16.54a1 1 0 010 1.41l-.71.71a1 1 0 01-1.41-1.41l.71-.71a1 1 0 011.41 0zM7.46 5.46a1 1 0 01-1.41 0l-.71-.71A1 1 0 016.75 3.34l.71.71a1 1 0 010 1.41zm11.19 11.19a1 1 0 01-1.41 0l-.71-.71a1 1 0 011.41-1.41l.71.71a1 1 0 010 1.41zM12 18a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1z"/>';
-                text.textContent = "Tema oscuro";
-            }
-        }
-
-        function toggleDarkMode() {
-            const isDark = !document.body.classList.contains("dark");
-            document.body.classList.toggle("dark", isDark);
-            localStorage.setItem("tema", isDark ? "dark" : "light");
-            setDarkIcon(isDark);
-        }
-
-        (function initTheme() {
-            const saved = localStorage.getItem("tema");
-            const isDark = saved === "dark";
-            if (isDark) {
-                document.body.classList.add("dark");
-            }
-            setDarkIcon(isDark);
-        })();
-    </script>
+    <script src="theme.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
