@@ -59,7 +59,7 @@ $categorias = $pdo->query("
 <head>
     <meta charset="UTF-8">
     <title>Editar apoyo</title>
-
+    <link rel="icon" href="apoyo2.png" type="image/x-icon">
     <style>
         /* ========================= */
         /* ====== VARIABLES ====== */
@@ -254,16 +254,22 @@ $categorias = $pdo->query("
         /* ====== TOPBAR ITIL ====== */
         .itil-topbar {
             position: fixed;
-            top: 0;
+            top: 65px;
             left: 240px;
             right: 0;
+
             height: 55px;
+
             background: var(--sidebar-bg);
+
             display: flex;
             align-items: center;
             gap: 25px;
+
             padding: 0 25px;
+
             box-shadow: 0 2px 8px var(--shadow);
+
             z-index: 2100;
         }
 
@@ -301,7 +307,12 @@ $categorias = $pdo->query("
 
             padding: 15px 20px;
 
+            display: flex;
+
+            justify-content: center;
+
         }
+
 
 
         .sidebar.collapsed~.itil-topbar+.main {
