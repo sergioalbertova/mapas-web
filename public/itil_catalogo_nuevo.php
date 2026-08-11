@@ -18,6 +18,7 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
 <head>
     <meta charset="UTF-8">
     <title>Nuevo catálogo ITIL</title>
+    <link rel="icon" href="apoyo2.png" type="image/x-icon">
 
     <style>
         :root {
@@ -230,6 +231,8 @@ $nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
             z-index: 9999;
         }
     </style>
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="topbar.css">
 </head>
 
 <body>
