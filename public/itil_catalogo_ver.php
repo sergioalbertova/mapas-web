@@ -2,6 +2,32 @@
 require "auth.php";
 require "db.php";
 
+$id = $_SESSION['user_id'];
+/* ============================================================
+   OBTENER TÉCNICO LOGUEADO (usuario + nombre)
+   ============================================================ */
+
+$tecnico_id = intval($_SESSION['user_id']);
+
+$stmt = $pdo->prepare("SELECT usuario, nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$tecnico_id]);
+$tecnico = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+// Obtener nombre real del usuario
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombreUsuario = $usuario ? $usuario['nombre'] : "Usuario";
+
+if ($tecnico) {
+    $nombreTecnico = $tecnico['usuario'] . " - " . $tecnico['nombre'];
+} else {
+    $nombreTecnico = "Usuario no encontrado (ID $tecnico_id)";
+}
+
+
+
 if (!isset($_GET['id'])) {
     die("ID no especificado");
 }
@@ -29,65 +55,79 @@ $categorias = $pdo->query("
 <!DOCTYPE html>
 <html lang="es">
 
+
 <head>
     <meta charset="UTF-8">
     <title>Editar apoyo</title>
 
     <style>
         /* ========================= */
-        /* VARIABLES                 */
-        /* ========================= */
+        /* ====== VARIABLES ====== */
         :root {
             --bg: #F4F7FA;
-            --sidebar-bg: #FFFFFF;
-            --sidebar-hover: #E8EEF5;
-            --card-bg: #FFFFFF;
             --text: #1F2933;
-            --subtext: #6B7280;
-            --primary: #0054A6;
-            --primary-hover: #003F7D;
+
+            --topbar-bg: rgba(255, 255, 255, 0.85);
+            --topbar-text: #1F2933;
+            --topbar-border: rgba(0, 0, 0, 0.1);
+
+            --sidebar-bg: #FFFFFF;
+            --sidebar-text: #1F2933;
+            --sidebar-border: rgba(0, 0, 0, 0.1);
+
+            --card-bg: #FFFFFF;
+            --card-text: #1F2933;
+
+            --accent: #00AEEF;
             --shadow: rgba(0, 0, 0, 0.08);
+
+            --primary: #00AEEF;
+            --primary-hover: #0088C0;
+            --sidebar-hover: #E8EEF5;
+
         }
 
         body.dark {
-            --bg: #1A1D21;
-            --sidebar-bg: #24272C;
-            --sidebar-hover: #2F3338;
-            --card-bg: #2C2F34;
+            --bg: #0f172a;
             --text: #E5E7EB;
-            --subtext: #9CA3AF;
-            --primary: #00AEEF;
-            --primary-hover: #0088C0;
+
+            --topbar-bg: rgba(17, 24, 39, 0.85);
+            --topbar-text: #E5E7EB;
+            --topbar-border: rgba(255, 255, 255, 0.1);
+
+            --sidebar-bg: #020617;
+            --sidebar-text: #E5E7EB;
+            --sidebar-border: rgba(255, 255, 255, 0.1);
+
+            --card-bg: #1f2937;
+            --card-text: #E5E7EB;
+
             --shadow: rgba(0, 0, 0, 0.45);
+
+            --primary: #00AEEF;
+            --primary-hover: #0099D6;
+            --sidebar-hover: #2F3338;
         }
 
-        /* ========================= */
-        /* GENERAL                   */
-        /* ========================= */
+
+        /* ====== GENERAL ====== */
         body {
             margin: 0;
             font-family: "Segoe UI", Arial;
             background: var(--bg);
             color: var(--text);
             display: flex;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* ========================= */
-        /* SIDEBAR ORIGINAL          */
-        /* ========================= */
-        .sidebar {
-            width: 240px;
-            background: var(--sidebar-bg);
-            height: 100vh;
-            box-shadow: 4px 0 20px var(--shadow);
-            padding: 20px 15px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            transition: width 0.25s ease;
-            overflow: visible;
-            z-index: 2000;
+
+        .sidebar.collapsed~.main {
+            margin-left: 70px;
+            width: calc(100% - 70px);
         }
+
+
+
 
         .sidebar.collapsed {
             width: 70px;
@@ -300,13 +340,14 @@ $categorias = $pdo->query("
             margin-bottom: 20px;
         }
     </style>
-
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="topbar.css">
 </head>
 
 <body>
 
     <?php include "sidebar.php"; ?>
-
+    <?php require "topbar.php"; ?>
     <!-- === TOPBAR REAL === -->
     <div class="itil-topbar">
 
@@ -454,20 +495,9 @@ $categorias = $pdo->query("
                 document.body.classList.add("dark");
             }
         });
-
-        // Función global para el sidebar
-        function toggleTheme() {
-            document.body.classList.toggle("dark");
-
-            if (document.body.classList.contains("dark")) {
-                localStorage.setItem("theme", "dark");
-            } else {
-                localStorage.setItem("theme", "light");
-            }
-        }
     </script>
 
-
+    <script src="theme.js"></script>
 </body>
 
 </html>
