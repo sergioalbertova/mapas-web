@@ -191,6 +191,10 @@ $categorias = $pdo->query("
             background: var(--sidebar-hover);
         }
 
+        .submenu-items .nav-text {
+            white-space: nowrap !important;
+        }
+
         .nav-item a {
             display: flex;
             align-items: center;
