@@ -174,19 +174,6 @@ $categorias = $pdo->query("
 
 
 
-        .nav-item {
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-        }
-
         .nav-item:hover {
             background: var(--sidebar-hover);
         }
@@ -194,41 +181,6 @@ $categorias = $pdo->query("
         .submenu-items .nav-text {
             white-space: nowrap !important;
         }
-
-        .nav-item a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-
-
-        /* TOOLTIP */
-        .tooltip {
-            position: absolute;
-            left: 80px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--sidebar-bg);
-            padding: 6px 12px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px var(--shadow);
-            font-size: 13px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease, left 0.2s ease;
-            z-index: 99999;
-        }
-
 
 
         /* ====== TOPBAR ITIL ====== */
