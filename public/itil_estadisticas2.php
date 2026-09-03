@@ -132,7 +132,7 @@ SELECT
         WHERE fecha_resolucion IS NOT NULL
     ) AS total
 FROM itil_incidentes
-WHERE fecha_r*porte BETWEEN :inicio AND :fin
+WHERE fecha_reporte BETWEEN :inicio AND :fin
 ";
 
 
