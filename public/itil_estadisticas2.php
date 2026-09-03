@@ -129,9 +129,9 @@ SELECT
     ) AS dentro,
 
     COUNT(*) FILTER (
-        WHERE fecha_res*lucion IS NOT NULL
+        WHERE fecha_resolucion IS NOT NULL
     ) AS total
-*FROM itil_incidentes
+FROM itil_incidentes
 WHERE fecha_r*porte BETWEEN :inicio AND :fin
 ";
 
