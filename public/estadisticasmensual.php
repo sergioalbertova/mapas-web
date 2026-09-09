@@ -141,6 +141,65 @@ $slaBaja =
     ? round(($row['cumplidos'] / $row['total']) * 100, 1)
     : 0;
 
+/* INCIDENTES QUE NO CUMPLIERON SLA */
+$sql = "
+SELECT
+    id,
+    titulo,
+    prioridad,
+    
+    ROUND(
+        EXTRACT(
+            EPOCH FROM (
+                fecha_resolucion - fecha_reporte
+            )
+        ) / 3600,
+    2) AS horas
+
+FROM itil_incidentes
+
+WHERE fecha_resolucion IS NOT NULL
+
+AND fecha_reporte BETWEEN :inicio AND :fin
+
+AND (
+
+    (
+        LOWER(prioridad) = 'alta'
+        AND fecha_resolucion >
+            fecha_reporte + INTERVAL '4 hours'
+    )
+
+    OR
+
+    (
+        LOWER(prioridad) = 'media'
+        AND fecha_resolucion >
+            fecha_reporte + INTERVAL '8 hours'
+    )
+
+    OR
+
+    (
+        LOWER(prioridad) = 'baja'
+        AND fecha_resolucion >
+            fecha_reporte + INTERVAL '24 hours'
+    )
+
+)
+
+ORDER BY horas DESC
+";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+
+$incumplidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$noCumplieron = count($incumplidos);
+
+
+
 /* TOP 10 FALLAS */
 $sql = "
 SELECT
@@ -289,6 +348,39 @@ $topFallas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <tr>
                     <td><?= htmlspecialchars($falla['titulo']) ?></td>
                     <td><?= $falla['total'] ?></td>
+                </tr>
+
+            <?php endforeach; ?>
+
+        </table>
+
+    </div>
+
+    <br><br>
+
+    <div class="card">
+
+        <h3>Incidentes que NO cumplieron SLA</h3>
+
+        <table>
+
+            <tr>
+                <th>ID</th>
+                <th>Incidente</th>
+                <th>Prioridad</th>
+                <th>Horas</th>
+            </tr>
+
+            <?php foreach ($incumplidos as $i): ?>
+
+                <tr>
+                    <td><?= $i['id'] ?></td>
+
+                    <td><?= htmlspecialchars($i['titulo']) ?></td>
+
+                    <td><?= $i['prioridad'] ?></td>
+
+                    <td><?= $i['horas'] ?></td>
                 </tr>
 
             <?php endforeach; ?>
