@@ -144,46 +144,56 @@ $slaBaja =
 /* INCIDENTES QUE NO CUMPLIERON SLA */
 $sql = "
 SELECT
-    id,
-    titulo,
-    prioridad,
-    
+    i.id,
+    i.titulo,
+    i.prioridad,
+
+    COALESCE(u.nombre,'Sin técnico') AS tecnico,
+
+    COALESCE(a.nomuser,'Sin usuario') AS usuario,
+
     ROUND(
         EXTRACT(
             EPOCH FROM (
-                fecha_resolucion - fecha_reporte
+                i.fecha_resolucion - i.fecha_reporte
             )
         ) / 3600,
     2) AS horas
 
-FROM itil_incidentes
+FROM itil_incidentes i
 
-WHERE fecha_resolucion IS NOT NULL
+LEFT JOIN usuarios u
+    ON u.id = i.tecnico_asignado
 
-AND fecha_reporte BETWEEN :inicio AND :fin
+LEFT JOIN activeuser a
+    ON a.idu = i.usuario_reporta
+
+WHERE i.fecha_resolucion IS NOT NULL
+
+AND i.fecha_reporte BETWEEN :inicio AND :fin
 
 AND (
 
     (
-        LOWER(prioridad) = 'alta'
-        AND fecha_resolucion >
-            fecha_reporte + INTERVAL '4 hours'
+        LOWER(i.prioridad) = 'alta'
+        AND i.fecha_resolucion >
+            i.fecha_reporte + INTERVAL '4 hours'
     )
 
     OR
 
     (
-        LOWER(prioridad) = 'media'
-        AND fecha_resolucion >
-            fecha_reporte + INTERVAL '8 hours'
+        LOWER(i.prioridad) = 'media'
+        AND i.fecha_resolucion >
+            i.fecha_reporte + INTERVAL '8 hours'
     )
 
     OR
 
     (
-        LOWER(prioridad) = 'baja'
-        AND fecha_resolucion >
-            fecha_reporte + INTERVAL '24 hours'
+        LOWER(i.prioridad) = 'baja'
+        AND i.fecha_resolucion >
+            i.fecha_reporte + INTERVAL '24 hours'
     )
 
 )
@@ -368,19 +378,27 @@ $topFallas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>ID</th>
                 <th>Incidente</th>
                 <th>Prioridad</th>
+                <th>Técnico</th>
+                <th>Usuario</th>
                 <th>Horas</th>
             </tr>
 
             <?php foreach ($incumplidos as $i): ?>
 
                 <tr>
+
                     <td><?= $i['id'] ?></td>
 
                     <td><?= htmlspecialchars($i['titulo']) ?></td>
 
                     <td><?= $i['prioridad'] ?></td>
 
+                    <td><?= htmlspecialchars($i['tecnico']) ?></td>
+
+                    <td><?= htmlspecialchars($i['usuario']) ?></td>
+
                     <td><?= $i['horas'] ?></td>
+
                 </tr>
 
             <?php endforeach; ?>
