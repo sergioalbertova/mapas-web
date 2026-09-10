@@ -1,5 +1,5 @@
 <?php
-require "auth.php";
+
 require "db.php";
 
 $inicioMesAnterior = date('Y-m-01', strtotime('first day of last month'));
