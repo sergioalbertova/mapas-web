@@ -231,6 +231,32 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 
 $topFallas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+/* TOP 10 USUARIOS */
+$sql = "
+SELECT
+    COALESCE(a.nomuser,'Sin usuario') AS usuario,
+    COUNT(*) AS total
+
+FROM itil_incidentes i
+
+LEFT JOIN activeuser a
+    ON a.idu = i.usuario_reporta
+
+WHERE i.fecha_reporte BETWEEN :inicio AND :fin
+
+GROUP BY usuario
+
+ORDER BY total DESC
+
+LIMIT 10
+";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+
+$topUsuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -367,6 +393,32 @@ $topFallas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <br><br>
+
+    <br><br>
+
+    <div class="card">
+
+        <h3>Top 10 Usuarios con más solicitudes</h3>
+
+        <table>
+
+            <tr>
+                <th>Usuario</th>
+                <th>Incidentes</th>
+            </tr>
+
+            <?php foreach ($topUsuarios as $u): ?>
+
+                <tr>
+                    <td><?= htmlspecialchars($u['usuario']) ?></td>
+                    <td><?= $u['total'] ?></td>
+                </tr>
+
+            <?php endforeach; ?>
+
+        </table>
+
+    </div>
 
     <div class="card">
 
