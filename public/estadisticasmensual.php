@@ -249,7 +249,6 @@ GROUP BY usuario
 
 ORDER BY total DESC
 
-LIMIT 10
 ";
 
 $stmt = $pdo->prepare($sql);
