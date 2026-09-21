@@ -5,13 +5,13 @@ require __DIR__ . "/db.php";
 $texto = "%" . $_GET['q'] . "%";
 
 $stmt = $pdo->prepare("
-    SELECT idu, nomuser 
+    SELECT idu, nomuser
     FROM activeuser
-    WHERE nomuser ILIKE ?
+    WHERE activo = TRUE
+      AND nomuser ILIKE ?
     ORDER BY nomuser
     LIMIT 20
 ");
 $stmt->execute([$texto]);
 
 echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
-?>
