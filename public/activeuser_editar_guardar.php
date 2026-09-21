@@ -12,6 +12,7 @@ $idu = $_POST['idu'] ?? null;
 // Manejo de enteros vacíos
 $ubimapa2 = $_POST['ubimapa2'] ?? null;
 $ubimapa2 = ($ubimapa2 === "" ? null : $ubimapa2);
+$activo = isset($_POST['activo']) ? true : false;
 
 $stmt = $pdo->prepare("
     UPDATE activeuser SET
@@ -20,8 +21,8 @@ $stmt = $pdo->prepare("
         hor1      = :hor1,
         hor2      = :hor2,
         piso      = :piso,
-        ubimapa2  = :ubimapa2
-        
+        ubimapa2  = :ubimapa2,
+        activo = :activo
 
     WHERE idu = :idu
 ");
@@ -33,6 +34,7 @@ $stmt->execute([
     ':hor2'      => $_POST['monitor']   ?? null,
     ':piso'      => $_POST['piso']      ?? null,
     ':ubimapa2'  => $ubimapa2,
+    ':activo' => $activo,
     ':idu'     => $idu
 
 
