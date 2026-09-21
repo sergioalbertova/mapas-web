@@ -6,11 +6,13 @@ $q = $_GET['q'] ?? '';
 $sql = "
     SELECT *
     FROM activeuser
-    WHERE 
+    WHERE activo = TRUE
+    AND (
         nomuser ILIKE ? OR
         ubicacion ILIKE ? OR
         hor1 ILIKE ? OR
         hor2 ILIKE ?
+    )
     ORDER BY nomuser ASC
 ";
 
