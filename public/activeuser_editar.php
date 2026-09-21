@@ -329,6 +329,7 @@ $ym = $coords['ym'] ?? null;
                         <input type="checkbox" id="permitirMover" checked>
                         Permitir reasignar ubicación
                     </label>
+
                 <?php else: ?>
                     <input type="hidden" id="xm" value="<?= safe($xm) ?>">
                     <input type="hidden" id="ym" value="<?= safe($ym) ?>">
