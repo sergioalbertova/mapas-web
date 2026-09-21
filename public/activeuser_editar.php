@@ -321,7 +321,11 @@ $ym = $coords['ym'] ?? null;
                     <input type="text" id="ym" value="<?= safe($ym) ?>">
 
                     <label style="margin-top:10px; display:flex; align-items:center; gap:8px;">
-                        <input type="checkbox" <?= $user['activo'] ? 'checked' : '' ?>>
+                        <input
+                            type="checkbox"
+                            name="activo"
+                            value="1"
+                            <?= $user['activo'] ? 'checked' : '' ?>>
                         Usuario activo
                     </label>
 

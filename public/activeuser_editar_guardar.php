@@ -12,7 +12,7 @@ $idu = $_POST['idu'] ?? null;
 // Manejo de enteros vacíos
 $ubimapa2 = $_POST['ubimapa2'] ?? null;
 $ubimapa2 = ($ubimapa2 === "" ? null : $ubimapa2);
-$activo = isset($_POST['activo']) ? true : false;
+$activo = isset($_POST['activo']) ? 1 : 0;
 
 $stmt = $pdo->prepare("
     UPDATE activeuser SET
