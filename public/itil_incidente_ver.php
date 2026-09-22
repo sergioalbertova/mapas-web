@@ -882,8 +882,7 @@ if ($restante >= 2) {
 
                         <div class="mb-2">
                             <label class="form-label">Solución</label>
-                            <textarea name="solucion" class="form-control" rows="6" required><?= htmlspecialchars($incidente['solucion'] ?? '') ?>
-                            </textarea>
+                            <textarea name="solucion" class="form-control" rows="6" required><?= htmlspecialchars($incidente['solucion'] ?? '') ?></textarea>
                         </div>
 
                         <small class="text-muted">
