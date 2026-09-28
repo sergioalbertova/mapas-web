@@ -2,12 +2,14 @@
 
 require "db.php";
 
-$inicioMesAnterior = date('Y-m-01', strtotime('first day of last month'));
-$finMesAnterior    = date('Y-m-t', strtotime('last month'));
+$mesSeleccionado = $_GET['mes'] ?? date('Y-m', strtotime('last month'));
+
+$inicioMes = date('Y-m-01', strtotime($mesSeleccionado));
+$finMes    = date('Y-m-t', strtotime($mesSeleccionado));
 
 $params = [
-    ':inicio' => $inicioMesAnterior . " 00:00:00",
-    ':fin'    => $finMesAnterior . " 23:59:59"
+    ':inicio' => $inicioMes . " 00:00:00",
+    ':fin'    => $finMes . " 23:59:59"
 ];
 
 /* TOTAL INCIDENTES */
@@ -326,10 +328,28 @@ $topUsuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <h1>Reporte Mensual</h1>
 
+
+    <form method="GET" style="margin-bottom:20px;">
+
+        <label>Mes a consultar:</label>
+
+        <input
+            type="month"
+            name="mes"
+            value="<?= htmlspecialchars($mesSeleccionado) ?>">
+
+        <button type="submit">
+            Consultar
+        </button>
+
+    </form>
+
     <div class="subtitulo">
         Mes analizado:
-        <?= date("F Y", strtotime($inicioMesAnterior)); ?>
+        <?= date("F Y", strtotime($inicioMes)); ?>
     </div>
+
+
 
     <div class="grid">
 
