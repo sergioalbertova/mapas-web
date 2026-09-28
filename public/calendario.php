@@ -556,8 +556,8 @@ $nombreMes = $meses[$mes] . " " . $anio;
                             echo "<div class='cumple-wrapper'>
                 
                 <svg class='icono-futbol rebote' viewBox='0 0 24 24' style='overflow: visible;'>
-    <path d='M12 2a5 5 0 00-5 5v4c0 1.7-.8 3.3-2 4.3V17h14v-1.7c-1.2-1-2-2.6-2-4.3V7a5 5 0 00-5-5zm0 20a3 3 0 01-3-3h6a3 3 0 01-3 3z'/>
-</svg>
+                    <path d='M3 15c2-2 16-2 18 0-2 3-16 3-18 0zm4-4c0-3 2.5-5 5-5s5 2 5 5H7z'/>
+                </svg>
                 <span class='cumpleanero'>" . htmlspecialchars($cumpleanero) . "</span>
               </div>";
                         }
