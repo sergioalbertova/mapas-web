@@ -389,7 +389,7 @@ $topUsuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="card">
 
-        <h3>Top 10 Fallas</h3>
+        <h3>Top 10 apoyos</h3>
 
         <table>
 
@@ -417,13 +417,13 @@ $topUsuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="card">
 
-        <h3>Top 10 Usuarios con más solicitudes</h3>
+        <h3>Usuarios solicitantes</h3>
 
         <table>
 
             <tr>
                 <th>Usuario</th>
-                <th>Incidentes</th>
+                <th># Apoyos</th>
             </tr>
 
             <?php foreach ($topUsuarios as $u): ?>
@@ -441,7 +441,7 @@ $topUsuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="card">
 
-        <h3>Incidentes que NO cumplieron SLA</h3>
+        <h3>Apoyos que no cumplieron el SLA</h3>
 
         <table>
 
