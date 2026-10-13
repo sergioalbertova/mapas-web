@@ -63,9 +63,9 @@ foreach ($guardias as $g) {
 
 // Colores
 $colores = [
-    "SERGIO"      => "#388E3C",
-    "ANTONIETA"   => "#F57C00",
-    "ERIK"        => "#7B1FA2",
+    "SERGIO"      => "#0f117b",
+    "ANTONIETA"   => "#ee8be4",
+    "RAFAEL"        => "#5660f0",
 ];
 
 // Contador
