@@ -63,9 +63,9 @@ foreach ($guardias as $g) {
 
 // Colores
 $colores = [
-    "SERGIO"      => "#0f117b",
-    "ANTONIETA"   => "#ee8be4",
-    "RAFAEL"        => "#5660f0",
+    "SERGIO"      => "#2D3192",
+    "ANTONIETA"   => "#F46E63",
+    "RAFAEL"        => "#1CB7C4",
 ];
 
 // Contador
@@ -108,7 +108,6 @@ $nombreMes = $meses[$mes] . " " . $anio;
     <link rel="stylesheet" href="topbar.css">
 
     <style>
-        /* VARIABLES TIHIL */
         :root {
             --bg: #F4F7FA;
             --text: #1F2933;
