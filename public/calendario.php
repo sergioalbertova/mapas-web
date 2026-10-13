@@ -315,7 +315,7 @@ $nombreMes = $meses[$mes] . " " . $anio;
 
         .cumpleanero {
             font-weight: bold;
-            color: #ff4081;
+            color: #860631;
             font-size: 14px;
         }
 
